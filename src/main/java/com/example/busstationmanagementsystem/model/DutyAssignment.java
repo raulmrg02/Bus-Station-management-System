@@ -4,9 +4,9 @@ public class DutyAssignment {
     private String id;
     private String tripId;
     private String staffId;
-    private String role;
+    private DutyRole role;
 
-    public DutyAssignment(String id, String tripId, String staffId, String role) {
+    public DutyAssignment(String id, String tripId, String staffId, DutyRole role) {
         this.id = id;
         this.tripId = tripId;
         this.staffId = staffId;
@@ -37,11 +37,11 @@ public class DutyAssignment {
         this.staffId = staffId;
     }
 
-    public String getRole() {
+    public DutyRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(DutyRole role) {
         this.role = role;
     }
 }
