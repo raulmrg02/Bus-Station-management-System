@@ -1,4 +1,4 @@
-package com.bus.busstationmanagementsystem;
+package com.example.busstationmanagementsystem;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
