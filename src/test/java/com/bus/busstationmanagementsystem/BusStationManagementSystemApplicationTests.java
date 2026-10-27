@@ -1,0 +1,13 @@
+package com.bus.busstationmanagementsystem;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class BusStationManagementSystemApplicationTests {
+
+    @Test
+    void contextLoads() {
+    }
+
+}
