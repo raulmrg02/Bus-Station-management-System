@@ -1,4 +1,4 @@
-package com.example.busstationmanagementsystem.repositories;
+package com.example.busstationmanagementsystem.repository;
 
 import java.util.List;
 import java.util.Optional;
