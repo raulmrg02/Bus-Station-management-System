@@ -1,5 +1,7 @@
 package com.example.busstationmanagementsystem.model;
 
+import java.util.Optional;
+
 public class DutyAssignment {
     private String id;
     private String tripId;
@@ -11,6 +13,13 @@ public class DutyAssignment {
         this.tripId = tripId;
         this.staffId = staffId;
         this.role = role;
+    }
+
+    public DutyAssignment(String id, String tripId, String staffId) {
+        this.id = id;
+        this.tripId = tripId;
+        this.staffId = staffId;
+        this.role = null;
     }
 
     public String getId() {
@@ -37,8 +46,8 @@ public class DutyAssignment {
         this.staffId = staffId;
     }
 
-    public DutyRole getRole() {
-        return role;
+    public Optional<DutyRole> getRole() {
+        return Optional.ofNullable(role);
     }
 
     public void setRole(DutyRole role) {
