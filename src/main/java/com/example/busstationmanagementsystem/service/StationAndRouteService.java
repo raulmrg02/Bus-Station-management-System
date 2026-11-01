@@ -19,7 +19,6 @@ public class StationAndRouteService {
         this.routeRepository = routeRepository;
     }
 
-    // BusStation methods
     public BusStation createStation(BusStation station) {
         return stationRepository.save(station);
     }
@@ -37,25 +36,5 @@ public class StationAndRouteService {
         return stationRepository.findAll().stream()
                 .filter(s -> s.getCity() != null && s.getCity().equalsIgnoreCase(city))
                 .toList();
-    }
-
-    // Route methods
-    public Route createRoute(Route route) {
-        if (route.getOrigin() == null || route.getDestination() == null) {
-            throw new IllegalArgumentException("A route must have both an origin and destination station");
-        }
-        if (route.getOrigin().getId().equals(route.getDestination().getId())) {
-            throw new IllegalArgumentException("Origin and destination cannot be the same station");
-        }
-        return routeRepository.save(route);
-    }
-
-    public Route getRouteById(String id) {
-        return routeRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Route not found: " + id));
-    }
-
-    public List<Route> getAllRoutes() {
-        return routeRepository.findAll();
     }
 }

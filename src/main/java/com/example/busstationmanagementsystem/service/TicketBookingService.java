@@ -46,19 +46,16 @@ public class TicketBookingService {
         Bus bus = busRepository.findById(trip.getBusId())
                 .orElseThrow(() -> new NoSuchElementException("Bus not found for trip: " + trip.getBusId()));
 
-        // Capacity validation rule
         if (trip.getTickets().size() >= bus.getCapacity()) {
             throw new IllegalStateException("Cannot book ticket: bus capacity (" + bus.getCapacity() + ") reached.");
         }
 
-        // Check if seat is already taken
         boolean seatTaken = trip.getTickets().stream()
                 .anyMatch(t -> t.getSeatNumber().equalsIgnoreCase(ticket.getSeatNumber()));
         if (seatTaken) {
             throw new IllegalArgumentException("Seat " + ticket.getSeatNumber() + " is already booked.");
         }
 
-        // Save ticket and update relations
         Ticket savedTicket = ticketRepository.save(ticket);
         trip.getTickets().add(savedTicket);
         busTripRepository.save(trip);
