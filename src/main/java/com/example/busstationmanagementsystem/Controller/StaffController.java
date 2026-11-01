@@ -23,6 +23,16 @@ public class StaffController {
         return staffService.registerStaff(staff);
     }
 
+    @PostMapping("/drivers")
+    public Driver registerDriver(@RequestBody Driver driver) {
+        return (Driver) staffService.registerStaff(driver);
+    }
+
+    @PostMapping("/managers")
+    public TripManager registerManager(@RequestBody TripManager manager) {
+        return (TripManager) staffService.registerStaff(manager);
+    }
+
     @GetMapping("/{id}")
     public Staff getStaffById(@PathVariable String id) {
         return staffService.getStaffById(id);

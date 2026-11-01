@@ -3,6 +3,10 @@ package com.example.busstationmanagementsystem.model;
 public class TripManager extends Staff {
     private String employeeCode;
 
+    public TripManager() {
+        super();
+    }
+
     public TripManager(String id, String name, String employeeCode) {
         super(id, name);
         this.employeeCode = employeeCode;

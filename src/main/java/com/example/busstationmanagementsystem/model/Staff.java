@@ -9,6 +9,9 @@ public abstract class Staff {
 
     private List<DutyAssignment> assignments = new ArrayList<>();
 
+    public Staff() {
+    }
+
     public Staff(String id, String name) {
         this.id = id;
         this.name = name;

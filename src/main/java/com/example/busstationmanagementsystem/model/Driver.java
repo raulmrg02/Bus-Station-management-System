@@ -3,6 +3,10 @@ package com.example.busstationmanagementsystem.model;
 public class Driver extends Staff {
     private String yearsOfExperience;
 
+    public Driver() {
+        super();
+    }
+
     public Driver(String id, String name, String yearsOfExperience) {
         super(id, name);
         this.yearsOfExperience = yearsOfExperience;
