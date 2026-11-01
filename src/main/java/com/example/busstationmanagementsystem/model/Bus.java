@@ -8,6 +8,9 @@ public class Bus {
     private String model; // erweiterung
     private int manufactureYear; // erweiterung
 
+    public Bus() {
+    }
+
     public Bus(String id, String registrationNumber, int capacity, BusStatus status, String model, int manufactureYear) {
         this.id = id;
         this.registrationNumber = registrationNumber;

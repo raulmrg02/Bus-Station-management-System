@@ -1,4 +1,4 @@
-package com.example.busstationmanagementsystem.Controller;
+package com.example.busstationmanagementsystem.controller;
 
 import com.example.busstationmanagementsystem.model.Driver;
 import com.example.busstationmanagementsystem.model.Staff;
@@ -21,6 +21,16 @@ public class StaffController {
     @PostMapping
     public Staff registerStaff(@RequestBody Staff staff) {
         return staffService.registerStaff(staff);
+    }
+
+    @PostMapping("/drivers")
+    public Driver registerDriver(@RequestBody Driver driver) {
+        return (Driver) staffService.registerStaff(driver);
+    }
+
+    @PostMapping("/managers")
+    public TripManager registerManager(@RequestBody TripManager manager) {
+        return (TripManager) staffService.registerStaff(manager);
     }
 
     @GetMapping("/{id}")

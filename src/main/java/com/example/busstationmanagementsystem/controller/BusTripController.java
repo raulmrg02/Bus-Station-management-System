@@ -1,4 +1,4 @@
-package com.example.busstationmanagementsystem.Controller;
+package com.example.busstationmanagementsystem.controller;
 
 import com.example.busstationmanagementsystem.model.BusTrip;
 import com.example.busstationmanagementsystem.model.DutyAssignment;
