@@ -11,11 +11,9 @@ import java.util.NoSuchElementException;
 @Service
 public class BusStationService {
     private final BusStationRepository stationRepository;
-    private final RouteRepository routeRepository;
 
-    public BusStationService(BusStationRepository stationRepository, RouteRepository routeRepository) {
+    public BusStationService(BusStationRepository stationRepository) {
         this.stationRepository = stationRepository;
-        this.routeRepository = routeRepository;
     }
 
     public BusStation createStation(BusStation station) {
