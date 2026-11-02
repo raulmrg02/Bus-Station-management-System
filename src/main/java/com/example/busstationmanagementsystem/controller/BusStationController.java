@@ -2,18 +2,18 @@ package com.example.busstationmanagementsystem.controller;
 
 import com.example.busstationmanagementsystem.model.BusStation;
 import com.example.busstationmanagementsystem.model.Route;
-import com.example.busstationmanagementsystem.service.StationAndRouteService;
+import com.example.busstationmanagementsystem.service.BusStationService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/stations-and-routes")
-public class StationAndRouteController {
+public class BusStationController {
 
-    private final StationAndRouteService stationAndRouteService;
+    private final BusStationService stationAndRouteService;
 
-    public StationAndRouteController(StationAndRouteService stationAndRouteService) {
+    public BusStationController(BusStationService stationAndRouteService) {
         this.stationAndRouteService = stationAndRouteService;
     }
 
@@ -37,18 +37,4 @@ public class StationAndRouteController {
         return stationAndRouteService.getStationsByCity(city);
     }
 
-    @PostMapping("/routes")
-    public Route createRoute(@RequestBody Route route) {
-        return stationAndRouteService.createRoute(route);
-    }
-
-    @GetMapping("/routes/{id}")
-    public Route getRouteById(@PathVariable String id) {
-        return stationAndRouteService.getRouteById(id);
-    }
-
-    @GetMapping("/routes")
-    public List<Route> getAllRoutes() {
-        return stationAndRouteService.getAllRoutes();
-    }
 }

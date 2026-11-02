@@ -2,18 +2,18 @@ package com.example.busstationmanagementsystem.controller;
 
 import com.example.busstationmanagementsystem.model.Passenger;
 import com.example.busstationmanagementsystem.model.Ticket;
-import com.example.busstationmanagementsystem.service.TicketBookingService;
+import com.example.busstationmanagementsystem.service.TicketService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/bookings")
-public class TicketBookingController {
+public class TicketController {
 
-    private final TicketBookingService ticketBookingService;
+    private final TicketService ticketBookingService;
 
-    public TicketBookingController(TicketBookingService ticketBookingService) {
+    public TicketController(TicketService ticketBookingService) {
         this.ticketBookingService = ticketBookingService;
     }
 

@@ -14,16 +14,16 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
-public class TicketBookingService {
+public class TicketService {
     private final TicketRepository ticketRepository;
     private final PassengerRepository passengerRepository;
     private final BusTripRepository busTripRepository;
     private final BusRepository busRepository;
 
-    public TicketBookingService(TicketRepository ticketRepository,
-                                PassengerRepository passengerRepository,
-                                BusTripRepository busTripRepository,
-                                BusRepository busRepository) {
+    public TicketService(TicketRepository ticketRepository,
+                         PassengerRepository passengerRepository,
+                         BusTripRepository busTripRepository,
+                         BusRepository busRepository) {
         this.ticketRepository = ticketRepository;
         this.passengerRepository = passengerRepository;
         this.busTripRepository = busTripRepository;
