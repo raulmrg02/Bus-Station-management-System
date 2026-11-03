@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Bus</title>
+</head>
+<body>
+<h1>Add a New Bus</h1>
+
+<form th:action="@{/buses}" th:object="${bus}" method="post">
+    <div>
+        <label for="id">Bus ID:</label><br>
+        <input type="text" id="id" th:field="*{id}" required />
+    </div>
+    <br>
+    <div>
+        <label for="registrationNumber">Registration Number:</label><br>
+        <input type="text" id="registrationNumber" th:field="*{registrationNumber}" required />
+    </div>
+    <br>
+    <div>
+        <label for="capacity">Capacity:</label><br>
+        <input type="number" id="capacity" th:field="*{capacity}" required />
+    </div>
+    <br>
+    <div>
+        <label for="model">Model:</label><br>
+        <input type="text" id="model" th:field="*{model}" />
+    </div>
+    <br>
+    <div>
+        <label for="manufactureYear">Manufacture Year:</label><br>
+        <input type="number" id="manufactureYear" th:field="*{manufactureYear}" />
+    </div>
+    <br>
+    <div>
+        <label for="status">Status:</label><br>
+        <select id="status" th:field="*{status}">
+            <option th:each="st : ${statuses}" th:value="${st}" th:text="${st}">ACTIVE</option>
+        </select>
+    </div>
+    <br>
+    <button type="submit">Save Bus</button>
+    <a th:href="@{/buses}">Cancel</a>
+</form>
+</body>
+</html>

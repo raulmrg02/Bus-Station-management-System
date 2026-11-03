@@ -3,11 +3,11 @@ package com.example.busstationmanagementsystem.controller;
 import com.example.busstationmanagementsystem.model.Bus;
 import com.example.busstationmanagementsystem.model.BusStatus;
 import com.example.busstationmanagementsystem.service.BusService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@RestController
+@Controller
 @RequestMapping("/buses")
 public class BusController {
 
@@ -17,33 +17,28 @@ public class BusController {
         this.busService = busService;
     }
 
-    @PostMapping
-    public Bus createBus(@RequestBody Bus bus) {
-        return busService.createBus(bus);
-    }
-
-    @GetMapping("/{id}")
-    public Bus getBusById(@PathVariable String id) {
-        return busService.getBusById(id);
-    }
-
     @GetMapping
-    public List<Bus> getAllBuses() {
-        return busService.getAllBuses();
+    public String getAllBuses(Model model) {
+        model.addAttribute("buses", busService.getAllBuses());
+        return "bus/index";
     }
 
-    @GetMapping("/active")
-    public List<Bus> getActiveBuses() {
-        return busService.getActiveBuses();
+    @GetMapping("/new")
+    public String showCreateForm(Model model) {
+        model.addAttribute("bus", new Bus());
+        model.addAttribute("statuses", BusStatus.values());
+        return "bus/form";
     }
 
-    @PutMapping("/{id}/status")
-    public Bus updateStatus(@PathVariable String id, @RequestParam BusStatus status) {
-        return busService.updateBusStatus(id, status);
+    @PostMapping
+    public String createBus(@ModelAttribute("bus") Bus bus) {
+        busService.createBus(bus);
+        return "redirect:/buses";
     }
 
-    @DeleteMapping("/{id}")
-    public boolean deleteBus(@PathVariable String id) {
-        return busService.deleteBus(id);
+    @PostMapping("/{id}/delete")
+    public String deleteBus(@PathVariable("id") String id) {
+        busService.deleteBus(id);
+        return "redirect:/buses";
     }
 }
