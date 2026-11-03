@@ -3,6 +3,7 @@ package com.example.busstationmanagementsystem.service;
 import com.example.busstationmanagementsystem.model.*;
 import com.example.busstationmanagementsystem.repository.BusRepository;
 import com.example.busstationmanagementsystem.repository.BusTripRepository;
+import com.example.busstationmanagementsystem.repository.DutyAssignmentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,10 +12,12 @@ import java.util.NoSuchElementException;
 @Service
 public class BusTripService {
     private final BusTripRepository busTripRepository;
+    private final DutyAssignmentRepository dutyAssignmentRepository;
     private final BusRepository busRepository;
 
-    public BusTripService(BusTripRepository busTripRepository, BusRepository busRepository) {
+    public BusTripService(BusTripRepository busTripRepository, DutyAssignmentRepository dutyAssignmentRepository, BusRepository busRepository) {
         this.busTripRepository = busTripRepository;
+        this.dutyAssignmentRepository = dutyAssignmentRepository;
         this.busRepository = busRepository;
     }
 
@@ -56,7 +59,10 @@ public class BusTripService {
 
     public BusTrip assignDuty(String tripId, DutyAssignment assignment) {
         BusTrip trip = getTripById(tripId);
-        trip.getAssignments().add(assignment);
+        assignment.setTripId(tripId);
+        DutyAssignment saved = dutyAssignmentRepository.save(assignment);
+
+        trip.getAssignments().add(saved);
         return busTripRepository.save(trip);
     }
 }
