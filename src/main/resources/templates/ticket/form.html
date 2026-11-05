@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Ticket</title>
+</head>
+<body>
+<h1>Book a New Ticket</h1>
+
+<form th:action="@{/tickets}" method="post">
+    <div>
+        <label for="id">Ticket ID:</label><br>
+        <input type="text" id="id" name="id" required />
+    </div>
+    <br>
+    <div>
+        <label for="tripId">Trip:</label><br>
+        <select id="tripId" name="tripId" required>
+            <option value="">Select trip</option>
+            <option th:each="trip : ${trips}"
+                    th:value="${trip.id}"
+                    th:text="${trip.id + ' - Route: ' + trip.routeId}">
+                TRIP-1 - Route: R1
+            </option>
+        </select>
+    </div>
+    <br>
+    <div>
+        <label for="passengerId">Passenger:</label><br>
+        <select id="passengerId" name="passengerId" required>
+            <option value="">Select passenger</option>
+            <option th:each="passenger : ${passengers}"
+                    th:value="${passenger.id}"
+                    th:text="${passenger.id + ' - ' + passenger.name}">
+                P1 - Alice
+            </option>
+        </select>
+    </div>
+    <br>
+    <div>
+        <label for="seatNumber">Seat Number:</label><br>
+        <input type="text" id="seatNumber" name="seatNumber" required />
+    </div>
+    <br>
+    <div>
+        <label for="price">Price:</label><br>
+        <input type="number" id="price" name="price" min="0" step="0.01" required />
+    </div>
+    <br>
+    <button type="submit">Save Ticket</button>
+    <a th:href="@{/tickets}">Cancel</a>
+</form>
+</body>
+</html>

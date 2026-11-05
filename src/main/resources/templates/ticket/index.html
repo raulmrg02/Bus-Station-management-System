@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket List</title>
+</head>
+<body>
+<h1>Ticket Overview</h1>
+
+<p>
+    <a th:href="@{/tickets/new}">Book New Ticket</a>
+</p>
+
+<table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Trip</th>
+        <th>Passenger</th>
+        <th>Seat</th>
+        <th>Price</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="ticket : ${tickets}">
+        <td th:text="${ticket.id}">T1</td>
+        <td th:text="${ticket.tripId}">TRIP-1</td>
+        <td th:text="${ticket.passengerId}">P1</td>
+        <td th:text="${ticket.seatNumber}">12A</td>
+        <td th:text="${ticket.price}">25.00</td>
+        <td>
+            <form th:action="@{'/tickets/' + ${ticket.id} + '/delete'}" method="post">
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

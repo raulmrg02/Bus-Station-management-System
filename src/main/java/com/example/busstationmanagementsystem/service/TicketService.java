@@ -73,4 +73,30 @@ public class TicketService {
                 .filter(t -> tripId.equals(t.getTripId()))
                 .toList();
     }
+
+    public List<Ticket> getAllTickets() {
+        return ticketRepository.findAll();
+    }
+
+    public List<Passenger> getAllPassengers() {
+        return passengerRepository.findAll();
+    }
+
+    public boolean deleteTicket(String id) {
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Ticket not found: " + id));
+
+        busTripRepository.findById(ticket.getTripId())
+                .ifPresent(trip -> {
+                    trip.getTickets().removeIf(t -> id.equals(t.getId()));
+                    busTripRepository.save(trip);
+                });
+        passengerRepository.findById(ticket.getPassengerId())
+                .ifPresent(passenger -> {
+                    passenger.getTickets().removeIf(t -> id.equals(t.getId()));
+                    passengerRepository.save(passenger);
+                });
+
+        return ticketRepository.deleteById(id);
+    }
 }
