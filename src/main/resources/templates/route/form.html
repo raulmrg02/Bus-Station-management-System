@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Route</title>
+</head>
+<body>
+<h1>Add a New Route</h1>
+
+<form th:action="@{/routes}" method="post">
+    <div>
+        <label for="id">Route ID:</label><br>
+        <input type="text" id="id" name="id" required />
+    </div>
+    <br>
+    <div>
+        <label for="originId">Origin:</label><br>
+        <select id="originId" name="originId" required>
+            <option value="">Select origin station</option>
+            <option th:each="station : ${stations}"
+                    th:value="${station.id}"
+                    th:text="${station.name + ' (' + station.city + ')'}">
+                Central Station (City)
+            </option>
+        </select>
+    </div>
+    <br>
+    <div>
+        <label for="destinationId">Destination:</label><br>
+        <select id="destinationId" name="destinationId" required>
+            <option value="">Select destination station</option>
+            <option th:each="station : ${stations}"
+                    th:value="${station.id}"
+                    th:text="${station.name + ' (' + station.city + ')'}">
+                Airport (City)
+            </option>
+        </select>
+    </div>
+    <br>
+    <div>
+        <label for="distance">Distance:</label><br>
+        <input type="number" id="distance" name="distance" min="0" step="0.01" required />
+    </div>
+    <br>
+    <button type="submit">Save Route</button>
+    <a th:href="@{/routes}">Cancel</a>
+</form>
+</body>
+</html>

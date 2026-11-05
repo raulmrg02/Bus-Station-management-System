@@ -16,7 +16,7 @@ public class RouteService {
         this.routeRepository = routeRepository;
     }
 
-    public Route createRoute(Route route) {
+    public void createRoute(Route route) {
         if (route.getOrigin() == null || route.getDestination() == null) {
             throw new IllegalArgumentException("A route must have both an origin and destination station");
         }
@@ -24,7 +24,7 @@ public class RouteService {
                 && route.getOrigin().getId().equals(route.getDestination().getId())) {
             throw new IllegalArgumentException("Origin and destination cannot be the same station");
         }
-        return routeRepository.save(route);
+        routeRepository.save(route);
     }
 
     public Route getRouteById(String id) {
@@ -34,5 +34,9 @@ public class RouteService {
 
     public List<Route> getAllRoutes() {
         return routeRepository.findAll();
+    }
+
+    public boolean deleteRoute(String id) {
+        return routeRepository.deleteById(id);
     }
 }
