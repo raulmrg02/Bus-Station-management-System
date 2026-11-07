@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Bus Trip</title>
+</head>
+<body>
+<h1>Add a New Bus Trip</h1>
+
+<form th:action="@{/trips}" th:object="${trip}" method="post">
+    <div>
+        <label for="id">Trip ID:</label><br>
+        <input type="text" id="id" th:field="*{id}" required />
+    </div>
+    <br>
+    <div>
+        <label for="routeId">Route ID:</label><br>
+        <input type="text" id="routeId" th:field="*{routeId}" required />
+    </div>
+    <br>
+    <div>
+        <label for="busId">Bus ID:</label><br>
+        <input type="text" id="busId" th:field="*{busId}" required />
+    </div>
+    <br>
+    <div>
+        <label for="startTime">Start Time:</label><br>
+        <input type="datetime-local" id="startTime" th:field="*{startTime}" required />
+    </div>
+    <br>
+    <div>
+        <label for="arrivalTime">Arrival Time:</label><br>
+        <input type="datetime-local" id="arrivalTime" th:field="*{arrivalTime}" />
+    </div>
+    <br>
+    <div>
+        <label for="status">Status:</label><br>
+        <select id="status" th:field="*{status}">
+            <option th:each="st : ${statuses}" th:value="${st}" th:text="${st}">SCHEDULED</option>
+        </select>
+    </div>
+    <br>
+    <button type="submit">Save Trip</button>
+    <a th:href="@{/trips}">Cancel</a>
+</form>
+</body>
+</html>

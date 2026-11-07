@@ -1,50 +1,44 @@
 package com.example.busstationmanagementsystem.controller;
 
 import com.example.busstationmanagementsystem.model.BusTrip;
-import com.example.busstationmanagementsystem.model.DutyAssignment;
 import com.example.busstationmanagementsystem.model.TripStatus;
 import com.example.busstationmanagementsystem.service.BusTripService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@RestController
+@Controller
 @RequestMapping("/trips")
 public class BusTripController {
 
-    private final BusTripService busTripService;
+    private final BusTripService tripService;
 
-    public BusTripController(BusTripService busTripService) {
-        this.busTripService = busTripService;
-    }
-
-    @PostMapping
-    public BusTrip scheduleTrip(@RequestBody BusTrip trip) {
-        return busTripService.scheduleTrip(trip);
-    }
-
-    @GetMapping("/{id}")
-    public BusTrip getTripById(@PathVariable String id) {
-        return busTripService.getTripById(id);
+    public BusTripController(BusTripService tripService) {
+        this.tripService = tripService;
     }
 
     @GetMapping
-    public List<BusTrip> getAllTrips() {
-        return busTripService.getAllTrips();
+    public String getAllTrips(Model model) {
+        model.addAttribute("trips", tripService.getAllTrips());
+        return "trip/index";
     }
 
-    @GetMapping("/by-route/{routeId}")
-    public List<BusTrip> getTripsByRoute(@PathVariable String routeId) {
-        return busTripService.getTripsByRoute(routeId);
+    @GetMapping("/new")
+    public String showCreateForm(Model model) {
+        model.addAttribute("trip", new BusTrip());
+        model.addAttribute("statuses", TripStatus.values());
+        return "trip/form";
     }
 
-    @PutMapping("/{id}/status")
-    public BusTrip updateStatus(@PathVariable String id, @RequestParam TripStatus status) {
-        return busTripService.updateTripStatus(id, status);
+    @PostMapping
+    public String createTrip(@ModelAttribute("trip") BusTrip trip) {
+        tripService.scheduleTrip(trip);
+        return "redirect:/trips";
     }
 
-    @PostMapping("/{id}/assignments")
-    public BusTrip assignDuty(@PathVariable String id, @RequestBody DutyAssignment assignment) {
-        return busTripService.assignDuty(id, assignment);
+    @PostMapping("/{id}/delete")
+    public String deleteTrip(@PathVariable("id") String id) {
+        tripService.deleteTrip(id);
+        return "redirect:/trips";
     }
 }
