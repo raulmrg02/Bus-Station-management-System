@@ -10,6 +10,9 @@ public class Passenger {
     private String email; // erweiterung
     private List<Ticket> tickets = new ArrayList<>();
 
+    public Passenger() {
+    }
+
     public Passenger(String id, String name, String currency, String email) {
         this.id = id;
         this.name = name;
