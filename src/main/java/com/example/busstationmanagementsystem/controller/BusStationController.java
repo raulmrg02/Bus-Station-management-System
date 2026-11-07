@@ -1,40 +1,42 @@
 package com.example.busstationmanagementsystem.controller;
 
 import com.example.busstationmanagementsystem.model.BusStation;
-import com.example.busstationmanagementsystem.model.Route;
 import com.example.busstationmanagementsystem.service.BusStationService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@RestController
-@RequestMapping("/stations-and-routes")
+@Controller
+@RequestMapping("/stations")
 public class BusStationController {
 
-    private final BusStationService stationAndRouteService;
+    private final BusStationService stationService;
 
-    public BusStationController(BusStationService stationAndRouteService) {
-        this.stationAndRouteService = stationAndRouteService;
+    public BusStationController(BusStationService stationService) {
+        this.stationService = stationService;
     }
 
-    @PostMapping("/stations")
-    public BusStation createStation(@RequestBody BusStation station) {
-        return stationAndRouteService.createStation(station);
+    @GetMapping
+    public String getAllStations(Model model) {
+        model.addAttribute("stations", stationService.getAllStations());
+        return "station/index";
     }
 
-    @GetMapping("/stations/{id}")
-    public BusStation getStationById(@PathVariable String id) {
-        return stationAndRouteService.getStationById(id);
+    @GetMapping("/new")
+    public String showCreateForm(Model model) {
+        model.addAttribute("station", new BusStation(null, null, null));
+        return "station/form";
     }
 
-    @GetMapping("/stations")
-    public List<BusStation> getAllStations() {
-        return stationAndRouteService.getAllStations();
+    @PostMapping
+    public String createStation(@ModelAttribute("station") BusStation station) {
+        stationService.createStation(station);
+        return "redirect:/stations";
     }
 
-    @GetMapping("/stations/by-city")
-    public List<BusStation> getStationsByCity(@RequestParam String city) {
-        return stationAndRouteService.getStationsByCity(city);
+    @PostMapping("/{id}/delete")
+    public String deleteStation(@PathVariable("id") String id) {
+        stationService.deleteStation(id);
+        return "redirect:/stations";
     }
-
 }

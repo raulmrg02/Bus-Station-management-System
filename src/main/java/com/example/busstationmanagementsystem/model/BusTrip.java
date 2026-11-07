@@ -14,6 +14,9 @@ public class BusTrip {
     private List<DutyAssignment> assignments = new ArrayList<>();
     private TripStatus status;
 
+    public BusTrip() {
+    }
+
     public BusTrip(String id, String routeId, String busId, LocalDateTime startTime, LocalDateTime arrivalTime, TripStatus status) {
         this.id = id;
         this.routeId = routeId;

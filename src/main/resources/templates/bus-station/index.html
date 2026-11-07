@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Bus Station List</title>
+</head>
+<body>
+<h1>Bus Station Overview</h1>
+
+<p>
+    <a th:href="@{/stations/new}">Add New Station</a>
+</p>
+
+<table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>City</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="station : ${stations}">
+        <td th:text="${station.id}">ST-01</td>
+        <td th:text="${station.name}">Central Station</td>
+        <td th:text="${station.city}">Berlin</td>
+        <td>
+            <form th:action="@{'/stations/' + ${station.id} + '/delete'}" method="post">
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

@@ -34,4 +34,8 @@ public class BusStationService {
                 .filter(s -> s.getCity() != null && s.getCity().equalsIgnoreCase(city))
                 .toList();
     }
+
+    public void deleteStation(String id) {
+        stationRepository.deleteById(id);
+    }
 }

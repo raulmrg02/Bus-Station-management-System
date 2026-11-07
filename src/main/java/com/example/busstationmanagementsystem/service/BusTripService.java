@@ -65,4 +65,7 @@ public class BusTripService {
         trip.getAssignments().add(saved);
         return busTripRepository.save(trip);
     }
+    public void deleteTrip(String id) {
+        busTripRepository.deleteById(id);
+    }
 }
