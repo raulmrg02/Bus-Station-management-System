@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Duty Assignment List</title>
+</head>
+<body>
+<h1>Duty Assignment Overview</h1>
+
+<p>
+    <a th:href="@{/duty-assignments/new}">Add New Duty Assignment</a>
+</p>
+
+<table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Trip ID</th>
+        <th>Staff ID</th>
+        <th>Role</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="assignment : ${assignments}">
+        <td th:text="${assignment.id}">DA-01</td>
+        <td th:text="${assignment.tripId}">TR-01</td>
+        <td th:text="${assignment.staffId}">STF-01</td>
+        <td th:text="${assignment.role}">DRIVER</td>
+        <td>
+            <form th:action="@{'/duty-assignments/' + ${assignment.id} + '/delete'}" method="post">
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

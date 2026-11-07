@@ -20,14 +20,14 @@ public class BusTripController {
     @GetMapping
     public String getAllTrips(Model model) {
         model.addAttribute("trips", tripService.getAllTrips());
-        return "trip/index";
+        return "bus-trip/index";
     }
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("trip", new BusTrip());
         model.addAttribute("statuses", TripStatus.values());
-        return "trip/form";
+        return "bus-trip/form";
     }
 
     @PostMapping

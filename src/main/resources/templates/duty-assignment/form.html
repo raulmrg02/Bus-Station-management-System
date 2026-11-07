@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Duty Assignment</title>
+</head>
+<body>
+<h1>Add a New Duty Assignment</h1>
+
+<form th:action="@{/duty-assignments}" th:object="${assignment}" method="post">
+    <div>
+        <label for="id">Assignment ID:</label><br>
+        <input type="text" id="id" th:field="*{id}" required />
+    </div>
+    <br>
+    <div>
+        <label for="tripId">Trip ID:</label><br>
+        <input type="text" id="tripId" th:field="*{tripId}" required />
+    </div>
+    <br>
+    <div>
+        <label for="staffId">Staff ID:</label><br>
+        <input type="text" id="staffId" th:field="*{staffId}" required />
+    </div>
+    <br>
+    <div>
+        <label for="role">Role:</label><br>
+        <select id="role" th:field="*{role}">
+            <option th:each="r : ${roles}" th:value="${r}" th:text="${r}">DRIVER</option>
+        </select>
+    </div>
+    <br>
+    <button type="submit">Save Duty Assignment</button>
+    <a th:href="@{/duty-assignments}">Cancel</a>
+</form>
+</body>
+</html>

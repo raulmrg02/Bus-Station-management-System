@@ -19,13 +19,13 @@ public class BusStationController {
     @GetMapping
     public String getAllStations(Model model) {
         model.addAttribute("stations", stationService.getAllStations());
-        return "station/index";
+        return "bus-station/index";
     }
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("station", new BusStation(null, null, null));
-        return "station/form";
+        return "bus-station/form";
     }
 
     @PostMapping
