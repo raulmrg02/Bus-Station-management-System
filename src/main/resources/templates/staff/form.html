@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Staff Member</title>
+</head>
+<body>
+<h1>Add a New Staff Member</h1>
+
+<p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
+
+<form th:action="@{/staff}" method="post">
+    <div>
+        <label for="id">Staff ID:</label><br>
+        <input type="text" id="id" name="id" required />
+    </div>
+    <br>
+    <div>
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" required />
+    </div>
+    <br>
+    <div>
+        <label for="staffType">Staff Type:</label><br>
+        <select id="staffType" name="staffType" onchange="toggleFields()">
+            <option value="DRIVER">Driver</option>
+            <option value="MANAGER">Trip Manager</option>
+        </select>
+    </div>
+    <br>
+    <div id="driverField">
+        <label for="yearsOfExperience">Years of Experience:</label><br>
+        <input type="text" id="yearsOfExperience" name="yearsOfExperience" placeholder="e.g. 5" />
+    </div>
+    <br>
+    <div id="managerField" style="display: none;">
+        <label for="employeeCode">Employee Code:</label><br>
+        <input type="text" id="employeeCode" name="employeeCode" placeholder="e.g. MGR-101" />
+    </div>
+    <br>
+    <button type="submit">Save Staff Member</button>
+    <a th:href="@{/staff}">Cancel</a>
+</form>
+
+<script>
+    function toggleFields() {
+        var type = document.getElementById("staffType").value;
+        document.getElementById("driverField").style.display = (type === "DRIVER") ? "block" : "none";
+        document.getElementById("managerField").style.display = (type === "MANAGER") ? "block" : "none";
+    }
+</script>
+</body>
+</html>

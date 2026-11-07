@@ -18,12 +18,22 @@ public class StaffService {
     }
 
     public Staff registerStaff(Staff staff) {
+        if (staff.getId() == null || staff.getId().isBlank()) {
+            throw new IllegalArgumentException("Staff ID cannot be empty");
+        }
+        if (staffRepository.findById(staff.getId()).isPresent()) {
+            throw new IllegalArgumentException("Staff member already exists with ID: " + staff.getId());
+        }
         return staffRepository.save(staff);
     }
 
     public Staff getStaffById(String id) {
         return staffRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Staff member not found: " + id));
+    }
+
+    public void deleteById(String id) {
+        staffRepository.deleteById(id);
     }
 
     public List<Staff> getAllStaff() {

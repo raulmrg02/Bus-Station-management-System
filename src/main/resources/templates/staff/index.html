@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff List</title>
+</head>
+<body>
+<h1>Staff Overview</h1>
+
+<p>
+    <a th:href="@{/staff/new}">Add New Staff Member</a>
+</p>
+
+<table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Details</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="staff : ${staffList}">
+        <td th:text="${staff.id}">S1</td>
+        <td th:text="${staff.name}">Alice</td>
+        <td th:text="${staff.class.simpleName}">Driver</td>
+        <td>
+            <span th:if="${staff.class.simpleName == 'Driver'}"
+                  th:text="'Experience: ' + staff.yearsOfExperience + ' years'"></span>
+            <span th:if="${staff.class.simpleName == 'TripManager'}"
+                  th:text="'Employee Code: ' + staff.employeeCode"></span>
+        </td>
+        <td>
+            <form th:action="@{'/staff/' + ${staff.id} + '/delete'}" method="post">
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

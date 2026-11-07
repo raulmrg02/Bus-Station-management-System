@@ -1,39 +1,51 @@
 package com.example.busstationmanagementsystem.controller;
 
-import com.example.busstationmanagementsystem.model.Passenger;
 import com.example.busstationmanagementsystem.model.Ticket;
+import com.example.busstationmanagementsystem.service.BusTripService;
 import com.example.busstationmanagementsystem.service.TicketService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@RestController
-@RequestMapping("/bookings")
+@Controller
+@RequestMapping("/tickets")
 public class TicketController {
 
-    private final TicketService ticketBookingService;
+    private final TicketService ticketService;
+    private final BusTripService busTripService;
 
-    public TicketController(TicketService ticketBookingService) {
-        this.ticketBookingService = ticketBookingService;
+    public TicketController(TicketService ticketService,
+                            BusTripService busTripService) {
+        this.ticketService = ticketService;
+        this.busTripService = busTripService;
     }
 
-    @PostMapping("/passengers")
-    public Passenger registerPassenger(@RequestBody Passenger passenger) {
-        return ticketBookingService.registerPassenger(passenger);
+    @GetMapping
+    public String getAllTickets(Model model) {
+        model.addAttribute("tickets", ticketService.getAllTickets());
+        return "ticket/index";
     }
 
-    @GetMapping("/passengers/{id}")
-    public Passenger getPassengerById(@PathVariable String id) {
-        return ticketBookingService.getPassengerById(id);
+    @GetMapping("/new")
+    public String showCreateForm(Model model) {
+        model.addAttribute("trips", busTripService.getAllTrips());
+        model.addAttribute("passengers", ticketService.getAllPassengers());
+        return "ticket/form";
     }
 
-    @PostMapping("/tickets")
-    public Ticket bookTicket(@RequestBody Ticket ticket) {
-        return ticketBookingService.bookTicket(ticket);
+    @PostMapping
+    public String bookTicket(@RequestParam String id,
+                             @RequestParam String tripId,
+                             @RequestParam String passengerId,
+                             @RequestParam String seatNumber,
+                             @RequestParam double price) {
+        ticketService.bookTicket(new Ticket(id, tripId, passengerId, seatNumber, price));
+        return "redirect:/tickets";
     }
 
-    @GetMapping("/tickets/by-trip/{tripId}")
-    public List<Ticket> getTicketsByTrip(@PathVariable String tripId) {
-        return ticketBookingService.getTicketsByTrip(tripId);
+    @PostMapping("/{id}/delete")
+    public String deleteTicket(@PathVariable String id) {
+        ticketService.deleteTicket(id);
+        return "redirect:/tickets";
     }
 }
