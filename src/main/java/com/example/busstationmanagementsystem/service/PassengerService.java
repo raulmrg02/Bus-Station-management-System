@@ -17,6 +17,15 @@ public class PassengerService {
     }
 
     public Passenger createPassenger(Passenger passenger) {
+        if (passengerRepository.findById(passenger.getId()).isPresent()) {
+            throw new IllegalArgumentException("Passenger already exists with ID: " + passenger.getId());
+        }
+        if (passenger.getEmail() != null
+                && !passenger.getEmail().isBlank()
+                && passengerRepository.findAll().stream()
+                .anyMatch(existingPassenger -> passenger.getEmail().equalsIgnoreCase(existingPassenger.getEmail()))) {
+            throw new IllegalArgumentException("Passenger already exists with email: " + passenger.getEmail());
+        }
         return passengerRepository.save(passenger);
     }
 

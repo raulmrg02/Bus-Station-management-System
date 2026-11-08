@@ -29,8 +29,13 @@ public class PassengerController {
     }
 
     @PostMapping
-    public String createPassenger(@ModelAttribute("passenger") Passenger passenger) {
-        passengerService.createPassenger(passenger);
+    public String createPassenger(@ModelAttribute("passenger") Passenger passenger, Model model) {
+        try {
+            passengerService.createPassenger(passenger);
+        } catch (IllegalArgumentException exception) {
+            model.addAttribute("errorMessage", exception.getMessage());
+            return "passenger/form";
+        }
         return "redirect:/passengers";
     }
 

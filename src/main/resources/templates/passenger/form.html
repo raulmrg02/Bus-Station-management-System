@@ -7,6 +7,8 @@
 <body>
 <h1>Add a New Passenger</h1>
 
+<p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
+
 <form th:action="@{/passengers}" th:object="${passenger}" method="post">
     <div>
         <label for="id">Passenger ID:</label><br>
