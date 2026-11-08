@@ -38,8 +38,16 @@ public class TicketController {
                              @RequestParam String tripId,
                              @RequestParam String passengerId,
                              @RequestParam String seatNumber,
-                             @RequestParam double price) {
-        ticketService.bookTicket(new Ticket(id, tripId, passengerId, seatNumber, price));
+                             @RequestParam double price,
+                             Model model) {
+        try {
+            ticketService.bookTicket(new Ticket(id, tripId, passengerId, seatNumber, price));
+        } catch (IllegalArgumentException | IllegalStateException exception) {
+            model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("trips", busTripService.getAllTrips());
+            model.addAttribute("passengers", ticketService.getAllPassengers());
+            return "ticket/form";
+        }
         return "redirect:/tickets";
     }
 

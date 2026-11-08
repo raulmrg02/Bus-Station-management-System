@@ -40,6 +40,9 @@ public class TicketService {
     }
 
     public Ticket bookTicket(Ticket ticket) {
+        if (ticketRepository.findById(ticket.getId()).isPresent()) {
+            throw new IllegalArgumentException("Ticket already exists with ID: " + ticket.getId());
+        }
         BusTrip trip = busTripRepository.findById(ticket.getTripId())
                 .orElseThrow(() -> new NoSuchElementException("Trip not found: " + ticket.getTripId()));
 

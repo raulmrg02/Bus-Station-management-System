@@ -7,6 +7,8 @@
 <body>
 <h1>Book a New Ticket</h1>
 
+<p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
+
 <form th:action="@{/tickets}" method="post">
     <div>
         <label for="id">Ticket ID:</label><br>
