@@ -4,10 +4,7 @@ import com.example.busstationmanagementsystem.model.Bus;
 import com.example.busstationmanagementsystem.model.BusTrip;
 import com.example.busstationmanagementsystem.model.Passenger;
 import com.example.busstationmanagementsystem.model.Ticket;
-import com.example.busstationmanagementsystem.repository.BusRepository;
-import com.example.busstationmanagementsystem.repository.BusTripRepository;
-import com.example.busstationmanagementsystem.repository.PassengerRepository;
-import com.example.busstationmanagementsystem.repository.TicketRepository;
+import com.example.busstationmanagementsystem.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,15 +12,15 @@ import java.util.NoSuchElementException;
 
 @Service
 public class TicketService {
-    private final TicketRepository ticketRepository;
-    private final PassengerRepository passengerRepository;
-    private final BusTripRepository busTripRepository;
-    private final BusRepository busRepository;
+    private final CrudRepository<Ticket, String> ticketRepository;
+    private final CrudRepository<Passenger, String> passengerRepository;
+    private final CrudRepository<BusTrip, String> busTripRepository;
+    private final CrudRepository<Bus, String> busRepository;
 
-    public TicketService(TicketRepository ticketRepository,
-                         PassengerRepository passengerRepository,
-                         BusTripRepository busTripRepository,
-                         BusRepository busRepository) {
+    public TicketService(CrudRepository<Ticket, String> ticketRepository,
+                         CrudRepository<Passenger, String> passengerRepository,
+                         CrudRepository<BusTrip, String> busTripRepository,
+                         CrudRepository<Bus, String> busRepository) {
         this.ticketRepository = ticketRepository;
         this.passengerRepository = passengerRepository;
         this.busTripRepository = busTripRepository;

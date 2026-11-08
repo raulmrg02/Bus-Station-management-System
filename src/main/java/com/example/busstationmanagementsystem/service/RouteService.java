@@ -1,7 +1,7 @@
 package com.example.busstationmanagementsystem.service;
 
 import com.example.busstationmanagementsystem.model.Route;
-import com.example.busstationmanagementsystem.repository.RouteRepository;
+import com.example.busstationmanagementsystem.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,9 +10,9 @@ import java.util.NoSuchElementException;
 @Service
 public class RouteService {
 
-    private final RouteRepository routeRepository;
+    private final CrudRepository<Route, String> routeRepository;
 
-    public RouteService(RouteRepository routeRepository) {
+    public RouteService(CrudRepository<Route, String> routeRepository) {
         this.routeRepository = routeRepository;
     }
 

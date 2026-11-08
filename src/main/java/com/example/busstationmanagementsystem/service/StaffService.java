@@ -3,7 +3,7 @@ package com.example.busstationmanagementsystem.service;
 import com.example.busstationmanagementsystem.model.Driver;
 import com.example.busstationmanagementsystem.model.Staff;
 import com.example.busstationmanagementsystem.model.TripManager;
-import com.example.busstationmanagementsystem.repository.StaffRepository;
+import com.example.busstationmanagementsystem.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,9 +11,9 @@ import java.util.NoSuchElementException;
 
 @Service
 public class StaffService {
-    private final StaffRepository staffRepository;
+    private final CrudRepository<Staff, String> staffRepository;
 
-    public StaffService(StaffRepository staffRepository) {
+    public StaffService(CrudRepository<Staff, String> staffRepository) {
         this.staffRepository = staffRepository;
     }
 

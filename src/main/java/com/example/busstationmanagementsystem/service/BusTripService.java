@@ -1,10 +1,7 @@
 package com.example.busstationmanagementsystem.service;
 
 import com.example.busstationmanagementsystem.model.*;
-import com.example.busstationmanagementsystem.repository.BusRepository;
-import com.example.busstationmanagementsystem.repository.BusTripRepository;
-import com.example.busstationmanagementsystem.repository.DutyAssignmentRepository;
-import com.example.busstationmanagementsystem.repository.RouteRepository;
+import com.example.busstationmanagementsystem.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,15 +9,15 @@ import java.util.NoSuchElementException;
 
 @Service
 public class BusTripService {
-    private final BusTripRepository busTripRepository;
-    private final DutyAssignmentRepository dutyAssignmentRepository;
-    private final BusRepository busRepository;
-    private final RouteRepository routeRepository;
+    private final CrudRepository<BusTrip, String> busTripRepository;
+    private final CrudRepository<DutyAssignment, String> dutyAssignmentRepository;
+    private final CrudRepository<Bus, String> busRepository;
+    private final CrudRepository<Route, String> routeRepository;
 
-    public BusTripService(BusTripRepository busTripRepository,
-                          DutyAssignmentRepository dutyAssignmentRepository,
-                          BusRepository busRepository,
-                          RouteRepository routeRepository) {
+    public BusTripService(CrudRepository<BusTrip, String> busTripRepository,
+                          CrudRepository<DutyAssignment, String> dutyAssignmentRepository,
+                          CrudRepository<Bus, String> busRepository,
+                          CrudRepository<Route, String> routeRepository) {
         this.busTripRepository = busTripRepository;
         this.dutyAssignmentRepository = dutyAssignmentRepository;
         this.busRepository = busRepository;
