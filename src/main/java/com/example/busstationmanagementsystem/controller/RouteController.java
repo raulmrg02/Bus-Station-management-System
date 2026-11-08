@@ -37,14 +37,21 @@ public class RouteController {
     public String createRoute(@RequestParam String id,
                               @RequestParam String originId,
                               @RequestParam String destinationId,
-                              @RequestParam BigDecimal distance) {
+                              @RequestParam BigDecimal distance,
+                              Model model) {
         Route route = new Route(
                 id,
                 stationService.getStationById(originId),
                 stationService.getStationById(destinationId),
                 distance
         );
-        routeService.createRoute(route);
+        try {
+            routeService.createRoute(route);
+        } catch (IllegalArgumentException exception) {
+            model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("stations", stationService.getAllStations());
+            return "route/form";
+        }
         return "redirect:/routes";
     }
 

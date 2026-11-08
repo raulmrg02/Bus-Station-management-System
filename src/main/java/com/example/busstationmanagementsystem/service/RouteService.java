@@ -17,6 +17,9 @@ public class RouteService {
     }
 
     public void createRoute(Route route) {
+        if (routeRepository.findById(route.getId()).isPresent()) {
+            throw new IllegalArgumentException("Route already exists with ID: " + route.getId());
+        }
         if (route.getOrigin() == null || route.getDestination() == null) {
             throw new IllegalArgumentException("A route must have both an origin and destination station");
         }
