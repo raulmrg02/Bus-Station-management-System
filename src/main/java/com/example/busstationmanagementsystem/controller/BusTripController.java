@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.NoSuchElementException;
+
 @Controller
 @RequestMapping("/trips")
 public class BusTripController {
@@ -31,8 +33,14 @@ public class BusTripController {
     }
 
     @PostMapping
-    public String createTrip(@ModelAttribute("trip") BusTrip trip) {
-        tripService.scheduleTrip(trip);
+    public String createTrip(@ModelAttribute("trip") BusTrip trip, Model model) {
+        try {
+            tripService.scheduleTrip(trip);
+        } catch (IllegalArgumentException | NoSuchElementException exception) {
+            model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("statuses", TripStatus.values());
+            return "bus-trip/form";
+        }
         return "redirect:/trips";
     }
 

@@ -7,6 +7,8 @@
 <body>
 <h1>Add a New Bus Trip</h1>
 
+<p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
+
 <form th:action="@{/trips}" th:object="${trip}" method="post">
     <div>
         <label for="id">Trip ID:</label><br>

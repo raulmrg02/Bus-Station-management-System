@@ -4,6 +4,7 @@ import com.example.busstationmanagementsystem.model.*;
 import com.example.busstationmanagementsystem.repository.BusRepository;
 import com.example.busstationmanagementsystem.repository.BusTripRepository;
 import com.example.busstationmanagementsystem.repository.DutyAssignmentRepository;
+import com.example.busstationmanagementsystem.repository.RouteRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,14 +15,24 @@ public class BusTripService {
     private final BusTripRepository busTripRepository;
     private final DutyAssignmentRepository dutyAssignmentRepository;
     private final BusRepository busRepository;
+    private final RouteRepository routeRepository;
 
-    public BusTripService(BusTripRepository busTripRepository, DutyAssignmentRepository dutyAssignmentRepository, BusRepository busRepository) {
+    public BusTripService(BusTripRepository busTripRepository,
+                          DutyAssignmentRepository dutyAssignmentRepository,
+                          BusRepository busRepository,
+                          RouteRepository routeRepository) {
         this.busTripRepository = busTripRepository;
         this.dutyAssignmentRepository = dutyAssignmentRepository;
         this.busRepository = busRepository;
+        this.routeRepository = routeRepository;
     }
 
     public BusTrip scheduleTrip(BusTrip trip) {
+        if (busTripRepository.findById(trip.getId()).isPresent()) {
+            throw new IllegalArgumentException("Bus trip already exists with ID: " + trip.getId());
+        }
+        routeRepository.findById(trip.getRouteId())
+                .orElseThrow(() -> new NoSuchElementException("Assigned route does not exist: " + trip.getRouteId()));
         Bus bus = busRepository.findById(trip.getBusId())
                 .orElseThrow(() -> new NoSuchElementException("Assigned bus does not exist: " + trip.getBusId()));
 
