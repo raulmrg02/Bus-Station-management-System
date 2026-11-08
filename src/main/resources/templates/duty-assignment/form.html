@@ -7,6 +7,8 @@
 <body>
 <h1>Add a New Duty Assignment</h1>
 
+<p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
+
 <form th:action="@{/duty-assignments}" th:object="${assignment}" method="post">
     <div>
         <label for="id">Assignment ID:</label><br>

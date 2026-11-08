@@ -22,6 +22,9 @@ public class DutyAssignmentService {
     }
 
     public DutyAssignment assignDuty(DutyAssignment assignment) {
+        if (dutyAssignmentRepository.findById(assignment.getId()).isPresent()) {
+            throw new IllegalArgumentException("Duty assignment already exists with ID: " + assignment.getId());
+        }
         DutyAssignment saved = dutyAssignmentRepository.save(assignment);
 
         // Keep the trip's internal list in sync if tripId exists

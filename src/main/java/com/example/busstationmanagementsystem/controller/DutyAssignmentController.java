@@ -31,8 +31,14 @@ public class DutyAssignmentController {
     }
 
     @PostMapping
-    public String createAssignment(@ModelAttribute("assignment") DutyAssignment assignment) {
-        dutyAssignmentService.assignDuty(assignment);
+    public String createAssignment(@ModelAttribute("assignment") DutyAssignment assignment, Model model) {
+        try {
+            dutyAssignmentService.assignDuty(assignment);
+        } catch (IllegalArgumentException exception) {
+            model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("roles", DutyRole.values());
+            return "duty-assignment/form";
+        }
         return "redirect:/duty-assignments";
     }
 
