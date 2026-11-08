@@ -2,13 +2,14 @@
 
 ## Architecture Decisions
 
-### 1. Granular Controller & Service Design
+### 1. Granular Controller & Domain Service Design
 
-* **Decision:** We chose a **controller-per-entity** and **service-per-entity** structure instead of a single monolithic
-  controller.
-* **Reason:** This strictly follows the **Single Responsibility Principle (SRP)**. Each controller manages only its own
-  HTTP routing, and each service handles only the business logic and validations of its domain entity, keeping files
-  modular and maintainable.
+* **Decision:** We use focused controllers for the main entities and eight domain services. Services are organized by
+  business responsibility rather than enforcing a separate service for every entity; related workflows are coordinated
+  together (for example, ticket booking with passengers and trips, and trip scheduling with duty assignments).
+* **Reason:** This keeps HTTP routing separate from business logic while avoiding artificial service boundaries. Each
+  service remains focused on a cohesive domain responsibility and its validations, keeping the code modular and
+  maintainable.
 
 ### 2. In-Memory Data Storage (`ConcurrentHashMap`)
 
@@ -23,8 +24,9 @@
 
 * **Decision:** We created a shared generic base class and a `CrudRepository<T, ID>` interface, passing an `idExtractor`
   function (e.g., `BusStation::getId`).
-* **Reason:** This eliminates repetitive CRUD boilerplate (**DRY** principle) while allowing services to depend purely
-  on interface abstractions (**Dependency Inversion Principle**).
+* **Reason:** This eliminates repetitive CRUD boilerplate (**DRY** principle). Services depend on typed
+  `CrudRepository<T, ID>` interfaces instead of concrete repository classes, so an alternative data source can be
+  introduced without changing service signatures (**Dependency Inversion Principle**).
 
 ---
 
@@ -58,4 +60,4 @@ We added new properties to 3 model classes:
 1. **`Bus`**: Added `modelName` (`String`) and `manufactureYear` (`int`) for fleet tracking.
 2. **`Passenger`**: Added `email` (`String`) for contact and ticketing notifications.
 3. **`BusTrip`**: Added `arrivalTime` (`LocalDateTime`) to support trip duration tracking.
-   ealth check endpoint: `GET http://localhost:8080/hello` $\rightarrow$ returns `"Die Anwendung funktioniert!"`
+Health check endpoint: `GET http://localhost:8080/hello` $\rightarrow$ returns `"Die Anwendung funktioniert!"`
