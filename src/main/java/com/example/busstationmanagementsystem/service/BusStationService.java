@@ -17,6 +17,9 @@ public class BusStationService {
     }
 
     public BusStation createStation(BusStation station) {
+        if (stationRepository.findById(station.getId()).isPresent()) {
+            throw new IllegalArgumentException("Bus station already exists with ID: " + station.getId());
+        }
         return stationRepository.save(station);
     }
 
