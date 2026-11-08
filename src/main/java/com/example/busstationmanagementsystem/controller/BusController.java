@@ -31,8 +31,14 @@ public class BusController {
     }
 
     @PostMapping
-    public String createBus(@ModelAttribute("bus") Bus bus) {
-        busService.createBus(bus);
+    public String createBus(@ModelAttribute("bus") Bus bus, Model model) {
+        try {
+            busService.createBus(bus);
+        } catch (IllegalArgumentException exception) {
+            model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("statuses", BusStatus.values());
+            return "bus/form";
+        }
         return "redirect:/buses";
     }
 

@@ -20,6 +20,9 @@ public class BusService {
         if (bus.getId() == null || bus.getId().isBlank()) {
             throw new IllegalArgumentException("Bus ID cannot be empty");
         }
+        if (busRepository.findById(bus.getId()).isPresent()) {
+            throw new IllegalArgumentException("Bus already exists with ID: " + bus.getId());
+        }
         return busRepository.save(bus);
     }
 
