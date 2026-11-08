@@ -32,7 +32,7 @@ public class StaffController {
     public String createStaff(@RequestParam("id") String id,
                               @RequestParam("name") String name,
                               @RequestParam("staffType") String staffType,
-                              @RequestParam(value = "yearsOfExperience", required = false) String yearsOfExperience,
+    @RequestParam(value = "yearsOfExperience", defaultValue = "0") int yearsOfExperience,
                               @RequestParam(value = "employeeCode", required = false) String employeeCode,
                               Model model) {
 
@@ -41,7 +41,7 @@ public class StaffController {
             Driver driver = new Driver();
             driver.setId(id);
             driver.setName(name);
-            driver.setYearsOfExperience(yearsOfExperience != null ? yearsOfExperience : "0");
+            driver.setYearsOfExperience(yearsOfExperience);
             staff = driver;
         } else {
             TripManager manager = new TripManager();

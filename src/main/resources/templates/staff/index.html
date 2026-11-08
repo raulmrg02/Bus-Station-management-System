@@ -28,9 +28,9 @@
         <td th:text="${staff.class.simpleName}">Driver</td>
         <td>
             <span th:if="${staff.class.simpleName == 'Driver'}"
-                  th:text="'Experience: ' + staff.yearsOfExperience + ' years'"></span>
+                  th:text="${'Experience: ' + staff.yearsOfExperience + ' years'}"></span>
             <span th:if="${staff.class.simpleName == 'TripManager'}"
-                  th:text="'Employee Code: ' + staff.employeeCode"></span>
+                  th:text="${'Employee Code: ' + staff.employeeCode}"></span>
         </td>
         <td>
             <form th:action="@{'/staff/' + ${staff.id} + '/delete'}" method="post">
