@@ -30,6 +30,10 @@ public abstract class InFileRepository<T> implements CrudRepository<T, String> {
     private synchronized void loadFromFile() {
         try {
             File file = new File(filePath);
+            if (!file.exists() || file.length() == 0) {
+                storage.clear();
+                return;
+            }
             JavaType listType = objectMapper.getTypeFactory().constructCollectionType(List.class, entityClass);
             List<T> list = objectMapper.readValue(file, listType);
 

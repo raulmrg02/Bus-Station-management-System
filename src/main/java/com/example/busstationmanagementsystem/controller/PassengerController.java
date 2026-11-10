@@ -17,31 +17,39 @@ public class PassengerController {
     }
 
     @GetMapping
-    public String getAllPassengers(Model model) {
-        model.addAttribute("passengers", passengerService.getAllPassengers());
+    public String getAllPassengers(@RequestParam(defaultValue = "IN_MEMORY") PassengerService.RepositoryType repository,
+                                   Model model) {
+        model.addAttribute("passengers", passengerService.getAllPassengers(repository));
+        model.addAttribute("selectedRepository", repository);
         return "passenger/index";
     }
 
     @GetMapping("/new")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(@RequestParam(defaultValue = "IN_MEMORY") PassengerService.RepositoryType repository,
+                                 Model model) {
         model.addAttribute("passenger", new Passenger());
+        model.addAttribute("selectedRepository", repository);
         return "passenger/form";
     }
 
     @PostMapping
-    public String createPassenger(@ModelAttribute("passenger") Passenger passenger, Model model) {
+    public String createPassenger(@ModelAttribute("passenger") Passenger passenger,
+                                  @RequestParam(defaultValue = "IN_MEMORY") PassengerService.RepositoryType repository,
+                                  Model model) {
         try {
-            passengerService.createPassenger(passenger);
+            passengerService.createPassenger(passenger, repository);
         } catch (IllegalArgumentException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("selectedRepository", repository);
             return "passenger/form";
         }
-        return "redirect:/passengers";
+        return "redirect:/passengers?repository=" + repository;
     }
 
     @PostMapping("/{id}/delete")
-    public String deletePassenger(@PathVariable("id") String id) {
-        passengerService.deletePassenger(id);
-        return "redirect:/passengers";
+    public String deletePassenger(@PathVariable("id") String id,
+                                  @RequestParam(defaultValue = "IN_MEMORY") PassengerService.RepositoryType repository) {
+        passengerService.deletePassenger(id, repository);
+        return "redirect:/passengers?repository=" + repository;
     }
 }
