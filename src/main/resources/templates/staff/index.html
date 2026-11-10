@@ -7,8 +7,20 @@
 <body>
 <h1>Staff Overview</h1>
 
+<form th:action="@{/staff}" method="get">
+    <label for="repository">Data source:</label>
+    <select id="repository" name="repository" onchange="this.form.submit()">
+        <option value="IN_MEMORY" th:selected="${selectedRepository == T(com.example.busstationmanagementsystem.service.StaffService.RepositoryType).IN_MEMORY}">
+            In-memory repository
+        </option>
+        <option value="IN_FILE" th:selected="${selectedRepository == T(com.example.busstationmanagementsystem.service.StaffService.RepositoryType).IN_FILE}">
+            In-file repository
+        </option>
+    </select>
+</form>
+
 <p>
-    <a th:href="@{/staff/new}">Add New Staff Member</a>
+    <a th:href="@{/staff/new(repository=${selectedRepository})}">Add New Staff Member</a>
 </p>
 
 <table border="1" cellpadding="6" cellspacing="0">
@@ -34,6 +46,7 @@
         </td>
         <td>
             <form th:action="@{'/staff/' + ${staff.id} + '/delete'}" method="post">
+                <input type="hidden" name="repository" th:value="${selectedRepository}">
                 <button type="submit">Delete</button>
             </form>
         </td>

@@ -18,13 +18,17 @@ public class StaffController {
     }
 
     @GetMapping
-    public String getAllStaff(Model model) {
-        model.addAttribute("staffList", staffService.getAllStaff());
+    public String getAllStaff(@RequestParam(defaultValue = "IN_MEMORY") StaffService.RepositoryType repository,
+                              Model model) {
+        model.addAttribute("staffList", staffService.getAllStaff(repository));
+        model.addAttribute("selectedRepository", repository);
         return "staff/index";
     }
 
     @GetMapping("/new")
-    public String showCreateForm() {
+    public String showCreateForm(@RequestParam(defaultValue = "IN_MEMORY") StaffService.RepositoryType repository,
+                                 Model model) {
+        model.addAttribute("selectedRepository", repository);
         return "staff/form";
     }
 
@@ -34,6 +38,7 @@ public class StaffController {
                               @RequestParam("staffType") String staffType,
     @RequestParam(value = "yearsOfExperience", defaultValue = "0") int yearsOfExperience,
                               @RequestParam(value = "employeeCode", required = false) String employeeCode,
+                              @RequestParam(defaultValue = "IN_MEMORY") StaffService.RepositoryType repository,
                               Model model) {
 
         Staff staff;
@@ -52,18 +57,20 @@ public class StaffController {
         }
 
         try {
-            staffService.registerStaff(staff);
+            staffService.registerStaff(staff, repository);
         } catch (IllegalArgumentException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("selectedRepository", repository);
             return "staff/form";
         }
 
-        return "redirect:/staff";
+        return "redirect:/staff?repository=" + repository;
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteStaff(@PathVariable("id") String id) {
-        staffService.deleteById(id);
-        return "redirect:/staff";
+    public String deleteStaff(@PathVariable("id") String id,
+                              @RequestParam(defaultValue = "IN_MEMORY") StaffService.RepositoryType repository) {
+        staffService.deleteById(id, repository);
+        return "redirect:/staff?repository=" + repository;
     }
 }
