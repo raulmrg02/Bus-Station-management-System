@@ -40,16 +40,8 @@ public class PassengerService {
         return passengerRepository.save(passenger);
     }
 
-    public Passenger createPassenger(Passenger passenger) {
-        return createPassenger(passenger, RepositoryType.IN_MEMORY);
-    }
-
     public List<Passenger> getAllPassengers(RepositoryType repositoryType) {
         return getRepository(repositoryType).findAll();
-    }
-
-    public List<Passenger> getAllPassengers() {
-        return getAllPassengers(RepositoryType.IN_MEMORY);
     }
 
     public Passenger getPassengerById(String id) {
@@ -59,10 +51,6 @@ public class PassengerService {
 
     public void deletePassenger(String id, RepositoryType repositoryType) {
         getRepository(repositoryType).deleteById(id);
-    }
-
-    public void deletePassenger(String id) {
-        deletePassenger(id, RepositoryType.IN_MEMORY);
     }
 
     private CrudRepository<Passenger, String> getRepository(RepositoryType repositoryType) {
