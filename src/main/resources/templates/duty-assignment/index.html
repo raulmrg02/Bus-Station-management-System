@@ -7,8 +7,20 @@
 <body>
 <h1>Duty Assignment Overview</h1>
 
+<form th:action="@{/duty-assignments}" method="get">
+    <label for="repository">Data source:</label>
+    <select id="repository" name="repository" onchange="this.form.submit()">
+        <option value="IN_MEMORY" th:selected="${selectedRepository == T(com.example.busstationmanagementsystem.service.DutyAssignmentService.RepositoryType).IN_MEMORY}">
+            In-memory repository
+        </option>
+        <option value="IN_FILE" th:selected="${selectedRepository == T(com.example.busstationmanagementsystem.service.DutyAssignmentService.RepositoryType).IN_FILE}">
+            In-file repository
+        </option>
+    </select>
+</form>
+
 <p>
-    <a th:href="@{/duty-assignments/new}">Add New Duty Assignment</a>
+    <a th:href="@{/duty-assignments/new(repository=${selectedRepository})}">Add New Duty Assignment</a>
 </p>
 
 <table border="1" cellpadding="6" cellspacing="0">
@@ -23,12 +35,13 @@
     </thead>
     <tbody>
     <tr th:each="assignment : ${assignments}">
-        <td th:text="${assignment.id}">DA-01</td>
-        <td th:text="${assignment.tripId}">TR-01</td>
-        <td th:text="${assignment.staffId}">STF-01</td>
-        <td th:text="${assignment.role}">DRIVER</td>
+        <td th:text="${assignment.id}">DA1</td>
+        <td th:text="${assignment.tripId}">T1</td>
+        <td th:text="${assignment.staffId}">S1</td>
+        <td th:text="${assignment.role}">PRIMARY_DRIVER</td>
         <td>
             <form th:action="@{'/duty-assignments/' + ${assignment.id} + '/delete'}" method="post">
+                <input type="hidden" name="repository" th:value="${selectedRepository}">
                 <button type="submit">Delete</button>
             </form>
         </td>

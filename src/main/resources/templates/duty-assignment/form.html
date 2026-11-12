@@ -10,6 +10,7 @@
 <p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
 
 <form th:action="@{/duty-assignments}" th:object="${assignment}" method="post">
+    <input type="hidden" name="repository" th:value="${selectedRepository}">
     <div>
         <label for="id">Assignment ID:</label><br>
         <input type="text" id="id" th:field="*{id}" required />
@@ -28,12 +29,15 @@
     <div>
         <label for="role">Role:</label><br>
         <select id="role" th:field="*{role}">
-            <option th:each="r : ${roles}" th:value="${r}" th:text="${r}">DRIVER</option>
+            <option th:each="r : ${roles}"
+                    th:value="${r}"
+                    th:text="${r}">
+            </option>
         </select>
     </div>
     <br>
     <button type="submit">Save Duty Assignment</button>
-    <a th:href="@{/duty-assignments}">Cancel</a>
+    <a th:href="@{/duty-assignments(repository=${selectedRepository})}">Cancel</a>
 </form>
 </body>
 </html>
