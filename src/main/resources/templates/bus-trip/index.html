@@ -7,8 +7,20 @@
 <body>
 <h1>Bus Trip Overview</h1>
 
+<form th:action="@{/trips}" method="get">
+    <label for="repository">Data source:</label>
+    <select id="repository" name="repository" onchange="this.form.submit()">
+        <option value="IN_MEMORY" th:selected="${selectedRepository == T(com.example.busstationmanagementsystem.service.BusTripService.RepositoryType).IN_MEMORY}">
+            In-memory repository
+        </option>
+        <option value="IN_FILE" th:selected="${selectedRepository == T(com.example.busstationmanagementsystem.service.BusTripService.RepositoryType).IN_FILE}">
+            In-file repository
+        </option>
+    </select>
+</form>
+
 <p>
-    <a th:href="@{/trips/new}">Add New Trip</a>
+    <a th:href="@{/trips/new(repository=${selectedRepository})}">Schedule New Trip</a>
 </p>
 
 <table border="1" cellpadding="6" cellspacing="0">
@@ -25,14 +37,15 @@
     </thead>
     <tbody>
     <tr th:each="trip : ${trips}">
-        <td th:text="${trip.id}">TR-01</td>
-        <td th:text="${trip.routeId}">R-10</td>
-        <td th:text="${trip.busId}">B-01</td>
-        <td th:text="${#temporals.format(trip.startTime, 'yyyy-MM-dd HH:mm')}">2026-11-07 10:00</td>
-        <td th:text="${#temporals.format(trip.arrivalTime, 'yyyy-MM-dd HH:mm')}">2026-11-07 12:30</td>
+        <td th:text="${trip.id}">T1</td>
+        <td th:text="${trip.routeId}">R1</td>
+        <td th:text="${trip.busId}">B1</td>
+        <td th:text="${trip.startTime}">2026-11-15T08:00</td>
+        <td th:text="${trip.arrivalTime}">2026-11-15T11:30</td>
         <td th:text="${trip.status}">SCHEDULED</td>
         <td>
             <form th:action="@{'/trips/' + ${trip.id} + '/delete'}" method="post">
+                <input type="hidden" name="repository" th:value="${selectedRepository}">
                 <button type="submit">Delete</button>
             </form>
         </td>

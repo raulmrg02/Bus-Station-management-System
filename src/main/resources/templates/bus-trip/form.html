@@ -2,14 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Create Bus Trip</title>
+    <title>Schedule Bus Trip</title>
 </head>
 <body>
-<h1>Add a New Bus Trip</h1>
+<h1>Schedule a New Bus Trip</h1>
 
 <p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
 
 <form th:action="@{/trips}" th:object="${trip}" method="post">
+    <input type="hidden" name="repository" th:value="${selectedRepository}">
     <div>
         <label for="id">Trip ID:</label><br>
         <input type="text" id="id" th:field="*{id}" required />
@@ -32,18 +33,21 @@
     <br>
     <div>
         <label for="arrivalTime">Arrival Time:</label><br>
-        <input type="datetime-local" id="arrivalTime" th:field="*{arrivalTime}" />
+        <input type="datetime-local" id="arrivalTime" th:field="*{arrivalTime}" required />
     </div>
     <br>
     <div>
         <label for="status">Status:</label><br>
         <select id="status" th:field="*{status}">
-            <option th:each="st : ${statuses}" th:value="${st}" th:text="${st}">SCHEDULED</option>
+            <option th:each="s : ${statuses}"
+                    th:value="${s}"
+                    th:text="${s}">
+            </option>
         </select>
     </div>
     <br>
-    <button type="submit">Save Trip</button>
-    <a th:href="@{/trips}">Cancel</a>
+    <button type="submit">Save Bus Trip</button>
+    <a th:href="@{/trips(repository=${selectedRepository})}">Cancel</a>
 </form>
 </body>
 </html>

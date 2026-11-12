@@ -1,0 +1,46 @@
+[ {
+  "id" : "T8",
+  "routeId" : "R3",
+  "busId" : "B10",
+  "startTime" : "2026-11-16T10:00:00",
+  "arrivalTime" : "2026-11-16T14:30:00",
+  "tickets" : [ ],
+  "assignments" : [ ],
+  "status" : "PLANNED"
+}, {
+  "id" : "T9",
+  "routeId" : "R4",
+  "busId" : "B1",
+  "startTime" : "2026-11-16T13:00:00",
+  "arrivalTime" : "2026-11-16T17:30:00",
+  "tickets" : [ ],
+  "assignments" : [ ],
+  "status" : "PLANNED"
+}, {
+  "id" : "T1",
+  "routeId" : "R1",
+  "busId" : "B1",
+  "startTime" : "2026-11-15T08:00:00",
+  "arrivalTime" : "2026-11-15T11:30:00",
+  "tickets" : [ ],
+  "assignments" : [ ],
+  "status" : "PLANNED"
+}, {
+  "id" : "T2",
+  "routeId" : "R2",
+  "busId" : "B2",
+  "startTime" : "2026-11-15T09:00:00",
+  "arrivalTime" : "2026-11-15T13:00:00",
+  "tickets" : [ ],
+  "assignments" : [ ],
+  "status" : "ACTIVE"
+}, {
+  "id" : "T3",
+  "routeId" : "R3",
+  "busId" : "B3",
+  "startTime" : "2026-11-15T10:15:00",
+  "arrivalTime" : "2026-11-15T14:45:00",
+  "tickets" : [ ],
+  "assignments" : [ ],
+  "status" : "COMPLETED"
+} ]
