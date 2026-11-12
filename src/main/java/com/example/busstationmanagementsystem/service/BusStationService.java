@@ -1,6 +1,8 @@
 package com.example.busstationmanagementsystem.service;
 
 import com.example.busstationmanagementsystem.model.BusStation;
+import com.example.busstationmanagementsystem.repository.BusStationFileRepository;
+import com.example.busstationmanagementsystem.repository.BusStationRepository;
 import com.example.busstationmanagementsystem.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
@@ -9,35 +11,51 @@ import java.util.NoSuchElementException;
 
 @Service
 public class BusStationService {
-    private final CrudRepository<BusStation, String> stationRepository;
-
-    public BusStationService(CrudRepository<BusStation, String> stationRepository) {
-        this.stationRepository = stationRepository;
+    public enum RepositoryType {
+        IN_MEMORY,
+        IN_FILE
     }
 
-    public BusStation createStation(BusStation station) {
+    private final CrudRepository<BusStation, String> inMemoryStationRepository;
+    private final CrudRepository<BusStation, String> inFileStationRepository;
+
+    public BusStationService(BusStationRepository stationRepository, BusStationFileRepository stationFileRepository) {
+        this.inMemoryStationRepository = stationRepository;
+        this.inFileStationRepository = stationFileRepository;
+    }
+
+    public BusStation registerStation(BusStation station, RepositoryType repositoryType) {
+        CrudRepository<BusStation, String> stationRepository = getRepository(repositoryType);
+        if (station.getId() == null || station.getId().isBlank()) {
+            throw new IllegalArgumentException("Station ID cannot be empty");
+        }
         if (stationRepository.findById(station.getId()).isPresent()) {
-            throw new IllegalArgumentException("Bus station already exists with ID: " + station.getId());
+            throw new IllegalArgumentException("Station already exists with ID: " + station.getId());
         }
         return stationRepository.save(station);
     }
 
     public BusStation getStationById(String id) {
-        return stationRepository.findById(id)
+        return inFileStationRepository.findById(id)
+                .or(() -> inMemoryStationRepository.findById(id))
                 .orElseThrow(() -> new NoSuchElementException("Station not found: " + id));
     }
 
+    public void deleteById(String id, RepositoryType repositoryType) {
+        getRepository(repositoryType).deleteById(id);
+    }
+
     public List<BusStation> getAllStations() {
-        return stationRepository.findAll();
+        return getAllStations(RepositoryType.IN_FILE);
     }
 
-    public List<BusStation> getStationsByCity(String city) {
-        return stationRepository.findAll().stream()
-                .filter(s -> s.getCity() != null && s.getCity().equalsIgnoreCase(city))
-                .toList();
+    public List<BusStation> getAllStations(RepositoryType repositoryType) {
+        return getRepository(repositoryType).findAll();
     }
 
-    public void deleteStation(String id) {
-        stationRepository.deleteById(id);
+    private CrudRepository<BusStation, String> getRepository(RepositoryType repositoryType) {
+        return repositoryType == RepositoryType.IN_FILE
+                ? inFileStationRepository
+                : inMemoryStationRepository;
     }
 }

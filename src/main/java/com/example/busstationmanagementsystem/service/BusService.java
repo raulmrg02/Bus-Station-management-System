@@ -1,7 +1,8 @@
 package com.example.busstationmanagementsystem.service;
 
 import com.example.busstationmanagementsystem.model.Bus;
-import com.example.busstationmanagementsystem.model.BusStatus;
+import com.example.busstationmanagementsystem.repository.BusFileRepository;
+import com.example.busstationmanagementsystem.repository.BusRepository;
 import com.example.busstationmanagementsystem.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
@@ -10,13 +11,21 @@ import java.util.NoSuchElementException;
 
 @Service
 public class BusService {
-    private final CrudRepository<Bus, String> busRepository;
-
-    public BusService(CrudRepository<Bus, String> busRepository) {
-        this.busRepository = busRepository;
+    public enum RepositoryType {
+        IN_MEMORY,
+        IN_FILE
     }
 
-    public Bus createBus(Bus bus) {
+    private final CrudRepository<Bus, String> inMemoryBusRepository;
+    private final CrudRepository<Bus, String> inFileBusRepository;
+
+    public BusService(BusRepository busRepository, BusFileRepository busFileRepository) {
+        this.inMemoryBusRepository = busRepository;
+        this.inFileBusRepository = busFileRepository;
+    }
+
+    public Bus registerBus(Bus bus, RepositoryType repositoryType) {
+        CrudRepository<Bus, String> busRepository = getRepository(repositoryType);
         if (bus.getId() == null || bus.getId().isBlank()) {
             throw new IllegalArgumentException("Bus ID cannot be empty");
         }
@@ -27,27 +36,21 @@ public class BusService {
     }
 
     public Bus getBusById(String id) {
-        return busRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Bus not found with ID: " + id));
+        return inMemoryBusRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Bus not found: " + id));
     }
 
-    public List<Bus> getAllBuses() {
-        return busRepository.findAll();
+    public void deleteById(String id, RepositoryType repositoryType) {
+        getRepository(repositoryType).deleteById(id);
     }
 
-    public List<Bus> getActiveBuses() {
-        return busRepository.findAll().stream()
-                .filter(b -> b.getStatus() == BusStatus.ACTIVE)
-                .toList();
+    public List<Bus> getAllBuses(RepositoryType repositoryType) {
+        return getRepository(repositoryType).findAll();
     }
 
-    public Bus updateBusStatus(String id, BusStatus status) {
-        Bus bus = getBusById(id);
-        bus.setStatus(status);
-        return busRepository.save(bus);
-    }
-
-    public boolean deleteBus(String id) {
-        return busRepository.deleteById(id);
+    private CrudRepository<Bus, String> getRepository(RepositoryType repositoryType) {
+        return repositoryType == RepositoryType.IN_FILE
+                ? inFileBusRepository
+                : inMemoryBusRepository;
     }
 }

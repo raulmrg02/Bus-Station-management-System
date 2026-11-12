@@ -7,8 +7,20 @@
 <body>
 <h1>Bus Station Overview</h1>
 
+<form th:action="@{/stations}" method="get">
+    <label for="repository">Data source:</label>
+    <select id="repository" name="repository" onchange="this.form.submit()">
+        <option value="IN_MEMORY" th:selected="${selectedRepository == T(com.example.busstationmanagementsystem.service.BusStationService.RepositoryType).IN_MEMORY}">
+            In-memory repository
+        </option>
+        <option value="IN_FILE" th:selected="${selectedRepository == T(com.example.busstationmanagementsystem.service.BusStationService.RepositoryType).IN_FILE}">
+            In-file repository
+        </option>
+    </select>
+</form>
+
 <p>
-    <a th:href="@{/stations/new}">Add New Station</a>
+    <a th:href="@{/stations/new(repository=${selectedRepository})}">Add New Bus Station</a>
 </p>
 
 <table border="1" cellpadding="6" cellspacing="0">
@@ -17,16 +29,19 @@
         <th>ID</th>
         <th>Name</th>
         <th>City</th>
+        <th>Trips Count</th>
         <th>Actions</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="station : ${stations}">
-        <td th:text="${station.id}">ST-01</td>
-        <td th:text="${station.name}">Central Station</td>
-        <td th:text="${station.city}">Berlin</td>
+        <td th:text="${station.id}">ST1</td>
+        <td th:text="${station.name}">Central Bus Terminal</td>
+        <td th:text="${station.city}">Bucharest</td>
+        <td th:text="${station.trips != null ? station.trips.size() : 0}">0</td>
         <td>
             <form th:action="@{'/stations/' + ${station.id} + '/delete'}" method="post">
+                <input type="hidden" name="repository" th:value="${selectedRepository}">
                 <button type="submit">Delete</button>
             </form>
         </td>

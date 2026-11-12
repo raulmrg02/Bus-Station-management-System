@@ -9,4 +9,3 @@ public class BusStationRepository extends InMemoryRepository<BusStation, String>
         super(BusStation::getId);
     }
 }
-

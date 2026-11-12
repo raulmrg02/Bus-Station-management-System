@@ -1,0 +1,22 @@
+[ {
+  "id" : "B8",
+  "registrationNumber" : "B-TX 1008",
+  "capacity" : 55,
+  "status" : "ACTIVE",
+  "model" : "Mercedes-Benz Tourismo",
+  "manufactureYear" : 2021
+}, {
+  "id" : "B9",
+  "registrationNumber" : "B-TX 1009",
+  "capacity" : 54,
+  "status" : "DOWN",
+  "model" : "MAN Lion's Coach",
+  "manufactureYear" : 2022
+}, {
+  "id" : "B1",
+  "registrationNumber" : "B-TX 1001",
+  "capacity" : 45,
+  "status" : "ACTIVE",
+  "model" : "Mercedes-Benz Citaro",
+  "manufactureYear" : 2020
+} ]

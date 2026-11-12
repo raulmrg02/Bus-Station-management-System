@@ -9,6 +9,9 @@ public class BusStation {
     private String city;
     private List<BusTrip> trips = new ArrayList<>();
 
+    public BusStation() {
+    }
+
     public BusStation(String id, String name, String city) {
         this.id = id;
         this.name = name;

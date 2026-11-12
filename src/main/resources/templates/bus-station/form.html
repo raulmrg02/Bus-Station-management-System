@@ -10,13 +10,14 @@
 <p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
 
 <form th:action="@{/stations}" th:object="${station}" method="post">
+    <input type="hidden" name="repository" th:value="${selectedRepository}">
     <div>
         <label for="id">Station ID:</label><br>
         <input type="text" id="id" th:field="*{id}" required />
     </div>
     <br>
     <div>
-        <label for="name">Station Name:</label><br>
+        <label for="name">Name:</label><br>
         <input type="text" id="name" th:field="*{name}" required />
     </div>
     <br>
@@ -25,8 +26,8 @@
         <input type="text" id="city" th:field="*{city}" required />
     </div>
     <br>
-    <button type="submit">Save Station</button>
-    <a th:href="@{/stations}">Cancel</a>
+    <button type="submit">Save Bus Station</button>
+    <a th:href="@{/stations(repository=${selectedRepository})}">Cancel</a>
 </form>
 </body>
 </html>

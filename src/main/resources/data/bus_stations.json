@@ -1,0 +1,16 @@
+[ {
+  "id" : "ST10",
+  "name" : "Autogara Pelendava",
+  "city" : "Craiova",
+  "trips" : [ ]
+}, {
+  "id" : "ST7",
+  "name" : "Autogara Sud",
+  "city" : "Constanta",
+  "trips" : [ ]
+}, {
+  "id" : "ST9",
+  "name" : "Autogara Inturban",
+  "city" : "Oradea",
+  "trips" : [ ]
+} ]

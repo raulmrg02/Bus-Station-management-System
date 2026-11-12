@@ -10,6 +10,7 @@
 <p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
 
 <form th:action="@{/buses}" th:object="${bus}" method="post">
+    <input type="hidden" name="repository" th:value="${selectedRepository}">
     <div>
         <label for="id">Bus ID:</label><br>
         <input type="text" id="id" th:field="*{id}" required />
@@ -22,28 +23,31 @@
     <br>
     <div>
         <label for="capacity">Capacity:</label><br>
-        <input type="number" id="capacity" th:field="*{capacity}" required />
+        <input type="number" id="capacity" th:field="*{capacity}" min="0" required />
     </div>
     <br>
     <div>
         <label for="model">Model:</label><br>
-        <input type="text" id="model" th:field="*{model}" />
+        <input type="text" id="model" th:field="*{model}" required />
     </div>
     <br>
     <div>
         <label for="manufactureYear">Manufacture Year:</label><br>
-        <input type="number" id="manufactureYear" th:field="*{manufactureYear}" />
+        <input type="number" id="manufactureYear" th:field="*{manufactureYear}" min="0" required />
     </div>
     <br>
     <div>
         <label for="status">Status:</label><br>
         <select id="status" th:field="*{status}">
-            <option th:each="st : ${statuses}" th:value="${st}" th:text="${st}">ACTIVE</option>
+            <option th:each="s : ${statuses}"
+                    th:value="${s}"
+                    th:text="${s}">
+            </option>
         </select>
     </div>
     <br>
     <button type="submit">Save Bus</button>
-    <a th:href="@{/buses}">Cancel</a>
+    <a th:href="@{/buses(repository=${selectedRepository})}">Cancel</a>
 </form>
 </body>
 </html>
