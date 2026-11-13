@@ -21,15 +21,19 @@ public class TicketController {
     }
 
     @GetMapping
-    public String getAllTickets(Model model) {
-        model.addAttribute("tickets", ticketService.getAllTickets());
+    public String getAllTickets(@RequestParam(defaultValue = "IN_MEMORY") TicketService.RepositoryType repository,
+                                Model model) {
+        model.addAttribute("tickets", ticketService.getAllTickets(repository));
+        model.addAttribute("selectedRepository", repository);
         return "ticket/index";
     }
 
     @GetMapping("/new")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(@RequestParam(defaultValue = "IN_MEMORY") TicketService.RepositoryType repository,
+                                 Model model) {
         model.addAttribute("trips", busTripService.getAllTrips());
-        model.addAttribute("passengers", ticketService.getAllPassengers());
+        model.addAttribute("passengers", ticketService.getAllPassengers(repository));
+        model.addAttribute("selectedRepository", repository);
         return "ticket/form";
     }
 
@@ -39,21 +43,24 @@ public class TicketController {
                              @RequestParam String passengerId,
                              @RequestParam String seatNumber,
                              @RequestParam double price,
+                             @RequestParam(defaultValue = "IN_MEMORY") TicketService.RepositoryType repository,
                              Model model) {
         try {
-            ticketService.bookTicket(new Ticket(id, tripId, passengerId, seatNumber, price));
+            ticketService.bookTicket(new Ticket(id, tripId, passengerId, seatNumber, price), repository);
         } catch (IllegalArgumentException | IllegalStateException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
             model.addAttribute("trips", busTripService.getAllTrips());
-            model.addAttribute("passengers", ticketService.getAllPassengers());
+            model.addAttribute("passengers", ticketService.getAllPassengers(repository));
+            model.addAttribute("selectedRepository", repository);
             return "ticket/form";
         }
-        return "redirect:/tickets";
+        return "redirect:/tickets?repository=" + repository;
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteTicket(@PathVariable String id) {
-        ticketService.deleteTicket(id);
-        return "redirect:/tickets";
+    public String deleteTicket(@PathVariable String id,
+                               @RequestParam(defaultValue = "IN_MEMORY") TicketService.RepositoryType repository) {
+        ticketService.deleteTicket(id, repository);
+        return "redirect:/tickets?repository=" + repository;
     }
 }

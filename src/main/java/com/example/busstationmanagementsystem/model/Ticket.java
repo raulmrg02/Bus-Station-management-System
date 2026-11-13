@@ -7,6 +7,9 @@ public class Ticket {
     private String seatNumber;
     private double price;
 
+    public Ticket() {
+    }
+
     public Ticket(String id, String tripId, String passengerId, String seatNumber, double price) {
         this.id = id;
         this.tripId = tripId;

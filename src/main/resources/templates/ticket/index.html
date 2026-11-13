@@ -7,8 +7,20 @@
 <body>
 <h1>Ticket Overview</h1>
 
+<form th:action="@{/tickets}" method="get">
+    <label for="repository">Data source:</label>
+    <select id="repository" name="repository" onchange="this.form.submit()">
+        <option value="IN_MEMORY" th:selected="${selectedRepository == T(com.example.busstationmanagementsystem.service.TicketService.RepositoryType).IN_MEMORY}">
+            In-memory repository
+        </option>
+        <option value="IN_FILE" th:selected="${selectedRepository == T(com.example.busstationmanagementsystem.service.TicketService.RepositoryType).IN_FILE}">
+            In-file repository
+        </option>
+    </select>
+</form>
+
 <p>
-    <a th:href="@{/tickets/new}">Book New Ticket</a>
+    <a th:href="@{/tickets/new(repository=${selectedRepository})}">Book New Ticket</a>
 </p>
 
 <table border="1" cellpadding="6" cellspacing="0">
@@ -31,6 +43,7 @@
         <td th:text="${ticket.price}">25.00</td>
         <td>
             <form th:action="@{'/tickets/' + ${ticket.id} + '/delete'}" method="post">
+                <input type="hidden" name="repository" th:value="${selectedRepository}">
                 <button type="submit">Delete</button>
             </form>
         </td>
