@@ -11,6 +11,9 @@ public class Route {
     private BigDecimal distance;
     private List<BusTrip> trips = new ArrayList<>();
 
+    public Route() {
+    }
+
     public Route(String id, BusStation origin, BusStation destination, BigDecimal distance) {
         this.id = id;
         this.origin = origin;

@@ -1,0 +1,17 @@
+[ {
+  "id" : "r1",
+  "origin" : {
+    "id" : "ST10",
+    "name" : "Autogara Pelendava",
+    "city" : "Craiova",
+    "trips" : [ ]
+  },
+  "destination" : {
+    "id" : "ST7",
+    "name" : "Autogara Sud",
+    "city" : "Constanta",
+    "trips" : [ ]
+  },
+  "distance" : 10,
+  "trips" : [ ]
+} ]

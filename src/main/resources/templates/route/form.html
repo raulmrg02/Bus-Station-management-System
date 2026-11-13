@@ -10,6 +10,7 @@
 <p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
 
 <form th:action="@{/routes}" method="post">
+    <input type="hidden" name="repository" th:value="${selectedRepository}">
     <div>
         <label for="id">Route ID:</label><br>
         <input type="text" id="id" name="id" required />
@@ -45,7 +46,7 @@
     </div>
     <br>
     <button type="submit">Save Route</button>
-    <a th:href="@{/routes}">Cancel</a>
+    <a th:href="@{/routes(repository=${selectedRepository})}">Cancel</a>
 </form>
 </body>
 </html>

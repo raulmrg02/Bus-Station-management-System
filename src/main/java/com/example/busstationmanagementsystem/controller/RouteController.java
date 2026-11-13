@@ -22,14 +22,20 @@ public class RouteController {
     }
 
     @GetMapping
-    public String getAllRoutes(Model model) {
-        model.addAttribute("routes", routeService.getAllRoutes());
+    public String getAllRoutes(@RequestParam(defaultValue = "IN_MEMORY") RouteService.RepositoryType repository,
+                               Model model) {
+        model.addAttribute("routes", routeService.getAllRoutes(repository));
+        model.addAttribute("selectedRepository", repository);
         return "route/index";
     }
 
     @GetMapping("/new")
-    public String showCreateForm(Model model) {
-        model.addAttribute("stations", stationService.getAllStations());
+    public String showCreateForm(@RequestParam(defaultValue = "IN_MEMORY") RouteService.RepositoryType repository,
+                                 Model model) {
+        model.addAttribute("stations", stationService.getAllStations(repository == RouteService.RepositoryType.IN_FILE
+                ? BusStationService.RepositoryType.IN_FILE
+                : BusStationService.RepositoryType.IN_MEMORY));
+        model.addAttribute("selectedRepository", repository);
         return "route/form";
     }
 
@@ -38,6 +44,7 @@ public class RouteController {
                               @RequestParam String originId,
                               @RequestParam String destinationId,
                               @RequestParam BigDecimal distance,
+                              @RequestParam(defaultValue = "IN_MEMORY") RouteService.RepositoryType repository,
                               Model model) {
         Route route = new Route(
                 id,
@@ -46,18 +53,22 @@ public class RouteController {
                 distance
         );
         try {
-            routeService.createRoute(route);
+            routeService.createRoute(route, repository);
         } catch (IllegalArgumentException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
-            model.addAttribute("stations", stationService.getAllStations());
+            model.addAttribute("stations", stationService.getAllStations(repository == RouteService.RepositoryType.IN_FILE
+                    ? BusStationService.RepositoryType.IN_FILE
+                    : BusStationService.RepositoryType.IN_MEMORY));
+            model.addAttribute("selectedRepository", repository);
             return "route/form";
         }
-        return "redirect:/routes";
+        return "redirect:/routes?repository=" + repository;
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteRoute(@PathVariable String id) {
-        routeService.deleteRoute(id);
-        return "redirect:/routes";
+    public String deleteRoute(@PathVariable String id,
+                              @RequestParam(defaultValue = "IN_MEMORY") RouteService.RepositoryType repository) {
+        routeService.deleteRoute(id, repository);
+        return "redirect:/routes?repository=" + repository;
     }
 }
