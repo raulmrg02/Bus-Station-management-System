@@ -31,7 +31,7 @@ public class TicketController {
     @GetMapping("/new")
     public String showCreateForm(@RequestParam(defaultValue = "IN_MEMORY") TicketService.RepositoryType repository,
                                  Model model) {
-        model.addAttribute("trips", busTripService.getAllTrips(BusTripService.RepositoryType.IN_FILE));
+        model.addAttribute("trips", busTripService.getAllTrips(toBusTripRepository(repository)));
         model.addAttribute("passengers", ticketService.getAllPassengers(repository));
         model.addAttribute("selectedRepository", repository);
         return "ticket/form";
@@ -47,14 +47,20 @@ public class TicketController {
                              Model model) {
         try {
             ticketService.bookTicket(new Ticket(id, tripId, passengerId, seatNumber, price), repository);
-        } catch (IllegalArgumentException | IllegalStateException exception) {
+        } catch (IllegalArgumentException | IllegalStateException | java.util.NoSuchElementException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
-            model.addAttribute("trips", busTripService.getAllTrips(BusTripService.RepositoryType.IN_FILE));
+            model.addAttribute("trips", busTripService.getAllTrips(toBusTripRepository(repository)));
             model.addAttribute("passengers", ticketService.getAllPassengers(repository));
             model.addAttribute("selectedRepository", repository);
             return "ticket/form";
         }
         return "redirect:/tickets?repository=" + repository;
+    }
+
+    private BusTripService.RepositoryType toBusTripRepository(TicketService.RepositoryType repository) {
+        return repository == TicketService.RepositoryType.IN_FILE
+                ? BusTripService.RepositoryType.IN_FILE
+                : BusTripService.RepositoryType.IN_MEMORY;
     }
 
     @PostMapping("/{id}/delete")

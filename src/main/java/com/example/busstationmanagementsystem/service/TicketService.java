@@ -5,6 +5,10 @@ import com.example.busstationmanagementsystem.model.BusTrip;
 import com.example.busstationmanagementsystem.model.Passenger;
 import com.example.busstationmanagementsystem.model.Ticket;
 import com.example.busstationmanagementsystem.repository.CrudRepository;
+import com.example.busstationmanagementsystem.repository.BusTripFileRepository;
+import com.example.busstationmanagementsystem.repository.BusTripRepository;
+import com.example.busstationmanagementsystem.repository.BusFileRepository;
+import com.example.busstationmanagementsystem.repository.BusRepository;
 import com.example.busstationmanagementsystem.repository.TicketFileRepository;
 import com.example.busstationmanagementsystem.repository.TicketRepository;
 import com.example.busstationmanagementsystem.repository.PassengerFileRepository;
@@ -25,21 +29,27 @@ public class TicketService {
     private final CrudRepository<Ticket, String> inFileTicketRepository;
     private final CrudRepository<Passenger, String> inMemoryPassengerRepository;
     private final CrudRepository<Passenger, String> inFilePassengerRepository;
-    private final CrudRepository<BusTrip, String> busTripRepository;
-    private final CrudRepository<Bus, String> busRepository;
+    private final CrudRepository<BusTrip, String> inMemoryBusTripRepository;
+    private final CrudRepository<BusTrip, String> inFileBusTripRepository;
+    private final CrudRepository<Bus, String> inMemoryBusRepository;
+    private final CrudRepository<Bus, String> inFileBusRepository;
 
     public TicketService(TicketRepository ticketRepository,
                          TicketFileRepository ticketFileRepository,
                          PassengerRepository passengerRepository,
                          PassengerFileRepository passengerFileRepository,
-                         CrudRepository<BusTrip, String> busTripRepository,
-                         CrudRepository<Bus, String> busRepository) {
+                         BusTripRepository busTripRepository,
+                         BusTripFileRepository busTripFileRepository,
+                         BusRepository busRepository,
+                         BusFileRepository busFileRepository) {
         this.inMemoryTicketRepository = ticketRepository;
         this.inFileTicketRepository = ticketFileRepository;
         this.inMemoryPassengerRepository = passengerRepository;
         this.inFilePassengerRepository = passengerFileRepository;
-        this.busTripRepository = busTripRepository;
-        this.busRepository = busRepository;
+        this.inMemoryBusTripRepository = busTripRepository;
+        this.inFileBusTripRepository = busTripFileRepository;
+        this.inMemoryBusRepository = busRepository;
+        this.inFileBusRepository = busFileRepository;
     }
 
     public Passenger registerPassenger(Passenger passenger) {
@@ -56,6 +66,8 @@ public class TicketService {
         if (ticketRepository.findById(ticket.getId()).isPresent()) {
             throw new IllegalArgumentException("Ticket already exists with ID: " + ticket.getId());
         }
+        CrudRepository<BusTrip, String> busTripRepository = getBusTripRepository(repositoryType);
+        CrudRepository<Bus, String> busRepository = getBusRepository(repositoryType);
         BusTrip trip = busTripRepository.findById(ticket.getTripId())
                 .orElseThrow(() -> new NoSuchElementException("Trip not found: " + ticket.getTripId()));
 
@@ -95,6 +107,7 @@ public class TicketService {
 
     public boolean deleteTicket(String id, RepositoryType repositoryType) {
         CrudRepository<Ticket, String> ticketRepository = getRepository(repositoryType);
+        CrudRepository<BusTrip, String> busTripRepository = getBusTripRepository(repositoryType);
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Ticket not found: " + id));
 
@@ -116,5 +129,17 @@ public class TicketService {
         return repositoryType == RepositoryType.IN_FILE
                 ? inFilePassengerRepository
                 : inMemoryPassengerRepository;
+    }
+
+    private CrudRepository<BusTrip, String> getBusTripRepository(RepositoryType repositoryType) {
+        return repositoryType == RepositoryType.IN_FILE
+                ? inFileBusTripRepository
+                : inMemoryBusTripRepository;
+    }
+
+    private CrudRepository<Bus, String> getBusRepository(RepositoryType repositoryType) {
+        return repositoryType == RepositoryType.IN_FILE
+                ? inFileBusRepository
+                : inMemoryBusRepository;
     }
 }
