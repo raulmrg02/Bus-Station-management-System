@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.NoSuchElementException;
 
 @Controller
 @RequestMapping("/routes")
@@ -46,15 +47,18 @@ public class RouteController {
                               @RequestParam BigDecimal distance,
                               @RequestParam(defaultValue = "IN_MEMORY") RouteService.RepositoryType repository,
                               Model model) {
-        Route route = new Route(
-                id,
-                stationService.getStationById(originId),
-                stationService.getStationById(destinationId),
-                distance
-        );
+        BusStationService.RepositoryType stationRepository = repository == RouteService.RepositoryType.IN_FILE
+                ? BusStationService.RepositoryType.IN_FILE
+                : BusStationService.RepositoryType.IN_MEMORY;
         try {
+            Route route = new Route(
+                    id,
+                    stationService.getStationById(originId, stationRepository),
+                    stationService.getStationById(destinationId, stationRepository),
+                    distance
+            );
             routeService.createRoute(route, repository);
-        } catch (IllegalArgumentException exception) {
+        } catch (IllegalArgumentException | NoSuchElementException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
             model.addAttribute("stations", stationService.getAllStations(repository == RouteService.RepositoryType.IN_FILE
                     ? BusStationService.RepositoryType.IN_FILE

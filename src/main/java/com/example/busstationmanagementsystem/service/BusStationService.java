@@ -35,18 +35,13 @@ public class BusStationService {
         return stationRepository.save(station);
     }
 
-    public BusStation getStationById(String id) {
-        return inFileStationRepository.findById(id)
-                .or(() -> inMemoryStationRepository.findById(id))
+    public BusStation getStationById(String id, RepositoryType repositoryType) {
+        return getRepository(repositoryType).findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Station not found: " + id));
     }
 
     public void deleteById(String id, RepositoryType repositoryType) {
         getRepository(repositoryType).deleteById(id);
-    }
-
-    public List<BusStation> getAllStations() {
-        return getAllStations(RepositoryType.IN_FILE);
     }
 
     public List<BusStation> getAllStations(RepositoryType repositoryType) {

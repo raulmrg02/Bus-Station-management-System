@@ -31,7 +31,7 @@ public class TicketController {
     @GetMapping("/new")
     public String showCreateForm(@RequestParam(defaultValue = "IN_MEMORY") TicketService.RepositoryType repository,
                                  Model model) {
-        model.addAttribute("trips", busTripService.getAllTrips());
+        model.addAttribute("trips", busTripService.getAllTrips(BusTripService.RepositoryType.IN_FILE));
         model.addAttribute("passengers", ticketService.getAllPassengers(repository));
         model.addAttribute("selectedRepository", repository);
         return "ticket/form";
@@ -49,7 +49,7 @@ public class TicketController {
             ticketService.bookTicket(new Ticket(id, tripId, passengerId, seatNumber, price), repository);
         } catch (IllegalArgumentException | IllegalStateException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
-            model.addAttribute("trips", busTripService.getAllTrips());
+            model.addAttribute("trips", busTripService.getAllTrips(BusTripService.RepositoryType.IN_FILE));
             model.addAttribute("passengers", ticketService.getAllPassengers(repository));
             model.addAttribute("selectedRepository", repository);
             return "ticket/form";
