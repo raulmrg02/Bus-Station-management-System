@@ -33,10 +33,6 @@ public class DutyAssignmentService {
         this.inFileBusTripRepository = busTripFileRepository;
     }
 
-    public DutyAssignment assignDuty(DutyAssignment assignment) {
-        return assignDuty(assignment, RepositoryType.IN_FILE);
-    }
-
     public DutyAssignment assignDuty(DutyAssignment assignment, RepositoryType repositoryType) {
         CrudRepository<DutyAssignment, String> assignmentRepository = getRepository(repositoryType);
         if (assignment.getId() == null || assignment.getId().isBlank()) {
@@ -61,10 +57,6 @@ public class DutyAssignmentService {
         return saved;
     }
 
-    public List<DutyAssignment> getAllAssignments() {
-        return getAllAssignments(RepositoryType.IN_FILE);
-    }
-
     public List<DutyAssignment> getAllAssignments(RepositoryType repositoryType) {
         return getRepository(repositoryType).findAll();
     }
@@ -73,10 +65,6 @@ public class DutyAssignmentService {
         return inFileAssignmentRepository.findById(id)
                 .or(() -> inMemoryAssignmentRepository.findById(id))
                 .orElseThrow(() -> new NoSuchElementException("Duty assignment not found: " + id));
-    }
-
-    public void deleteAssignment(String id) {
-        deleteAssignment(id, RepositoryType.IN_FILE);
     }
 
     public void deleteAssignment(String id, RepositoryType repositoryType) {
