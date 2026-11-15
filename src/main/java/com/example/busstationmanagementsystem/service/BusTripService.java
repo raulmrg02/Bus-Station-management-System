@@ -21,6 +21,8 @@ public class BusTripService {
     private final BusFileRepository inFileBusRepository;
     private final CrudRepository<Route, String> inMemoryRouteRepository;
     private final CrudRepository<Route, String> inFileRouteRepository;
+    private final CrudRepository<BusStation, String> inMemoryStationRepository;
+    private final CrudRepository<BusStation, String> inFileStationRepository;
 
     public BusTripService(BusTripRepository busTripRepository,
                           BusTripFileRepository busTripFileRepository,
@@ -28,7 +30,9 @@ public class BusTripService {
                           BusRepository busRepository,
                           BusFileRepository busFileRepository,
                           RouteRepository routeRepository,
-                          RouteFileRepository routeFileRepository) {
+                          RouteFileRepository routeFileRepository,
+                          BusStationRepository stationRepository,
+                          BusStationFileRepository stationFileRepository) {
         this.inMemoryBusTripRepository = busTripRepository;
         this.inFileBusTripRepository = busTripFileRepository;
         this.dutyAssignmentRepository = dutyAssignmentRepository;
@@ -36,6 +40,8 @@ public class BusTripService {
         this.inFileBusRepository = busFileRepository;
         this.inMemoryRouteRepository = routeRepository;
         this.inFileRouteRepository = routeFileRepository;
+        this.inMemoryStationRepository = stationRepository;
+        this.inFileStationRepository = stationFileRepository;
     }
 
     public BusTrip scheduleTrip(BusTrip trip, RepositoryType repositoryType) {
@@ -46,10 +52,10 @@ public class BusTripService {
         if (tripRepository.findById(trip.getId()).isPresent()) {
             throw new IllegalArgumentException("Bus trip already exists with ID: " + trip.getId());
         }
-        getRouteRepository(repositoryType).findById(trip.getRouteId())
+        CrudRepository<Route, String> routeRepository = getRouteRepository(repositoryType);
+        Route route = routeRepository.findById(trip.getRouteId())
                 .orElseThrow(() -> new NoSuchElementException("Assigned route does not exist: " + trip.getRouteId()));
-        Bus bus = inFileBusRepository.findById(trip.getBusId())
-                .or(() -> inMemoryBusRepository.findById(trip.getBusId()))
+        Bus bus = getBusRepository(repositoryType).findById(trip.getBusId())
                 .orElseThrow(() -> new NoSuchElementException("Assigned bus does not exist: " + trip.getBusId()));
 
         if (bus.getStatus() != BusStatus.ACTIVE) {
@@ -60,7 +66,9 @@ public class BusTripService {
             throw new IllegalArgumentException("Arrival time cannot be before start time");
         }
 
-        return tripRepository.save(trip);
+        BusTrip savedTrip = tripRepository.save(trip);
+        addTripToRouteAndStations(savedTrip, route, repositoryType, routeRepository);
+        return savedTrip;
     }
 
     public BusTrip getTripById(String id) {
@@ -101,7 +109,11 @@ public class BusTripService {
     }
 
     public void deleteTrip(String id, RepositoryType repositoryType) {
-        getRepository(repositoryType).deleteById(id);
+        CrudRepository<BusTrip, String> tripRepository = getRepository(repositoryType);
+        tripRepository.findById(id).ifPresent(trip -> {
+            removeTripFromRouteAndStations(trip, repositoryType);
+            tripRepository.deleteById(id);
+        });
     }
 
     private CrudRepository<BusTrip, String> getRepository(RepositoryType repositoryType) {
@@ -114,5 +126,66 @@ public class BusTripService {
         return repositoryType == RepositoryType.IN_FILE
                 ? inFileRouteRepository
                 : inMemoryRouteRepository;
+    }
+
+    private CrudRepository<Bus, String> getBusRepository(RepositoryType repositoryType) {
+        return repositoryType == RepositoryType.IN_FILE
+                ? inFileBusRepository
+                : inMemoryBusRepository;
+    }
+
+    private void addTripToRouteAndStations(BusTrip trip, Route route,
+                                           RepositoryType repositoryType,
+                                           CrudRepository<Route, String> routeRepository) {
+        addIfMissing(route.getTrips(), trip);
+        routeRepository.save(route);
+
+        CrudRepository<BusStation, String> stationRepository = repositoryType == RepositoryType.IN_FILE
+                ? inFileStationRepository
+                : inMemoryStationRepository;
+        addTripToStation(trip, route.getOrigin(), stationRepository);
+        addTripToStation(trip, route.getDestination(), stationRepository);
+    }
+
+    private void addTripToStation(BusTrip trip, BusStation station,
+                                  CrudRepository<BusStation, String> stationRepository) {
+        if (station == null) {
+            return;
+        }
+        stationRepository.findById(station.getId()).ifPresent(storedStation -> {
+            addIfMissing(storedStation.getTrips(), trip);
+            stationRepository.save(storedStation);
+        });
+    }
+
+    private void addIfMissing(List<BusTrip> trips, BusTrip trip) {
+        if (trips.stream().noneMatch(existing -> trip.getId().equals(existing.getId()))) {
+            trips.add(trip);
+        }
+    }
+
+    private void removeTripFromRouteAndStations(BusTrip trip, RepositoryType repositoryType) {
+        CrudRepository<Route, String> routeRepository = getRouteRepository(repositoryType);
+        CrudRepository<BusStation, String> stationRepository = repositoryType == RepositoryType.IN_FILE
+                ? inFileStationRepository
+                : inMemoryStationRepository;
+
+        routeRepository.findById(trip.getRouteId()).ifPresent(route -> {
+            route.getTrips().removeIf(existing -> trip.getId().equals(existing.getId()));
+            routeRepository.save(route);
+            removeTripFromStation(route.getOrigin(), trip, stationRepository);
+            removeTripFromStation(route.getDestination(), trip, stationRepository);
+        });
+    }
+
+    private void removeTripFromStation(BusStation station, BusTrip trip,
+                                       CrudRepository<BusStation, String> stationRepository) {
+        if (station == null) {
+            return;
+        }
+        stationRepository.findById(station.getId()).ifPresent(storedStation -> {
+            storedStation.getTrips().removeIf(existing -> trip.getId().equals(existing.getId()));
+            stationRepository.save(storedStation);
+        });
     }
 }

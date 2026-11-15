@@ -1,11 +1,18 @@
 package com.example.busstationmanagementsystem.service;
 
 import com.example.busstationmanagementsystem.model.DutyAssignment;
+import com.example.busstationmanagementsystem.model.BusStation;
+import com.example.busstationmanagementsystem.model.BusTrip;
+import com.example.busstationmanagementsystem.model.Route;
 import com.example.busstationmanagementsystem.repository.BusTripFileRepository;
 import com.example.busstationmanagementsystem.repository.BusTripRepository;
 import com.example.busstationmanagementsystem.repository.CrudRepository;
 import com.example.busstationmanagementsystem.repository.DutyAssignmentFileRepository;
 import com.example.busstationmanagementsystem.repository.DutyAssignmentRepository;
+import com.example.busstationmanagementsystem.repository.BusStationFileRepository;
+import com.example.busstationmanagementsystem.repository.BusStationRepository;
+import com.example.busstationmanagementsystem.repository.RouteFileRepository;
+import com.example.busstationmanagementsystem.repository.RouteRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,15 +29,27 @@ public class DutyAssignmentService {
     private final CrudRepository<DutyAssignment, String> inFileAssignmentRepository;
     private final BusTripRepository inMemoryBusTripRepository;
     private final BusTripFileRepository inFileBusTripRepository;
+    private final CrudRepository<Route, String> inMemoryRouteRepository;
+    private final CrudRepository<Route, String> inFileRouteRepository;
+    private final CrudRepository<BusStation, String> inMemoryStationRepository;
+    private final CrudRepository<BusStation, String> inFileStationRepository;
 
     public DutyAssignmentService(DutyAssignmentRepository dutyAssignmentRepository,
                                  DutyAssignmentFileRepository dutyAssignmentFileRepository,
                                  BusTripRepository busTripRepository,
-                                 BusTripFileRepository busTripFileRepository) {
+                                 BusTripFileRepository busTripFileRepository,
+                                 RouteRepository routeRepository,
+                                 RouteFileRepository routeFileRepository,
+                                 BusStationRepository stationRepository,
+                                 BusStationFileRepository stationFileRepository) {
         this.inMemoryAssignmentRepository = dutyAssignmentRepository;
         this.inFileAssignmentRepository = dutyAssignmentFileRepository;
         this.inMemoryBusTripRepository = busTripRepository;
         this.inFileBusTripRepository = busTripFileRepository;
+        this.inMemoryRouteRepository = routeRepository;
+        this.inFileRouteRepository = routeFileRepository;
+        this.inMemoryStationRepository = stationRepository;
+        this.inFileStationRepository = stationFileRepository;
     }
 
     public DutyAssignment assignDuty(DutyAssignment assignment, RepositoryType repositoryType) {
@@ -53,6 +72,7 @@ public class DutyAssignmentService {
                 trip.getAssignments().add(saved);
                 inMemoryBusTripRepository.save(trip);
             });
+            syncTripReferences(assignment.getTripId(), repositoryType);
         }
         return saved;
     }
@@ -71,14 +91,11 @@ public class DutyAssignmentService {
         CrudRepository<DutyAssignment, String> assignmentRepository = getRepository(repositoryType);
         assignmentRepository.findById(id).ifPresent(assignment -> {
             if (assignment.getTripId() != null) {
-                inFileBusTripRepository.findById(assignment.getTripId()).ifPresent(trip -> {
+                getTripRepository(repositoryType).findById(assignment.getTripId()).ifPresent(trip -> {
                     trip.getAssignments().removeIf(a -> id.equals(a.getId()));
-                    inFileBusTripRepository.save(trip);
+                    getTripRepository(repositoryType).save(trip);
                 });
-                inMemoryBusTripRepository.findById(assignment.getTripId()).ifPresent(trip -> {
-                    trip.getAssignments().removeIf(a -> id.equals(a.getId()));
-                    inMemoryBusTripRepository.save(trip);
-                });
+                syncTripReferences(assignment.getTripId(), repositoryType);
             }
         });
 
@@ -89,5 +106,47 @@ public class DutyAssignmentService {
         return repositoryType == RepositoryType.IN_FILE
                 ? inFileAssignmentRepository
                 : inMemoryAssignmentRepository;
+    }
+
+    private CrudRepository<BusTrip, String> getTripRepository(RepositoryType repositoryType) {
+        return repositoryType == RepositoryType.IN_FILE
+                ? inFileBusTripRepository
+                : inMemoryBusTripRepository;
+    }
+
+    private void syncTripReferences(String tripId, RepositoryType repositoryType) {
+        CrudRepository<BusTrip, String> tripRepository = repositoryType == RepositoryType.IN_FILE
+                ? inFileBusTripRepository
+                : inMemoryBusTripRepository;
+        tripRepository.findById(tripId).ifPresent(trip -> {
+            CrudRepository<Route, String> routeRepository = repositoryType == RepositoryType.IN_FILE
+                    ? inFileRouteRepository
+                    : inMemoryRouteRepository;
+            CrudRepository<BusStation, String> stationRepository = repositoryType == RepositoryType.IN_FILE
+                    ? inFileStationRepository
+                    : inMemoryStationRepository;
+            routeRepository.findById(trip.getRouteId()).ifPresent(route -> {
+                replaceTrip(route.getTrips(), trip);
+                routeRepository.save(route);
+                syncStation(route.getOrigin(), trip, stationRepository);
+                syncStation(route.getDestination(), trip, stationRepository);
+            });
+        });
+    }
+
+    private void syncStation(BusStation station, BusTrip trip,
+                             CrudRepository<BusStation, String> stationRepository) {
+        if (station == null) {
+            return;
+        }
+        stationRepository.findById(station.getId()).ifPresent(storedStation -> {
+            replaceTrip(storedStation.getTrips(), trip);
+            stationRepository.save(storedStation);
+        });
+    }
+
+    private void replaceTrip(List<BusTrip> trips, BusTrip trip) {
+        trips.removeIf(existing -> trip.getId().equals(existing.getId()));
+        trips.add(trip);
     }
 }
