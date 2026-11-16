@@ -33,5 +33,40 @@
     "passengerId": "PSG-501",
     "seatNumber": "8B",
     "price": 130.0
+  },
+  {
+    "id": "TCK-9006",
+    "tripId": "TRIP-2026-04",
+    "passengerId": "PSG-505",
+    "seatNumber": "6A",
+    "price": 75.0
+  },
+  {
+    "id": "TCK-9007",
+    "tripId": "TRIP-2026-05",
+    "passengerId": "PSG-506",
+    "seatNumber": "10B",
+    "price": 90.0
+  },
+  {
+    "id": "TCK-9008",
+    "tripId": "TRIP-2026-06",
+    "passengerId": "PSG-507",
+    "seatNumber": "14C",
+    "price": 160.0
+  },
+  {
+    "id": "TCK-9009",
+    "tripId": "TRIP-2026-07",
+    "passengerId": "PSG-508",
+    "seatNumber": "3A",
+    "price": 55.0
+  },
+  {
+    "id": "TCK-9010",
+    "tripId": "TRIP-2026-08",
+    "passengerId": "PSG-509",
+    "seatNumber": "5B",
+    "price": 60.0
   }
 ]

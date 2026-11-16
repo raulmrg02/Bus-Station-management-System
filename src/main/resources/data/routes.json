@@ -22,8 +22,36 @@
         "startTime": "2026-11-15T08:00:00",
         "arrivalTime": "2026-11-15T15:30:00",
         "status": "COMPLETED",
-        "tickets": [],
-        "assignments": []
+        "tickets": [
+          {
+            "id": "TCK-9001",
+            "tripId": "TRIP-2026-01",
+            "passengerId": "PSG-501",
+            "seatNumber": "12A",
+            "price": 145.0
+          },
+          {
+            "id": "TCK-9002",
+            "tripId": "TRIP-2026-01",
+            "passengerId": "PSG-502",
+            "seatNumber": "12B",
+            "price": 29.0
+          }
+        ],
+        "assignments": [
+          {
+            "id": "DA-001",
+            "tripId": "TRIP-2026-01",
+            "staffId": "DRV-101",
+            "role": "PRIMARY_DRIVER"
+          },
+          {
+            "id": "DA-002",
+            "tripId": "TRIP-2026-01",
+            "staffId": "DRV-102",
+            "role": "RESERVE_DRIVER"
+          }
+        ]
       }
     ]
   },
@@ -50,8 +78,23 @@
         "startTime": "2026-11-16T16:00:00",
         "arrivalTime": "2026-11-16T21:15:00",
         "status": "ACTIVE",
-        "tickets": [],
-        "assignments": []
+        "tickets": [
+          {
+            "id": "TCK-9003",
+            "tripId": "TRIP-2026-02",
+            "passengerId": "PSG-503",
+            "seatNumber": "4C",
+            "price": 110.0
+          }
+        ],
+        "assignments": [
+          {
+            "id": "DA-003",
+            "tripId": "TRIP-2026-02",
+            "staffId": "DRV-103",
+            "role": "PRIMARY_DRIVER"
+          }
+        ]
       }
     ]
   },
@@ -77,6 +120,305 @@
         "busId": "BUS-001",
         "startTime": "2026-11-20T09:30:00",
         "arrivalTime": "2026-11-20T16:00:00",
+        "status": "PLANNED",
+        "tickets": [
+          {
+            "id": "TCK-9004",
+            "tripId": "TRIP-2026-03",
+            "passengerId": "PSG-504",
+            "seatNumber": "8A",
+            "price": 130.0
+          },
+          {
+            "id": "TCK-9005",
+            "tripId": "TRIP-2026-03",
+            "passengerId": "PSG-501",
+            "seatNumber": "8B",
+            "price": 130.0
+          }
+        ],
+        "assignments": [
+          {
+            "id": "DA-004",
+            "tripId": "TRIP-2026-03",
+            "staffId": "DRV-104",
+            "role": "PRIMARY_DRIVER"
+          },
+          {
+            "id": "DA-005",
+            "tripId": "TRIP-2026-03",
+            "staffId": "DRV-101",
+            "role": "RESERVE_DRIVER"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "RT-BV-SIB",
+    "origin": {
+      "id": "ST-BV",
+      "name": "Autogara Bartolomeu",
+      "city": "Brasov",
+      "trips": []
+    },
+    "destination": {
+      "id": "ST-SIB",
+      "name": "Autogara Turnul Sfatului",
+      "city": "Sibiu",
+      "trips": []
+    },
+    "distance": 145.0,
+    "trips": [
+      {
+        "id": "TRIP-2026-04",
+        "routeId": "RT-BV-SIB",
+        "busId": "BUS-004",
+        "startTime": "2026-11-21T07:30:00",
+        "arrivalTime": "2026-11-21T10:00:00",
+        "status": "PLANNED",
+        "tickets": [
+          {
+            "id": "TCK-9006",
+            "tripId": "TRIP-2026-04",
+            "passengerId": "PSG-505",
+            "seatNumber": "6A",
+            "price": 75.0
+          }
+        ],
+        "assignments": [
+          {
+            "id": "DA-006",
+            "tripId": "TRIP-2026-04",
+            "staffId": "DRV-105",
+            "role": "PRIMARY_DRIVER"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "RT-SIB-ORA",
+    "origin": {
+      "id": "ST-SIB",
+      "name": "Autogara Turnul Sfatului",
+      "city": "Sibiu",
+      "trips": []
+    },
+    "destination": {
+      "id": "ST-ORA",
+      "name": "Autogara Oradea",
+      "city": "Oradea",
+      "trips": []
+    },
+    "distance": 175.0,
+    "trips": [
+      {
+        "id": "TRIP-2026-05",
+        "routeId": "RT-SIB-ORA",
+        "busId": "BUS-005",
+        "startTime": "2026-11-22T09:00:00",
+        "arrivalTime": "2026-11-22T12:15:00",
+        "status": "PLANNED",
+        "tickets": [
+          {
+            "id": "TCK-9007",
+            "tripId": "TRIP-2026-05",
+            "passengerId": "PSG-506",
+            "seatNumber": "10B",
+            "price": 90.0
+          }
+        ],
+        "assignments": [
+          {
+            "id": "DA-007",
+            "tripId": "TRIP-2026-05",
+            "staffId": "DRV-106",
+            "role": "PRIMARY_DRIVER"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "RT-ORA-BAC",
+    "origin": {
+      "id": "ST-ORA",
+      "name": "Autogara Oradea",
+      "city": "Oradea",
+      "trips": []
+    },
+    "destination": {
+      "id": "ST-BAC",
+      "name": "Autogara Bacau",
+      "city": "Bacau",
+      "trips": []
+    },
+    "distance": 510.0,
+    "trips": [
+      {
+        "id": "TRIP-2026-06",
+        "routeId": "RT-ORA-BAC",
+        "busId": "BUS-006",
+        "startTime": "2026-11-23T06:45:00",
+        "arrivalTime": "2026-11-23T14:30:00",
+        "status": "PLANNED",
+        "tickets": [
+          {
+            "id": "TCK-9008",
+            "tripId": "TRIP-2026-06",
+            "passengerId": "PSG-507",
+            "seatNumber": "14C",
+            "price": 160.0
+          }
+        ],
+        "assignments": [
+          {
+            "id": "DA-008",
+            "tripId": "TRIP-2026-06",
+            "staffId": "DRV-107",
+            "role": "PRIMARY_DRIVER"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "RT-BAC-SUC",
+    "origin": {
+      "id": "ST-BAC",
+      "name": "Autogara Bacau",
+      "city": "Bacau",
+      "trips": []
+    },
+    "destination": {
+      "id": "ST-SUC",
+      "name": "Autogara Suceava",
+      "city": "Suceava",
+      "trips": []
+    },
+    "distance": 150.0,
+    "trips": [
+      {
+        "id": "TRIP-2026-07",
+        "routeId": "RT-BAC-SUC",
+        "busId": "BUS-007",
+        "startTime": "2026-11-24T11:00:00",
+        "arrivalTime": "2026-11-24T13:30:00",
+        "status": "PLANNED",
+        "tickets": [
+          {
+            "id": "TCK-9009",
+            "tripId": "TRIP-2026-07",
+            "passengerId": "PSG-508",
+            "seatNumber": "3A",
+            "price": 55.0
+          }
+        ],
+        "assignments": [
+          {
+            "id": "DA-009",
+            "tripId": "TRIP-2026-07",
+            "staffId": "DRV-108",
+            "role": "PRIMARY_DRIVER"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "RT-SUC-IAS",
+    "origin": {
+      "id": "ST-SUC",
+      "name": "Autogara Suceava",
+      "city": "Suceava",
+      "trips": []
+    },
+    "destination": {
+      "id": "ST-IAS",
+      "name": "Autogara Codreanu",
+      "city": "Iasi",
+      "trips": []
+    },
+    "distance": 145.0,
+    "trips": [
+      {
+        "id": "TRIP-2026-08",
+        "routeId": "RT-SUC-IAS",
+        "busId": "BUS-008",
+        "startTime": "2026-11-25T08:15:00",
+        "arrivalTime": "2026-11-25T10:45:00",
+        "status": "PLANNED",
+        "tickets": [
+          {
+            "id": "TCK-9010",
+            "tripId": "TRIP-2026-08",
+            "passengerId": "PSG-509",
+            "seatNumber": "5B",
+            "price": 60.0
+          }
+        ],
+        "assignments": [
+          {
+            "id": "DA-010",
+            "tripId": "TRIP-2026-08",
+            "staffId": "DRV-109",
+            "role": "PRIMARY_DRIVER"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "RT-IAS-AR",
+    "origin": {
+      "id": "ST-IAS",
+      "name": "Autogara Codreanu",
+      "city": "Iasi",
+      "trips": []
+    },
+    "destination": {
+      "id": "34",
+      "name": "Autogara Arad",
+      "city": "Arad",
+      "trips": []
+    },
+    "distance": 140.0,
+    "trips": [
+      {
+        "id": "TRIP-2026-09",
+        "routeId": "RT-IAS-AR",
+        "busId": "BUS-009",
+        "startTime": "2026-11-26T14:00:00",
+        "arrivalTime": "2026-11-26T16:30:00",
+        "status": "PLANNED",
+        "tickets": [],
+        "assignments": []
+      }
+    ]
+  },
+  {
+    "id": "RT-AR-BUC",
+    "origin": {
+      "id": "34",
+      "name": "Autogara Arad",
+      "city": "Arad",
+      "trips": []
+    },
+    "destination": {
+      "id": "ST-BUC",
+      "name": "Autogara Militari",
+      "city": "Bucharest",
+      "trips": []
+    },
+    "distance": 570.0,
+    "trips": [
+      {
+        "id": "TRIP-2026-10",
+        "routeId": "RT-AR-BUC",
+        "busId": "BUS-010",
+        "startTime": "2026-11-27T05:30:00",
+        "arrivalTime": "2026-11-27T14:00:00",
         "status": "PLANNED",
         "tickets": [],
         "assignments": []

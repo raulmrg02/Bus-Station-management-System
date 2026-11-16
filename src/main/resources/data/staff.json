@@ -1,4 +1,48 @@
 [ {
+  "id" : "DRV-108",
+  "name" : "Paul Vasile",
+  "assignments" : [ {
+    "id" : "DA-009",
+    "tripId" : "TRIP-2026-07",
+    "staffId" : "DRV-108",
+    "role" : "PRIMARY_DRIVER"
+  } ],
+  "yearsOfExperience" : 4,
+  "type" : "DRIVER"
+}, {
+  "id" : "DRV-109",
+  "name" : "Irina Tudor",
+  "assignments" : [ {
+    "id" : "DA-010",
+    "tripId" : "TRIP-2026-08",
+    "staffId" : "DRV-109",
+    "role" : "PRIMARY_DRIVER"
+  } ],
+  "yearsOfExperience" : 8,
+  "type" : "DRIVER"
+}, {
+  "id" : "DRV-106",
+  "name" : "George Nistor",
+  "assignments" : [ {
+    "id" : "DA-007",
+    "tripId" : "TRIP-2026-05",
+    "staffId" : "DRV-106",
+    "role" : "PRIMARY_DRIVER"
+  } ],
+  "yearsOfExperience" : 11,
+  "type" : "DRIVER"
+}, {
+  "id" : "DRV-107",
+  "name" : "Oana Marinescu",
+  "assignments" : [ {
+    "id" : "DA-008",
+    "tripId" : "TRIP-2026-06",
+    "staffId" : "DRV-107",
+    "role" : "PRIMARY_DRIVER"
+  } ],
+  "yearsOfExperience" : 6,
+  "type" : "DRIVER"
+}, {
   "id" : "DRV-104",
   "name" : "Cristian Stan",
   "assignments" : [ {
@@ -8,6 +52,17 @@
     "role" : "PRIMARY_DRIVER"
   } ],
   "yearsOfExperience" : 3,
+  "type" : "DRIVER"
+}, {
+  "id" : "DRV-105",
+  "name" : "Laura Dobre",
+  "assignments" : [ {
+    "id" : "DA-006",
+    "tripId" : "TRIP-2026-04",
+    "staffId" : "DRV-105",
+    "role" : "PRIMARY_DRIVER"
+  } ],
+  "yearsOfExperience" : 7,
   "type" : "DRIVER"
 }, {
   "id" : "DRV-102",
@@ -46,5 +101,11 @@
     "role" : "RESERVE_DRIVER"
   } ],
   "yearsOfExperience" : 12,
+  "type" : "DRIVER"
+}, {
+  "id" : "DRV-110",
+  "name" : "Dan Matei",
+  "assignments" : [ ],
+  "yearsOfExperience" : 10,
   "type" : "DRIVER"
 } ]

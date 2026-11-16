@@ -65,5 +65,87 @@
         "price": 130.0
       }
     ]
+  },
+  {
+    "id": "PSG-505",
+    "name": "Radu Ene",
+    "currency": "RON",
+    "email": "radu.ene@example.com",
+    "tickets": [
+      {
+        "id": "TCK-9006",
+        "tripId": "TRIP-2026-04",
+        "passengerId": "PSG-505",
+        "seatNumber": "6A",
+        "price": 75.0
+      }
+    ]
+  },
+  {
+    "id": "PSG-506",
+    "name": "Sofia Munteanu",
+    "currency": "EUR",
+    "email": "sofia.munteanu@example.com",
+    "tickets": [
+      {
+        "id": "TCK-9007",
+        "tripId": "TRIP-2026-05",
+        "passengerId": "PSG-506",
+        "seatNumber": "10B",
+        "price": 90.0
+      }
+    ]
+  },
+  {
+    "id": "PSG-507",
+    "name": "Vlad Neagu",
+    "currency": "RON",
+    "email": "vlad.neagu@example.com",
+    "tickets": [
+      {
+        "id": "TCK-9008",
+        "tripId": "TRIP-2026-06",
+        "passengerId": "PSG-507",
+        "seatNumber": "14C",
+        "price": 160.0
+      }
+    ]
+  },
+  {
+    "id": "PSG-508",
+    "name": "Diana Pavel",
+    "currency": "RON",
+    "email": "diana.pavel@example.com",
+    "tickets": [
+      {
+        "id": "TCK-9009",
+        "tripId": "TRIP-2026-07",
+        "passengerId": "PSG-508",
+        "seatNumber": "3A",
+        "price": 55.0
+      }
+    ]
+  },
+  {
+    "id": "PSG-509",
+    "name": "Matei Ilie",
+    "currency": "RON",
+    "email": "matei.ilie@example.com",
+    "tickets": [
+      {
+        "id": "TCK-9010",
+        "tripId": "TRIP-2026-08",
+        "passengerId": "PSG-509",
+        "seatNumber": "5B",
+        "price": 60.0
+      }
+    ]
+  },
+  {
+    "id": "PSG-510",
+    "name": "Ana Popa",
+    "currency": "EUR",
+    "email": "ana.popa@example.com",
+    "tickets": []
   }
 ]

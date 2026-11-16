@@ -28,5 +28,35 @@
     "tripId": "TRIP-2026-03",
     "staffId": "DRV-101",
     "role": "RESERVE_DRIVER"
+  },
+  {
+    "id": "DA-006",
+    "tripId": "TRIP-2026-04",
+    "staffId": "DRV-105",
+    "role": "PRIMARY_DRIVER"
+  },
+  {
+    "id": "DA-007",
+    "tripId": "TRIP-2026-05",
+    "staffId": "DRV-106",
+    "role": "PRIMARY_DRIVER"
+  },
+  {
+    "id": "DA-008",
+    "tripId": "TRIP-2026-06",
+    "staffId": "DRV-107",
+    "role": "PRIMARY_DRIVER"
+  },
+  {
+    "id": "DA-009",
+    "tripId": "TRIP-2026-07",
+    "staffId": "DRV-108",
+    "role": "PRIMARY_DRIVER"
+  },
+  {
+    "id": "DA-010",
+    "tripId": "TRIP-2026-08",
+    "staffId": "DRV-109",
+    "role": "PRIMARY_DRIVER"
   }
 ]

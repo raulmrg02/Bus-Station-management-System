@@ -99,5 +99,150 @@
         "role": "RESERVE_DRIVER"
       }
     ]
+  },
+  {
+    "id": "TRIP-2026-04",
+    "routeId": "RT-BV-SIB",
+    "busId": "BUS-004",
+    "startTime": "2026-11-21T07:30:00",
+    "arrivalTime": "2026-11-21T10:00:00",
+    "status": "PLANNED",
+    "tickets": [
+      {
+        "id": "TCK-9006",
+        "tripId": "TRIP-2026-04",
+        "passengerId": "PSG-505",
+        "seatNumber": "6A",
+        "price": 75.0
+      }
+    ],
+    "assignments": [
+      {
+        "id": "DA-006",
+        "tripId": "TRIP-2026-04",
+        "staffId": "DRV-105",
+        "role": "PRIMARY_DRIVER"
+      }
+    ]
+  },
+  {
+    "id": "TRIP-2026-05",
+    "routeId": "RT-SIB-ORA",
+    "busId": "BUS-005",
+    "startTime": "2026-11-22T09:00:00",
+    "arrivalTime": "2026-11-22T12:15:00",
+    "status": "PLANNED",
+    "tickets": [
+      {
+        "id": "TCK-9007",
+        "tripId": "TRIP-2026-05",
+        "passengerId": "PSG-506",
+        "seatNumber": "10B",
+        "price": 90.0
+      }
+    ],
+    "assignments": [
+      {
+        "id": "DA-007",
+        "tripId": "TRIP-2026-05",
+        "staffId": "DRV-106",
+        "role": "PRIMARY_DRIVER"
+      }
+    ]
+  },
+  {
+    "id": "TRIP-2026-06",
+    "routeId": "RT-ORA-BAC",
+    "busId": "BUS-006",
+    "startTime": "2026-11-23T06:45:00",
+    "arrivalTime": "2026-11-23T14:30:00",
+    "status": "PLANNED",
+    "tickets": [
+      {
+        "id": "TCK-9008",
+        "tripId": "TRIP-2026-06",
+        "passengerId": "PSG-507",
+        "seatNumber": "14C",
+        "price": 160.0
+      }
+    ],
+    "assignments": [
+      {
+        "id": "DA-008",
+        "tripId": "TRIP-2026-06",
+        "staffId": "DRV-107",
+        "role": "PRIMARY_DRIVER"
+      }
+    ]
+  },
+  {
+    "id": "TRIP-2026-07",
+    "routeId": "RT-BAC-SUC",
+    "busId": "BUS-007",
+    "startTime": "2026-11-24T11:00:00",
+    "arrivalTime": "2026-11-24T13:30:00",
+    "status": "PLANNED",
+    "tickets": [
+      {
+        "id": "TCK-9009",
+        "tripId": "TRIP-2026-07",
+        "passengerId": "PSG-508",
+        "seatNumber": "3A",
+        "price": 55.0
+      }
+    ],
+    "assignments": [
+      {
+        "id": "DA-009",
+        "tripId": "TRIP-2026-07",
+        "staffId": "DRV-108",
+        "role": "PRIMARY_DRIVER"
+      }
+    ]
+  },
+  {
+    "id": "TRIP-2026-08",
+    "routeId": "RT-SUC-IAS",
+    "busId": "BUS-008",
+    "startTime": "2026-11-25T08:15:00",
+    "arrivalTime": "2026-11-25T10:45:00",
+    "status": "PLANNED",
+    "tickets": [
+      {
+        "id": "TCK-9010",
+        "tripId": "TRIP-2026-08",
+        "passengerId": "PSG-509",
+        "seatNumber": "5B",
+        "price": 60.0
+      }
+    ],
+    "assignments": [
+      {
+        "id": "DA-010",
+        "tripId": "TRIP-2026-08",
+        "staffId": "DRV-109",
+        "role": "PRIMARY_DRIVER"
+      }
+    ]
+  },
+  {
+    "id": "TRIP-2026-09",
+    "routeId": "RT-IAS-AR",
+    "busId": "BUS-009",
+    "startTime": "2026-11-26T14:00:00",
+    "arrivalTime": "2026-11-26T16:30:00",
+    "status": "PLANNED",
+    "tickets": [],
+    "assignments": []
+  },
+  {
+    "id": "TRIP-2026-10",
+    "routeId": "RT-AR-BUC",
+    "busId": "BUS-010",
+    "startTime": "2026-11-27T05:30:00",
+    "arrivalTime": "2026-11-27T14:00:00",
+    "status": "PLANNED",
+    "tickets": [],
+    "assignments": []
   }
 ]
