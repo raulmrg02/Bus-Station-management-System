@@ -1,12 +1,32 @@
 [
-  { "id": "DA1", "tripId": "T1", "staffId": "S1", "role": "PRIMARY_DRIVER" },
-  { "id": "DA2", "tripId": "T1", "staffId": "S2", "role": "RESERVE_DRIVER" },
-  { "id": "DA3", "tripId": "T2", "staffId": "S3", "role": "PRIMARY_DRIVER" },
-  { "id": "DA4", "tripId": "T3", "staffId": "S4", "role": "PRIMARY_DRIVER" },
-  { "id": "DA5", "tripId": "T4", "staffId": "S5", "role": "PRIMARY_DRIVER" },
-  { "id": "DA6", "tripId": "T5", "staffId": "S1", "role": "RESERVE_DRIVER" },
-  { "id": "DA7", "tripId": "T6", "staffId": "S2", "role": "PRIMARY_DRIVER" },
-  { "id": "DA8", "tripId": "T7", "staffId": "S3", "role": "RESERVE_DRIVER" },
-  { "id": "DA9", "tripId": "T8", "staffId": "S4", "role": "PRIMARY_DRIVER" },
-  { "id": "DA10", "tripId": "T9", "staffId": "S5", "role": "PRIMARY_DRIVER" }
+  {
+    "id": "DA-001",
+    "tripId": "TRIP-2026-01",
+    "staffId": "DRV-101",
+    "role": "PRIMARY_DRIVER"
+  },
+  {
+    "id": "DA-002",
+    "tripId": "TRIP-2026-01",
+    "staffId": "DRV-102",
+    "role": "RESERVE_DRIVER"
+  },
+  {
+    "id": "DA-003",
+    "tripId": "TRIP-2026-02",
+    "staffId": "DRV-103",
+    "role": "PRIMARY_DRIVER"
+  },
+  {
+    "id": "DA-004",
+    "tripId": "TRIP-2026-03",
+    "staffId": "DRV-104",
+    "role": "PRIMARY_DRIVER"
+  },
+  {
+    "id": "DA-005",
+    "tripId": "TRIP-2026-03",
+    "staffId": "DRV-101",
+    "role": "RESERVE_DRIVER"
+  }
 ]

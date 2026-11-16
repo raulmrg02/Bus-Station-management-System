@@ -1,72 +1,37 @@
 [
   {
-    "id": "T1",
-    "tripId": "TR1",
-    "passengerId": "P1",
+    "id": "TCK-9001",
+    "tripId": "TRIP-2026-01",
+    "passengerId": "PSG-501",
     "seatNumber": "12A",
-    "price": 120
+    "price": 145.0
   },
   {
-    "id": "T2",
-    "tripId": "TR1",
-    "passengerId": "P2",
+    "id": "TCK-9002",
+    "tripId": "TRIP-2026-01",
+    "passengerId": "PSG-502",
     "seatNumber": "12B",
-    "price": 24
+    "price": 29.0
   },
   {
-    "id": "T3",
-    "tripId": "TR2",
-    "passengerId": "P3",
-    "seatNumber": "01A",
-    "price": 150
+    "id": "TCK-9003",
+    "tripId": "TRIP-2026-02",
+    "passengerId": "PSG-503",
+    "seatNumber": "4C",
+    "price": 110.0
   },
   {
-    "id": "T4",
-    "tripId": "TR2",
-    "passengerId": "P4",
-    "seatNumber": "08C",
-    "price": 30
+    "id": "TCK-9004",
+    "tripId": "TRIP-2026-03",
+    "passengerId": "PSG-504",
+    "seatNumber": "8A",
+    "price": 130.0
   },
   {
-    "id": "T5",
-    "tripId": "TR3",
-    "passengerId": "P1",
-    "seatNumber": "04B",
-    "price": 85.5
-  },
-  {
-    "id": "T6",
-    "tripId": "TR4",
-    "passengerId": "P5",
-    "seatNumber": "15D",
-    "price": 95
-  },
-  {
-    "id": "T7",
-    "tripId": "TR5",
-    "passengerId": "P6",
-    "seatNumber": "03A",
-    "price": 210
-  },
-  {
-    "id": "T8",
-    "tripId": "TR5",
-    "passengerId": "P7",
-    "seatNumber": "03B",
-    "price": 42
-  },
-  {
-    "id": "T9",
-    "tripId": "TR6",
-    "passengerId": "P2",
-    "seatNumber": "07A",
-    "price": 18.5
-  },
-  {
-    "id": "T10",
-    "tripId": "TR6",
-    "passengerId": "P4",
-    "seatNumber": "11C",
-    "price": 22
+    "id": "TCK-9005",
+    "tripId": "TRIP-2026-03",
+    "passengerId": "PSG-501",
+    "seatNumber": "8B",
+    "price": 130.0
   }
 ]

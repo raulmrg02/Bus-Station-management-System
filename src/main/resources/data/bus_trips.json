@@ -1,46 +1,103 @@
-[ {
-  "id" : "T8",
-  "routeId" : "R3",
-  "busId" : "B10",
-  "startTime" : "2026-11-16T10:00:00",
-  "arrivalTime" : "2026-11-16T14:30:00",
-  "tickets" : [ ],
-  "assignments" : [ ],
-  "status" : "PLANNED"
-}, {
-  "id" : "T9",
-  "routeId" : "R4",
-  "busId" : "B1",
-  "startTime" : "2026-11-16T13:00:00",
-  "arrivalTime" : "2026-11-16T17:30:00",
-  "tickets" : [ ],
-  "assignments" : [ ],
-  "status" : "PLANNED"
-}, {
-  "id" : "T1",
-  "routeId" : "R1",
-  "busId" : "B1",
-  "startTime" : "2026-11-15T08:00:00",
-  "arrivalTime" : "2026-11-15T11:30:00",
-  "tickets" : [ ],
-  "assignments" : [ ],
-  "status" : "PLANNED"
-}, {
-  "id" : "T2",
-  "routeId" : "R2",
-  "busId" : "B2",
-  "startTime" : "2026-11-15T09:00:00",
-  "arrivalTime" : "2026-11-15T13:00:00",
-  "tickets" : [ ],
-  "assignments" : [ ],
-  "status" : "ACTIVE"
-}, {
-  "id" : "T3",
-  "routeId" : "R3",
-  "busId" : "B3",
-  "startTime" : "2026-11-15T10:15:00",
-  "arrivalTime" : "2026-11-15T14:45:00",
-  "tickets" : [ ],
-  "assignments" : [ ],
-  "status" : "COMPLETED"
-} ]
+[
+  {
+    "id": "TRIP-2026-01",
+    "routeId": "RT-BUC-CLJ",
+    "busId": "BUS-001",
+    "startTime": "2026-11-15T08:00:00",
+    "arrivalTime": "2026-11-15T15:30:00",
+    "status": "COMPLETED",
+    "tickets": [
+      {
+        "id": "TCK-9001",
+        "tripId": "TRIP-2026-01",
+        "passengerId": "PSG-501",
+        "seatNumber": "12A",
+        "price": 145.0
+      },
+      {
+        "id": "TCK-9002",
+        "tripId": "TRIP-2026-01",
+        "passengerId": "PSG-502",
+        "seatNumber": "12B",
+        "price": 29.0
+      }
+    ],
+    "assignments": [
+      {
+        "id": "DA-001",
+        "tripId": "TRIP-2026-01",
+        "staffId": "DRV-101",
+        "role": "PRIMARY_DRIVER"
+      },
+      {
+        "id": "DA-002",
+        "tripId": "TRIP-2026-01",
+        "staffId": "DRV-102",
+        "role": "RESERVE_DRIVER"
+      }
+    ]
+  },
+  {
+    "id": "TRIP-2026-02",
+    "routeId": "RT-CLJ-TIM",
+    "busId": "BUS-002",
+    "startTime": "2026-11-16T16:00:00",
+    "arrivalTime": "2026-11-16T21:15:00",
+    "status": "ACTIVE",
+    "tickets": [
+      {
+        "id": "TCK-9003",
+        "tripId": "TRIP-2026-02",
+        "passengerId": "PSG-503",
+        "seatNumber": "4C",
+        "price": 110.0
+      }
+    ],
+    "assignments": [
+      {
+        "id": "DA-003",
+        "tripId": "TRIP-2026-02",
+        "staffId": "DRV-103",
+        "role": "PRIMARY_DRIVER"
+      }
+    ]
+  },
+  {
+    "id": "TRIP-2026-03",
+    "routeId": "RT-BUC-IAS",
+    "busId": "BUS-001",
+    "startTime": "2026-11-20T09:30:00",
+    "arrivalTime": "2026-11-20T16:00:00",
+    "status": "PLANNED",
+    "tickets": [
+      {
+        "id": "TCK-9004",
+        "tripId": "TRIP-2026-03",
+        "passengerId": "PSG-504",
+        "seatNumber": "8A",
+        "price": 130.0
+      },
+      {
+        "id": "TCK-9005",
+        "tripId": "TRIP-2026-03",
+        "passengerId": "PSG-501",
+        "seatNumber": "8B",
+        "price": 130.0
+      }
+    ],
+    "assignments": [
+      {
+        "id": "DA-004",
+        "tripId": "TRIP-2026-03",
+        "staffId": "DRV-104",
+        "role": "PRIMARY_DRIVER"
+      },
+      {
+        "id": "DA-005",
+        "tripId": "TRIP-2026-03",
+        "staffId": "DRV-101",
+        "role": "RESERVE_DRIVER"
+      }
+    ]
+  }
+]
