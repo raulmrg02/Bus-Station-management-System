@@ -1,0 +1,121 @@
+[
+  {
+    "id": "P1",
+    "name": "Elena Popescu",
+    "currency": "RON",
+    "email": "elena.popescu@example.com",
+    "tickets": [
+      {
+        "id": "T1",
+        "tripId": "TR1",
+        "passengerId": "P1",
+        "seatNumber": "12A",
+        "price": 120
+      },
+      {
+        "id": "T5",
+        "tripId": "TR3",
+        "passengerId": "P1",
+        "seatNumber": "04B",
+        "price": 85.5
+      }
+    ]
+  },
+  {
+    "id": "P2",
+    "name": "Andrei Ionescu",
+    "currency": "EUR",
+    "email": "andrei.ionescu@example.com",
+    "tickets": [
+      {
+        "id": "T2",
+        "tripId": "TR1",
+        "passengerId": "P2",
+        "seatNumber": "12B",
+        "price": 24
+      }
+    ]
+  },
+  {
+    "id": "P3",
+    "name": "Maria Dumitrescu",
+    "currency": "RON",
+    "email": "maria.dumitrescu@example.com",
+    "tickets": [
+      {
+        "id": "T3",
+        "tripId": "TR2",
+        "passengerId": "P3",
+        "seatNumber": "01A",
+        "price": 150
+      }
+    ]
+  },
+  {
+    "id": "P4",
+    "name": "Alexandru Stan",
+    "currency": "EUR",
+    "email": "alex.stan@example.com",
+    "tickets": [
+      {
+        "id": "T4",
+        "tripId": "TR2",
+        "passengerId": "P4",
+        "seatNumber": "08C",
+        "price": 30
+      }
+    ]
+  },
+  {
+    "id": "P5",
+    "name": "Ioana Radu",
+    "currency": "RON",
+    "email": "ioana.radu@example.com",
+    "tickets": [
+      {
+        "id": "T6",
+        "tripId": "TR4",
+        "passengerId": "P5",
+        "seatNumber": "15D",
+        "price": 95
+      }
+    ]
+  },
+  {
+    "id": "P6",
+    "name": "Mihai Gheorghe",
+    "currency": "RON",
+    "email": "mihai.gheorghe@example.com",
+    "tickets": [
+      {
+        "id": "T7",
+        "tripId": "TR5",
+        "passengerId": "P6",
+        "seatNumber": "03A",
+        "price": 210
+      }
+    ]
+  },
+  {
+    "id": "P7",
+    "name": "Cristina Stoica",
+    "currency": "EUR",
+    "email": "cristina.stoica@example.com",
+    "tickets": [
+      {
+        "id": "T8",
+        "tripId": "TR5",
+        "passengerId": "P7",
+        "seatNumber": "03B",
+        "price": 42
+      }
+    ]
+  },
+  {
+    "id": "P8",
+    "name": "Vlad Marin",
+    "currency": "RON",
+    "email": "vlad.marin@example.com",
+    "tickets": []
+  }
+]
