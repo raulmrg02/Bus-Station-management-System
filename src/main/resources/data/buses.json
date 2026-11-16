@@ -1,26 +1,29 @@
-[
-  {
-    "id": "BUS-001",
-    "registrationNumber": "B-123-XYZ",
-    "capacity": 50,
-    "status": "ACTIVE",
-    "model": "Mercedes-Benz Tourismo",
-    "manufactureYear": 2022
-  },
-  {
-    "id": "BUS-002",
-    "registrationNumber": "CJ-45-ABC",
-    "capacity": 35,
-    "status": "ACTIVE",
-    "model": "Setra S 515 HD",
-    "manufactureYear": 2021
-  },
-  {
-    "id": "BUS-003",
-    "registrationNumber": "TM-99-DEF",
-    "capacity": 55,
-    "status": "DOWN",
-    "model": "MAN Lion's Coach",
-    "manufactureYear": 2018
-  }
-]
+[ {
+  "id" : "1",
+  "registrationNumber" : "44",
+  "capacity" : 2,
+  "status" : "ACTIVE",
+  "model" : "33",
+  "manufactureYear" : 0
+}, {
+  "id" : "BUS-003",
+  "registrationNumber" : "TM-99-DEF",
+  "capacity" : 55,
+  "status" : "DOWN",
+  "model" : "MAN Lion's Coach",
+  "manufactureYear" : 2018
+}, {
+  "id" : "BUS-001",
+  "registrationNumber" : "B-123-XYZ",
+  "capacity" : 50,
+  "status" : "ACTIVE",
+  "model" : "Mercedes-Benz Tourismo",
+  "manufactureYear" : 2022
+}, {
+  "id" : "BUS-002",
+  "registrationNumber" : "CJ-45-ABC",
+  "capacity" : 35,
+  "status" : "ACTIVE",
+  "model" : "Setra S 515 HD",
+  "manufactureYear" : 2021
+} ]
