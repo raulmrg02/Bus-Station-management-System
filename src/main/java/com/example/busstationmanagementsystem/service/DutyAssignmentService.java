@@ -81,6 +81,34 @@ public class DutyAssignmentService {
         return getRepository(repositoryType).findAll();
     }
 
+    public DutyAssignment updateAssignment(String id, DutyAssignment updatedAssignment,
+                                           RepositoryType repositoryType) {
+        CrudRepository<DutyAssignment, String> assignmentRepository = getRepository(repositoryType);
+        DutyAssignment existingAssignment = assignmentRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Duty assignment not found: " + id));
+
+        updatedAssignment.setId(id);
+        DutyAssignment saved = assignmentRepository.save(updatedAssignment);
+        String oldTripId = existingAssignment.getTripId();
+        String newTripId = saved.getTripId();
+        if (oldTripId != null) {
+            getTripRepository(repositoryType).findById(oldTripId).ifPresent(trip -> {
+                trip.getAssignments().removeIf(assignment -> id.equals(assignment.getId()));
+                getTripRepository(repositoryType).save(trip);
+            });
+            syncTripReferences(oldTripId, repositoryType);
+        }
+        if (newTripId != null) {
+            getTripRepository(repositoryType).findById(newTripId).ifPresent(trip -> {
+                trip.getAssignments().removeIf(assignment -> id.equals(assignment.getId()));
+                trip.getAssignments().add(saved);
+                getTripRepository(repositoryType).save(trip);
+            });
+            syncTripReferences(newTripId, repositoryType);
+        }
+        return saved;
+    }
+
     public DutyAssignment getAssignmentById(String id) {
         return inFileAssignmentRepository.findById(id)
                 .or(() -> inMemoryAssignmentRepository.findById(id))

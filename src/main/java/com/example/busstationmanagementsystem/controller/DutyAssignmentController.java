@@ -37,6 +37,22 @@ public class DutyAssignmentController {
         model.addAttribute("assignment", new DutyAssignment());
         model.addAttribute("roles", DutyRole.values());
         model.addAttribute("selectedRepository", repository);
+        model.addAttribute("isUpdate", false);
+        return "duty-assignment/form";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showUpdateForm(@PathVariable("id") String id,
+                                 @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
+                                 Model model) {
+        DutyAssignment assignment = dutyAssignmentService.getAllAssignments(repository).stream()
+                .filter(item -> item.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new java.util.NoSuchElementException("Duty assignment not found: " + id));
+        model.addAttribute("assignment", assignment);
+        model.addAttribute("roles", DutyRole.values());
+        model.addAttribute("selectedRepository", repository);
+        model.addAttribute("isUpdate", true);
         return "duty-assignment/form";
     }
 
@@ -51,6 +67,24 @@ public class DutyAssignmentController {
             model.addAttribute("errorMessage", exception.getMessage());
             model.addAttribute("roles", DutyRole.values());
             model.addAttribute("selectedRepository", repository);
+            model.addAttribute("isUpdate", false);
+            return "duty-assignment/form";
+        }
+        return "redirect:/duty-assignments?repository=" + repository;
+    }
+
+    @PostMapping("/{id}")
+    public String updateAssignment(@PathVariable("id") String id,
+                                   @ModelAttribute("assignment") DutyAssignment assignment,
+                                   @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
+                                   Model model) {
+        try {
+            dutyAssignmentService.updateAssignment(id, assignment, repository);
+        } catch (IllegalArgumentException exception) {
+            model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("roles", DutyRole.values());
+            model.addAttribute("selectedRepository", repository);
+            model.addAttribute("isUpdate", true);
             return "duty-assignment/form";
         }
         return "redirect:/duty-assignments?repository=" + repository;

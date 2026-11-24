@@ -41,6 +41,7 @@
         <td th:text="${assignment.role}">PRIMARY_DRIVER</td>
         <td>
             <a th:href="@{'/duty-assignments/' + ${assignment.id}(repository=${selectedRepository})}">Details</a>
+            <a th:href="@{'/duty-assignments/' + ${assignment.id} + '/edit'(repository=${selectedRepository})}">Update</a>
             <form th:action="@{'/duty-assignments/' + ${assignment.id} + '/delete'}" method="post" style="display:inline">
                 <input type="hidden" name="repository" th:value="${selectedRepository}">
                 <button type="submit">Delete</button>
