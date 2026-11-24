@@ -7,6 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @Controller
 @RequestMapping("/stations")
 public class BusStationController {
@@ -48,6 +51,26 @@ public class BusStationController {
             return "bus-station/form";
         }
         return "redirect:/stations?repository=" + repository;
+    }
+
+    @GetMapping("/{id}")
+    public String showStationDetails(@PathVariable("id") String id,
+                                     @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
+                                     Model model) {
+        BusStation station = stationService.getAllStations(repository).stream()
+                .filter(item -> item.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new java.util.NoSuchElementException("Bus station not found: " + id));
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("ID", station.getId());
+        fields.put("Name", station.getName());
+        fields.put("City", station.getCity());
+        fields.put("Trip IDs", station.getTrips().stream().map(trip -> trip.getId()).toList());
+        model.addAttribute("title", "Bus Station " + station.getId());
+        model.addAttribute("fields", fields);
+        model.addAttribute("backUrl", "/stations");
+        model.addAttribute("selectedRepository", repository);
+        return "details";
     }
 
     @PostMapping("/{id}/delete")
