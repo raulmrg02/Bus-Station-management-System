@@ -35,10 +35,25 @@ public class RouteController {
     @GetMapping("/new")
     public String showCreateForm(@RequestParam(defaultValue = "IN_MEMORY") RouteService.RepositoryType repository,
                                  Model model) {
-        model.addAttribute("stations", stationService.getAllStations(repository == RouteService.RepositoryType.IN_FILE
-                ? BusStationService.RepositoryType.IN_FILE
-                : BusStationService.RepositoryType.IN_MEMORY));
+        model.addAttribute("route", new Route());
+        model.addAttribute("stations", getStations(repository));
         model.addAttribute("selectedRepository", repository);
+        model.addAttribute("isUpdate", false);
+        return "route/form";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showUpdateForm(@PathVariable String id,
+                                 @RequestParam(defaultValue = "IN_MEMORY") RouteService.RepositoryType repository,
+                                 Model model) {
+        Route route = routeService.getAllRoutes(repository).stream()
+                .filter(item -> item.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Route not found: " + id));
+        model.addAttribute("route", route);
+        model.addAttribute("stations", getStations(repository));
+        model.addAttribute("selectedRepository", repository);
+        model.addAttribute("isUpdate", true);
         return "route/form";
     }
 
@@ -62,13 +77,58 @@ public class RouteController {
             routeService.createRoute(route, repository);
         } catch (IllegalArgumentException | NoSuchElementException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
-            model.addAttribute("stations", stationService.getAllStations(repository == RouteService.RepositoryType.IN_FILE
-                    ? BusStationService.RepositoryType.IN_FILE
-                    : BusStationService.RepositoryType.IN_MEMORY));
+            model.addAttribute("route", new Route());
+            model.addAttribute("stations", getStations(repository));
             model.addAttribute("selectedRepository", repository);
+            model.addAttribute("isUpdate", false);
             return "route/form";
         }
         return "redirect:/routes?repository=" + repository;
+    }
+
+    @PostMapping("/{id}")
+    public String updateRoute(@PathVariable String id,
+                              @RequestParam String originId,
+                              @RequestParam String destinationId,
+                              @RequestParam BigDecimal distance,
+                              @RequestParam(defaultValue = "IN_MEMORY") RouteService.RepositoryType repository,
+                              Model model) {
+        try {
+            routeService.updateRoute(id, new Route(
+                    id,
+                    stationService.getStationById(originId, toStationRepository(repository)),
+                    stationService.getStationById(destinationId, toStationRepository(repository)),
+                    distance
+            ), repository);
+        } catch (IllegalArgumentException | NoSuchElementException exception) {
+            model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("route", new Route(
+                    id,
+                    stationService.getAllStations(toStationRepository(repository)).stream()
+                            .filter(station -> station.getId().equals(originId))
+                            .findFirst().orElse(null),
+                    stationService.getAllStations(toStationRepository(repository)).stream()
+                            .filter(station -> station.getId().equals(destinationId))
+                            .findFirst().orElse(null),
+                    distance
+            ));
+            model.addAttribute("stations", getStations(repository));
+            model.addAttribute("selectedRepository", repository);
+            model.addAttribute("isUpdate", true);
+            return "route/form";
+        }
+        return "redirect:/routes?repository=" + repository;
+    }
+
+    private java.util.List<com.example.busstationmanagementsystem.model.BusStation> getStations(
+            RouteService.RepositoryType repository) {
+        return stationService.getAllStations(toStationRepository(repository));
+    }
+
+    private BusStationService.RepositoryType toStationRepository(RouteService.RepositoryType repository) {
+        return repository == RouteService.RepositoryType.IN_FILE
+                ? BusStationService.RepositoryType.IN_FILE
+                : BusStationService.RepositoryType.IN_MEMORY;
     }
 
     @GetMapping("/{id}")

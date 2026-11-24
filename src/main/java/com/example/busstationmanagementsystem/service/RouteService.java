@@ -49,6 +49,26 @@ public class RouteService {
         return getRepository(repositoryType).findAll();
     }
 
+    public Route updateRoute(String id, Route updatedRoute, RepositoryType repositoryType) {
+        CrudRepository<Route, String> routeRepository = getRepository(repositoryType);
+        Route existingRoute = routeRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Route not found: " + id));
+        validateRoute(updatedRoute);
+        updatedRoute.setId(id);
+        updatedRoute.setTrips(existingRoute.getTrips());
+        return routeRepository.save(updatedRoute);
+    }
+
+    private void validateRoute(Route route) {
+        if (route.getOrigin() == null || route.getDestination() == null) {
+            throw new IllegalArgumentException("A route must have both an origin and destination station");
+        }
+        if (route.getOrigin().getId() != null
+                && route.getOrigin().getId().equals(route.getDestination().getId())) {
+            throw new IllegalArgumentException("Origin and destination cannot be the same station");
+        }
+    }
+
     public boolean deleteRoute(String id, RepositoryType repositoryType) {
         return getRepository(repositoryType).deleteById(id);
     }

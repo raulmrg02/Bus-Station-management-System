@@ -41,6 +41,7 @@
         <td th:text="${route.distance}">25.5</td>
         <td>
             <a th:href="@{'/routes/' + ${route.id}(repository=${selectedRepository})}">Details</a>
+            <a th:href="@{'/routes/' + ${route.id} + '/edit'(repository=${selectedRepository})}">Update</a>
             <form th:action="@{'/routes/' + ${route.id} + '/delete'}" method="post" style="display:inline">
                 <input type="hidden" name="repository" th:value="${selectedRepository}">
                 <button type="submit">Delete</button>
