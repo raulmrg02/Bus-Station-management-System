@@ -1,7 +1,7 @@
 package com.example.busstationmanagementsystem.model;
 
 public class Bus {
-    private String id;
+    private String id = IdGenerator.generate("B");
     private String registrationNumber;
     private int capacity;
     private BusStatus status;

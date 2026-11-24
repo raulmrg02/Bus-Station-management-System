@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Passenger {
-    private String id;
+    private String id = IdGenerator.generate("P");
     private String name;
     private String currency;
     private String email; // erweiterung
