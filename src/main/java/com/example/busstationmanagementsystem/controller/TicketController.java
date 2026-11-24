@@ -7,6 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @Controller
 @RequestMapping("/tickets")
 public class TicketController {
@@ -61,6 +64,27 @@ public class TicketController {
         return repository == TicketService.RepositoryType.IN_FILE
                 ? BusTripService.RepositoryType.IN_FILE
                 : BusTripService.RepositoryType.IN_MEMORY;
+    }
+
+    @GetMapping("/{id}")
+    public String showTicketDetails(@PathVariable String id,
+                                    @RequestParam(defaultValue = "IN_MEMORY") TicketService.RepositoryType repository,
+                                    Model model) {
+        Ticket ticket = ticketService.getAllTickets(repository).stream()
+                .filter(item -> item.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new java.util.NoSuchElementException("Ticket not found: " + id));
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("ID", ticket.getId());
+        fields.put("Trip ID", ticket.getTripId());
+        fields.put("Passenger ID", ticket.getPassengerId());
+        fields.put("Seat Number", ticket.getSeatNumber());
+        fields.put("Price", ticket.getPrice());
+        model.addAttribute("title", "Ticket " + ticket.getId());
+        model.addAttribute("fields", fields);
+        model.addAttribute("backUrl", "/tickets");
+        model.addAttribute("selectedRepository", repository);
+        return "details";
     }
 
     @PostMapping("/{id}/delete")
