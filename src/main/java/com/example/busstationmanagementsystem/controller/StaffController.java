@@ -8,6 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @Controller
 @RequestMapping("/staff")
 public class StaffController {
@@ -65,6 +68,31 @@ public class StaffController {
         }
 
         return "redirect:/staff?repository=" + repository;
+    }
+
+    @GetMapping("/{id}")
+    public String showStaffDetails(@PathVariable("id") String id,
+                                   @RequestParam(defaultValue = "IN_MEMORY") StaffService.RepositoryType repository,
+                                   Model model) {
+        Staff staff = staffService.getAllStaff(repository).stream()
+                .filter(item -> item.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new java.util.NoSuchElementException("Staff member not found: " + id));
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("ID", staff.getId());
+        fields.put("Name", staff.getName());
+        fields.put("Type", staff.getClass().getSimpleName());
+        if (staff instanceof Driver) {
+            fields.put("Years of Experience", ((Driver) staff).getYearsOfExperience());
+        } else if (staff instanceof TripManager) {
+            fields.put("Employee Code", ((TripManager) staff).getEmployeeCode());
+        }
+        fields.put("Duty Assignment IDs", staff.getAssignments().stream().map(assignment -> assignment.getId()).toList());
+        model.addAttribute("title", "Staff " + staff.getId());
+        model.addAttribute("fields", fields);
+        model.addAttribute("backUrl", "/staff");
+        model.addAttribute("selectedRepository", repository);
+        return "details";
     }
 
     @PostMapping("/{id}/delete")
