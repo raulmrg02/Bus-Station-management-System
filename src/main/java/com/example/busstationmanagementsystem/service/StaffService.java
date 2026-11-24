@@ -4,7 +4,6 @@ import com.example.busstationmanagementsystem.model.Driver;
 import com.example.busstationmanagementsystem.model.Staff;
 import com.example.busstationmanagementsystem.model.TripManager;
 import com.example.busstationmanagementsystem.repository.CrudRepository;
-import com.example.busstationmanagementsystem.repository.StaffRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,21 +11,13 @@ import java.util.NoSuchElementException;
 
 @Service
 public class StaffService {
-    public enum RepositoryType {
-        IN_MEMORY,
-        IN_FILE
+    private final CrudRepository<Staff, String> staffRepository;
+
+    public StaffService(CrudRepository<Staff, String> staffRepository) {
+        this.staffRepository = staffRepository;
     }
 
-    private final CrudRepository<Staff, String> inMemoryStaffRepository;
-    private final CrudRepository<Staff, String> inFileStaffRepository;
-
-    public StaffService(StaffRepository staffRepository) {
-        this.inMemoryStaffRepository = staffRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
-        this.inFileStaffRepository = staffRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
-    }
-
-    public Staff registerStaff(Staff staff, RepositoryType repositoryType) {
-        CrudRepository<Staff, String> staffRepository = getRepository(repositoryType);
+    public Staff registerStaff(Staff staff) {
         if (staff.getId() == null || staff.getId().isBlank()) {
             throw new IllegalArgumentException("Staff ID cannot be empty");
         }
@@ -37,35 +28,30 @@ public class StaffService {
     }
 
     public Staff getStaffById(String id) {
-        return inMemoryStaffRepository.findById(id)
+        return staffRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Staff member not found: " + id));
     }
 
-    public void deleteById(String id, RepositoryType repositoryType) {
-        getRepository(repositoryType).deleteById(id);
+    public void deleteById(String id) {
+        staffRepository.deleteById(id);
     }
 
-    public List<Staff> getAllStaff(RepositoryType repositoryType) {
-        return getRepository(repositoryType).findAll();
+    public List<Staff> getAllStaff() {
+        return staffRepository.findAll();
     }
 
     public List<Driver> getAllDrivers() {
-        return inMemoryStaffRepository.findAll().stream()
+        return staffRepository.findAll().stream()
                 .filter(Driver.class::isInstance)
                 .map(Driver.class::cast)
                 .toList();
     }
 
     public List<TripManager> getAllTripManagers() {
-        return inMemoryStaffRepository.findAll().stream()
+        return staffRepository.findAll().stream()
                 .filter(TripManager.class::isInstance)
                 .map(TripManager.class::cast)
                 .toList();
     }
 
-    private CrudRepository<Staff, String> getRepository(RepositoryType repositoryType) {
-        return repositoryType == RepositoryType.IN_FILE
-                ? inFileStaffRepository
-                : inMemoryStaffRepository;
-    }
 }

@@ -21,17 +21,13 @@ public class StaffController {
     }
 
     @GetMapping
-    public String getAllStaff(@RequestParam(defaultValue = "IN_MEMORY") StaffService.RepositoryType repository,
-                              Model model) {
-        model.addAttribute("staffList", staffService.getAllStaff(repository));
-        model.addAttribute("selectedRepository", repository);
+    public String getAllStaff(Model model) {
+        model.addAttribute("staffList", staffService.getAllStaff());
         return "staff/index";
     }
 
     @GetMapping("/new")
-    public String showCreateForm(@RequestParam(defaultValue = "IN_MEMORY") StaffService.RepositoryType repository,
-                                 Model model) {
-        model.addAttribute("selectedRepository", repository);
+    public String showCreateForm() {
         return "staff/form";
     }
 
@@ -41,7 +37,6 @@ public class StaffController {
                               @RequestParam("staffType") String staffType,
     @RequestParam(value = "yearsOfExperience", defaultValue = "0") int yearsOfExperience,
                               @RequestParam(value = "employeeCode", required = false) String employeeCode,
-                              @RequestParam(defaultValue = "IN_MEMORY") StaffService.RepositoryType repository,
                               Model model) {
 
         Staff staff;
@@ -60,21 +55,18 @@ public class StaffController {
         }
 
         try {
-            staffService.registerStaff(staff, repository);
+            staffService.registerStaff(staff);
         } catch (IllegalArgumentException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
-            model.addAttribute("selectedRepository", repository);
             return "staff/form";
         }
 
-        return "redirect:/staff?repository=" + repository;
+        return "redirect:/staff";
     }
 
     @GetMapping("/{id}")
-    public String showStaffDetails(@PathVariable("id") String id,
-                                   @RequestParam(defaultValue = "IN_MEMORY") StaffService.RepositoryType repository,
-                                   Model model) {
-        Staff staff = staffService.getAllStaff(repository).stream()
+    public String showStaffDetails(@PathVariable("id") String id, Model model) {
+        Staff staff = staffService.getAllStaff().stream()
                 .filter(item -> item.getId().equals(id))
                 .findFirst()
                 .orElseThrow(() -> new java.util.NoSuchElementException("Staff member not found: " + id));
@@ -91,14 +83,12 @@ public class StaffController {
         model.addAttribute("title", "Staff " + staff.getId());
         model.addAttribute("fields", fields);
         model.addAttribute("backUrl", "/staff");
-        model.addAttribute("selectedRepository", repository);
         return "details";
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteStaff(@PathVariable("id") String id,
-                              @RequestParam(defaultValue = "IN_MEMORY") StaffService.RepositoryType repository) {
-        staffService.deleteById(id, repository);
-        return "redirect:/staff?repository=" + repository;
+    public String deleteStaff(@PathVariable("id") String id) {
+        staffService.deleteById(id);
+        return "redirect:/staff";
     }
 }

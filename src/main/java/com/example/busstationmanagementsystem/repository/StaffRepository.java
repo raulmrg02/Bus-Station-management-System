@@ -3,38 +3,36 @@ package com.example.busstationmanagementsystem.repository;
 import com.example.busstationmanagementsystem.model.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
+@Profile("memory")
 public class StaffRepository extends InMemoryRepository<Staff, String> {
-    private final CrudRepository<Staff, String> fileRepository;
-
     public StaffRepository() {
         super(Staff::getId);
-        fileRepository = new StaffFileRepository();
     }
 
-    public CrudRepository<Staff, String> forMode(StorageMode mode) {
-        return mode == StorageMode.IN_FILE ? fileRepository : this;
-    }
-
-    private static class StaffFileRepository extends InFileRepository<Staff> {
-        StaffFileRepository() {
-            super("src/main/resources/data/staff.json", Staff.class, Staff::getId);
+    @Repository
+    @Profile("file")
+    public static class StaffFileRepository extends InFileRepository<Staff> {
+        public StaffFileRepository() {
+            super(Path.of(DATA_DIRECTORY, "staff.json").toString(), Staff.class, Staff::getId);
         }
 
         @Override
         protected synchronized void loadFromFile() {
             try {
                 File file = new File(filePath);
-                if (!file.exists() || file.length() == 0) return;
                 storage.clear();
+                if (!file.exists() || file.length() == 0) return;
                 for (JsonNode node : objectMapper.readTree(file)) {
                     String kind = node.path("type").asText("");
                     ObjectNode data = (ObjectNode) node.deepCopy();
