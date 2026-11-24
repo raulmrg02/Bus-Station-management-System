@@ -125,6 +125,56 @@ public class TicketService {
         return getRepository(repositoryType).findAll();
     }
 
+    public Ticket updateTicket(String id, Ticket updatedTicket, RepositoryType repositoryType) {
+        CrudRepository<Ticket, String> ticketRepository = getRepository(repositoryType);
+        Ticket existingTicket = ticketRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Ticket not found: " + id));
+        CrudRepository<BusTrip, String> busTripRepository = getBusTripRepository(repositoryType);
+        CrudRepository<Bus, String> busRepository = getBusRepository(repositoryType);
+        CrudRepository<Passenger, String> passengerRepository = getPassengerRepository(repositoryType);
+        BusTrip updatedTrip = busTripRepository.findById(updatedTicket.getTripId())
+                .orElseThrow(() -> new NoSuchElementException("Trip not found: " + updatedTicket.getTripId()));
+        Passenger updatedPassenger = passengerRepository.findById(updatedTicket.getPassengerId())
+                .orElseThrow(() -> new NoSuchElementException("Passenger not found: " + updatedTicket.getPassengerId()));
+        Bus bus = busRepository.findById(updatedTrip.getBusId())
+                .orElseThrow(() -> new NoSuchElementException("Bus not found for trip: " + updatedTrip.getBusId()));
+
+        boolean movingToAnotherTrip = !existingTicket.getTripId().equals(updatedTicket.getTripId());
+        if (movingToAnotherTrip && updatedTrip.getTickets().size() >= bus.getCapacity()) {
+            throw new IllegalStateException("Cannot book ticket: bus capacity (" + bus.getCapacity() + ") reached.");
+        }
+        boolean seatTaken = updatedTrip.getTickets().stream()
+                .anyMatch(ticket -> !id.equals(ticket.getId())
+                        && ticket.getSeatNumber().equalsIgnoreCase(updatedTicket.getSeatNumber()));
+        if (seatTaken) {
+            throw new IllegalArgumentException("Seat " + updatedTicket.getSeatNumber() + " is already booked.");
+        }
+
+        updatedTicket.setId(id);
+        Ticket savedTicket = ticketRepository.save(updatedTicket);
+        if (movingToAnotherTrip) {
+            busTripRepository.findById(existingTicket.getTripId()).ifPresent(oldTrip -> {
+                oldTrip.getTickets().removeIf(ticket -> id.equals(ticket.getId()));
+                busTripRepository.save(oldTrip);
+                syncTripReferences(oldTrip, repositoryType);
+            });
+        }
+        if (!existingTicket.getPassengerId().equals(updatedTicket.getPassengerId())) {
+            passengerRepository.findById(existingTicket.getPassengerId()).ifPresent(oldPassenger -> {
+                oldPassenger.getTickets().removeIf(ticket -> id.equals(ticket.getId()));
+                passengerRepository.save(oldPassenger);
+            });
+        }
+        updatedTrip.getTickets().removeIf(ticket -> id.equals(ticket.getId()));
+        updatedTrip.getTickets().add(savedTicket);
+        busTripRepository.save(updatedTrip);
+        syncTripReferences(updatedTrip, repositoryType);
+        updatedPassenger.getTickets().removeIf(ticket -> id.equals(ticket.getId()));
+        updatedPassenger.getTickets().add(savedTicket);
+        passengerRepository.save(updatedPassenger);
+        return savedTicket;
+    }
+
     public List<Passenger> getAllPassengers(RepositoryType repositoryType) {
         return getPassengerRepository(repositoryType).findAll();
     }

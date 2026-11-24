@@ -36,7 +36,25 @@ public class TicketController {
                                  Model model) {
         model.addAttribute("trips", busTripService.getAllTrips(toBusTripRepository(repository)));
         model.addAttribute("passengers", ticketService.getAllPassengers(repository));
+        model.addAttribute("ticket", new Ticket());
         model.addAttribute("selectedRepository", repository);
+        model.addAttribute("isUpdate", false);
+        return "ticket/form";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showUpdateForm(@PathVariable String id,
+                                 @RequestParam(defaultValue = "IN_MEMORY") TicketService.RepositoryType repository,
+                                 Model model) {
+        Ticket ticket = ticketService.getAllTickets(repository).stream()
+                .filter(item -> item.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new java.util.NoSuchElementException("Ticket not found: " + id));
+        model.addAttribute("ticket", ticket);
+        model.addAttribute("trips", busTripService.getAllTrips(toBusTripRepository(repository)));
+        model.addAttribute("passengers", ticketService.getAllPassengers(repository));
+        model.addAttribute("selectedRepository", repository);
+        model.addAttribute("isUpdate", true);
         return "ticket/form";
     }
 
@@ -48,13 +66,38 @@ public class TicketController {
                              @RequestParam double price,
                              @RequestParam(defaultValue = "IN_MEMORY") TicketService.RepositoryType repository,
                              Model model) {
+        return saveTicket(null, id, tripId, passengerId, seatNumber, price, repository, model);
+    }
+
+    @PostMapping("/{id}")
+    public String updateTicket(@PathVariable String pathId,
+                               @RequestParam String id,
+                               @RequestParam String tripId,
+                               @RequestParam String passengerId,
+                               @RequestParam String seatNumber,
+                               @RequestParam double price,
+                               @RequestParam(defaultValue = "IN_MEMORY") TicketService.RepositoryType repository,
+                               Model model) {
+        return saveTicket(pathId, id, tripId, passengerId, seatNumber, price, repository, model);
+    }
+
+    private String saveTicket(String pathId, String id, String tripId, String passengerId,
+                              String seatNumber, double price,
+                              TicketService.RepositoryType repository, Model model) {
+        Ticket ticket = new Ticket(id, tripId, passengerId, seatNumber, price);
         try {
-            ticketService.bookTicket(new Ticket(id, tripId, passengerId, seatNumber, price), repository);
+            if (pathId == null) {
+                ticketService.bookTicket(ticket, repository);
+            } else {
+                ticketService.updateTicket(pathId, ticket, repository);
+            }
         } catch (IllegalArgumentException | IllegalStateException | java.util.NoSuchElementException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("ticket", ticket);
             model.addAttribute("trips", busTripService.getAllTrips(toBusTripRepository(repository)));
             model.addAttribute("passengers", ticketService.getAllPassengers(repository));
             model.addAttribute("selectedRepository", repository);
+            model.addAttribute("isUpdate", pathId != null);
             return "ticket/form";
         }
         return "redirect:/tickets?repository=" + repository;
