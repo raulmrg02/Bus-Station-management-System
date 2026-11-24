@@ -7,7 +7,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -27,7 +30,7 @@ public abstract class InFileRepository<T> implements CrudRepository<T, String> {
         loadFromFile();
     }
 
-    private synchronized void loadFromFile() {
+    protected synchronized void loadFromFile() {
         try {
             File file = new File(filePath);
             if (!file.exists() || file.length() == 0) {
@@ -51,7 +54,7 @@ public abstract class InFileRepository<T> implements CrudRepository<T, String> {
         }
     }
 
-    private synchronized void saveToFile() {
+    protected synchronized void saveToFile() {
         try {
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(filePath), new ArrayList<>(storage.values()));
         } catch (IOException e) {
