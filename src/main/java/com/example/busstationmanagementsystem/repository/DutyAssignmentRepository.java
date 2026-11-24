@@ -1,18 +1,23 @@
 package com.example.busstationmanagementsystem.repository;
 
 import com.example.busstationmanagementsystem.model.DutyAssignment;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class DutyAssignmentRepository extends InMemoryRepository<DutyAssignment, String> {
-    private final CrudRepository<DutyAssignment, String> fileRepository;
+import java.nio.file.Path;
 
+@Repository
+@Profile("memory")
+public class DutyAssignmentRepository extends InMemoryRepository<DutyAssignment, String> {
     public DutyAssignmentRepository() {
         super(DutyAssignment::getId);
-        fileRepository = new InFileRepository<DutyAssignment>("src/main/resources/data/duty_assignments.json", DutyAssignment.class, DutyAssignment::getId) {};
     }
 
-    public CrudRepository<DutyAssignment, String> forMode(StorageMode mode) {
-        return mode == StorageMode.IN_FILE ? fileRepository : this;
+    @Repository
+    @Profile("file")
+    public static class DutyAssignmentFileRepository extends InFileRepository<DutyAssignment> {
+        public DutyAssignmentFileRepository() {
+            super(Path.of(DATA_DIRECTORY, "duty_assignments.json").toString(), DutyAssignment.class, DutyAssignment::getId);
+        }
     }
 }
