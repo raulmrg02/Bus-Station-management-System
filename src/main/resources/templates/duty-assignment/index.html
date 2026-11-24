@@ -40,7 +40,8 @@
         <td th:text="${assignment.staffId}">S1</td>
         <td th:text="${assignment.role}">PRIMARY_DRIVER</td>
         <td>
-            <form th:action="@{'/duty-assignments/' + ${assignment.id} + '/delete'}" method="post">
+            <a th:href="@{'/duty-assignments/' + ${assignment.id}(repository=${selectedRepository})}">Details</a>
+            <form th:action="@{'/duty-assignments/' + ${assignment.id} + '/delete'}" method="post" style="display:inline">
                 <input type="hidden" name="repository" th:value="${selectedRepository}">
                 <button type="submit">Delete</button>
             </form>

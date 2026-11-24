@@ -45,7 +45,8 @@
                   th:text="${'Employee Code: ' + staff.employeeCode}"></span>
         </td>
         <td>
-            <form th:action="@{'/staff/' + ${staff.id} + '/delete'}" method="post">
+            <a th:href="@{'/staff/' + ${staff.id}(repository=${selectedRepository})}">Details</a>
+            <form th:action="@{'/staff/' + ${staff.id} + '/delete'}" method="post" style="display:inline">
                 <input type="hidden" name="repository" th:value="${selectedRepository}">
                 <button type="submit">Delete</button>
             </form>

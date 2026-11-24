@@ -40,7 +40,8 @@
         <td th:text="${route.destination.name + ' (' + route.destination.city + ')'}">Airport (City)</td>
         <td th:text="${route.distance}">25.5</td>
         <td>
-            <form th:action="@{'/routes/' + ${route.id} + '/delete'}" method="post">
+            <a th:href="@{'/routes/' + ${route.id}(repository=${selectedRepository})}">Details</a>
+            <form th:action="@{'/routes/' + ${route.id} + '/delete'}" method="post" style="display:inline">
                 <input type="hidden" name="repository" th:value="${selectedRepository}">
                 <button type="submit">Delete</button>
             </form>

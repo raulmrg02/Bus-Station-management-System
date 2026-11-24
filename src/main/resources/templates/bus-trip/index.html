@@ -44,7 +44,8 @@
         <td th:text="${trip.arrivalTime}">2026-11-15T11:30</td>
         <td th:text="${trip.status}">SCHEDULED</td>
         <td>
-            <form th:action="@{'/trips/' + ${trip.id} + '/delete'}" method="post">
+            <a th:href="@{'/trips/' + ${trip.id}(repository=${selectedRepository})}">Details</a>
+            <form th:action="@{'/trips/' + ${trip.id} + '/delete'}" method="post" style="display:inline">
                 <input type="hidden" name="repository" th:value="${selectedRepository}">
                 <button type="submit">Delete</button>
             </form>

@@ -42,7 +42,8 @@
         <td th:text="${ticket.seatNumber}">12A</td>
         <td th:text="${ticket.price}">25.00</td>
         <td>
-            <form th:action="@{'/tickets/' + ${ticket.id} + '/delete'}" method="post">
+            <a th:href="@{'/tickets/' + ${ticket.id}(repository=${selectedRepository})}">Details</a>
+            <form th:action="@{'/tickets/' + ${ticket.id} + '/delete'}" method="post" style="display:inline">
                 <input type="hidden" name="repository" th:value="${selectedRepository}">
                 <button type="submit">Delete</button>
             </form>

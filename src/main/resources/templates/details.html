@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title} + ' Details'">Details</title>
+</head>
+<body>
+<h1 th:text="${title} + ' Details'">Details</h1>
+
+<table border="1" cellpadding="6" cellspacing="0">
+    <tbody>
+    <tr th:each="field : ${fields}">
+        <th th:text="${field.key}" style="text-align: left;">Field</th>
+        <td th:text="${field.value}">Value</td>
+    </tr>
+    </tbody>
+</table>
+
+<p>
+    <a th:href="@{|${backUrl}?repository=${selectedRepository}|}">Back</a>
+</p>
+</body>
+</html>
