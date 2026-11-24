@@ -1,5 +1,18 @@
 # Bus Station Management System (Thema 1)
 
+## Storage configuration
+
+Choose exactly one storage profile: `memory` (the default) stores data in memory, and data is lost when the application
+stops; `file` persists data in JSON files. Do not activate both profiles together. File storage always uses the `data`
+directory at `src/main/resources/data`, relative to the application's working directory. File-mode changes are written
+to that directory.
+
+For example, to use file storage:
+
+```shell
+./mvnw spring-boot:run -Dspring-boot.run.profiles=memory
+```
+
 ## Architecture Decisions
 
 ### 1. Granular Controller & Domain Service Design
@@ -60,4 +73,4 @@ We added new properties to 3 model classes:
 1. **`Bus`**: Added `modelName` (`String`) and `manufactureYear` (`int`) for fleet tracking.
 2. **`Passenger`**: Added `email` (`String`) for contact and ticketing notifications.
 3. **`BusTrip`**: Added `arrivalTime` (`LocalDateTime`) to support trip duration tracking.
-Health check endpoint: `GET http://localhost:8080/hello` $\rightarrow$ returns `"Die Anwendung funktioniert!"`
+   Health check endpoint: `GET http://localhost:8080/hello` $\rightarrow$ returns `"Die Anwendung funktioniert!"`
