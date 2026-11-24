@@ -10,7 +10,6 @@
 <p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
 
 <form th:action="@{/tickets}" method="post">
-    <input type="hidden" name="repository" th:value="${selectedRepository}">
     <div>
         <label for="id">Ticket ID:</label><br>
         <input type="text" id="id" name="id" required />
@@ -51,7 +50,7 @@
     </div>
     <br>
     <button type="submit">Save Ticket</button>
-    <a th:href="@{/tickets(repository=${selectedRepository})}">Cancel</a>
+    <a th:href="@{/tickets}">Cancel</a>
 </form>
 </body>
 </html>
