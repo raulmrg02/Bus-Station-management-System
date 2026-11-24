@@ -2,7 +2,6 @@ package com.example.busstationmanagementsystem.service;
 
 import com.example.busstationmanagementsystem.model.Route;
 import com.example.busstationmanagementsystem.repository.CrudRepository;
-import com.example.busstationmanagementsystem.repository.RouteRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,22 +9,13 @@ import java.util.NoSuchElementException;
 
 @Service
 public class RouteService {
+    private final CrudRepository<Route, String> routeRepository;
 
-    public enum RepositoryType {
-        IN_MEMORY,
-        IN_FILE
+    public RouteService(CrudRepository<Route, String> routeRepository) {
+        this.routeRepository = routeRepository;
     }
 
-    private final CrudRepository<Route, String> inMemoryRouteRepository;
-    private final CrudRepository<Route, String> inFileRouteRepository;
-
-    public RouteService(RouteRepository routeRepository) {
-        this.inMemoryRouteRepository = routeRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
-        this.inFileRouteRepository = routeRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
-    }
-
-    public void createRoute(Route route, RepositoryType repositoryType) {
-        CrudRepository<Route, String> routeRepository = getRepository(repositoryType);
+    public void createRoute(Route route) {
         if (routeRepository.findById(route.getId()).isPresent()) {
             throw new IllegalArgumentException("Route already exists with ID: " + route.getId());
         }
@@ -40,21 +30,15 @@ public class RouteService {
     }
 
     public Route getRouteById(String id) {
-        return inMemoryRouteRepository.findById(id)
+        return routeRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Route not found: " + id));
     }
 
-    public List<Route> getAllRoutes(RepositoryType repositoryType) {
-        return getRepository(repositoryType).findAll();
+    public List<Route> getAllRoutes() {
+        return routeRepository.findAll();
     }
 
-    public boolean deleteRoute(String id, RepositoryType repositoryType) {
-        return getRepository(repositoryType).deleteById(id);
-    }
-
-    private CrudRepository<Route, String> getRepository(RepositoryType repositoryType) {
-        return repositoryType == RepositoryType.IN_FILE
-                ? inFileRouteRepository
-                : inMemoryRouteRepository;
+    public boolean deleteRoute(String id) {
+        return routeRepository.deleteById(id);
     }
 }
