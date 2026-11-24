@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BusStation {
-    private String id;
+    private String id = IdGenerator.generate("ST");
     private String name;
     private String city;
     private List<BusTrip> trips = new ArrayList<>();
