@@ -8,6 +8,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Controller
@@ -67,6 +69,27 @@ public class RouteController {
             return "route/form";
         }
         return "redirect:/routes?repository=" + repository;
+    }
+
+    @GetMapping("/{id}")
+    public String showRouteDetails(@PathVariable String id,
+                                   @RequestParam(defaultValue = "IN_MEMORY") RouteService.RepositoryType repository,
+                                   Model model) {
+        Route route = routeService.getAllRoutes(repository).stream()
+                .filter(item -> item.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Route not found: " + id));
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("ID", route.getId());
+        fields.put("Origin", route.getOrigin() != null ? route.getOrigin().getName() + " (" + route.getOrigin().getId() + ")" : null);
+        fields.put("Destination", route.getDestination() != null ? route.getDestination().getName() + " (" + route.getDestination().getId() + ")" : null);
+        fields.put("Distance", route.getDistance());
+        fields.put("Trip IDs", route.getTrips().stream().map(trip -> trip.getId()).toList());
+        model.addAttribute("title", "Route " + route.getId());
+        model.addAttribute("fields", fields);
+        model.addAttribute("backUrl", "/routes");
+        model.addAttribute("selectedRepository", repository);
+        return "details";
     }
 
     @PostMapping("/{id}/delete")
