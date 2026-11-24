@@ -8,6 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @Controller
 @RequestMapping("/duty-assignments")
 public class DutyAssignmentController {
@@ -51,6 +54,26 @@ public class DutyAssignmentController {
             return "duty-assignment/form";
         }
         return "redirect:/duty-assignments?repository=" + repository;
+    }
+
+    @GetMapping("/{id}")
+    public String showAssignmentDetails(@PathVariable("id") String id,
+                                        @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
+                                        Model model) {
+        DutyAssignment assignment = dutyAssignmentService.getAllAssignments(repository).stream()
+                .filter(item -> item.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new java.util.NoSuchElementException("Duty assignment not found: " + id));
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("ID", assignment.getId());
+        fields.put("Trip ID", assignment.getTripId());
+        fields.put("Staff ID", assignment.getStaffId());
+        fields.put("Role", assignment.getRole());
+        model.addAttribute("title", "Duty Assignment " + assignment.getId());
+        model.addAttribute("fields", fields);
+        model.addAttribute("backUrl", "/duty-assignments");
+        model.addAttribute("selectedRepository", repository);
+        return "details";
     }
 
     @PostMapping("/{id}/delete")
