@@ -1,10 +1,14 @@
 package com.example.busstationmanagementsystem.controller;
 
 import com.example.busstationmanagementsystem.model.Passenger;
+import com.example.busstationmanagementsystem.model.Ticket;
 import com.example.busstationmanagementsystem.service.PassengerService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/passengers")
@@ -44,6 +48,27 @@ public class PassengerController {
             return "passenger/form";
         }
         return "redirect:/passengers?repository=" + repository;
+    }
+
+    @GetMapping("/{id}")
+    public String showPassengerDetails(@PathVariable("id") String id,
+                                       @RequestParam(defaultValue = "IN_MEMORY") PassengerService.RepositoryType repository,
+                                       Model model) {
+        Passenger passenger = passengerService.getAllPassengers(repository).stream()
+                .filter(item -> item.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new java.util.NoSuchElementException("Passenger not found: " + id));
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("ID", passenger.getId());
+        fields.put("Name", passenger.getName());
+        fields.put("Currency", passenger.getCurrency());
+        fields.put("Email", passenger.getEmail());
+        fields.put("Ticket IDs", passenger.getTickets().stream().map(Ticket -> Ticket.getId()).toList());
+        model.addAttribute("title", "Passenger " + passenger.getId());
+        model.addAttribute("fields", fields);
+        model.addAttribute("backUrl", "/passengers");
+        model.addAttribute("selectedRepository", repository);
+        return "details";
     }
 
     @PostMapping("/{id}/delete")
