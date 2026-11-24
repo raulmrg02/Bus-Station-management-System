@@ -38,6 +38,22 @@ public class BusTripController {
         model.addAttribute("trip", new BusTrip());
         model.addAttribute("statuses", TripStatus.values());
         model.addAttribute("selectedRepository", repository);
+        model.addAttribute("isUpdate", false);
+        return "bus-trip/form";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showUpdateForm(@PathVariable("id") String id,
+                                 @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
+                                 Model model) {
+        BusTrip trip = tripService.getAllTrips(repository).stream()
+                .filter(item -> item.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Bus trip not found: " + id));
+        model.addAttribute("trip", trip);
+        model.addAttribute("statuses", TripStatus.values());
+        model.addAttribute("selectedRepository", repository);
+        model.addAttribute("isUpdate", true);
         return "bus-trip/form";
     }
 
@@ -52,6 +68,24 @@ public class BusTripController {
             model.addAttribute("errorMessage", exception.getMessage());
             model.addAttribute("statuses", TripStatus.values());
             model.addAttribute("selectedRepository", repository);
+            model.addAttribute("isUpdate", false);
+            return "bus-trip/form";
+        }
+        return "redirect:/trips?repository=" + repository;
+    }
+
+    @PostMapping("/{id}")
+    public String updateTrip(@PathVariable("id") String id,
+                             @ModelAttribute("trip") BusTrip trip,
+                             @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
+                             Model model) {
+        try {
+            tripService.updateTrip(id, trip, repository);
+        } catch (IllegalArgumentException | IllegalStateException | NoSuchElementException exception) {
+            model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("statuses", TripStatus.values());
+            model.addAttribute("selectedRepository", repository);
+            model.addAttribute("isUpdate", true);
             return "bus-trip/form";
         }
         return "redirect:/trips?repository=" + repository;

@@ -71,6 +71,33 @@ public class BusTripService {
         return savedTrip;
     }
 
+    public BusTrip updateTrip(String id, BusTrip updatedTrip, RepositoryType repositoryType) {
+        CrudRepository<BusTrip, String> tripRepository = getRepository(repositoryType);
+        BusTrip existingTrip = tripRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("BusTrip not found: " + id));
+        CrudRepository<Route, String> routeRepository = getRouteRepository(repositoryType);
+        Route route = routeRepository.findById(updatedTrip.getRouteId())
+                .orElseThrow(() -> new NoSuchElementException("Assigned route does not exist: " + updatedTrip.getRouteId()));
+        Bus bus = getBusRepository(repositoryType).findById(updatedTrip.getBusId())
+                .orElseThrow(() -> new NoSuchElementException("Assigned bus does not exist: " + updatedTrip.getBusId()));
+
+        if (bus.getStatus() != BusStatus.ACTIVE) {
+            throw new IllegalStateException("Cannot schedule trip with a non-active bus");
+        }
+        if (updatedTrip.getArrivalTime() != null
+                && updatedTrip.getArrivalTime().isBefore(updatedTrip.getStartTime())) {
+            throw new IllegalArgumentException("Arrival time cannot be before start time");
+        }
+
+        removeTripFromRouteAndStations(existingTrip, repositoryType);
+        updatedTrip.setId(id);
+        updatedTrip.setTickets(existingTrip.getTickets());
+        updatedTrip.setAssignments(existingTrip.getAssignments());
+        BusTrip savedTrip = tripRepository.save(updatedTrip);
+        addTripToRouteAndStations(savedTrip, route, repositoryType, routeRepository);
+        return savedTrip;
+    }
+
     public BusTrip getTripById(String id) {
         return inFileBusTripRepository.findById(id)
                 .or(() -> inMemoryBusTripRepository.findById(id))
