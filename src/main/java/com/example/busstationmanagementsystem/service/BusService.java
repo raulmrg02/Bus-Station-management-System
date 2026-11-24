@@ -1,7 +1,6 @@
 package com.example.busstationmanagementsystem.service;
 
 import com.example.busstationmanagementsystem.model.Bus;
-import com.example.busstationmanagementsystem.repository.BusRepository;
 import com.example.busstationmanagementsystem.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
@@ -10,21 +9,13 @@ import java.util.NoSuchElementException;
 
 @Service
 public class BusService {
-    public enum RepositoryType {
-        IN_MEMORY,
-        IN_FILE
+    private final CrudRepository<Bus, String> busRepository;
+
+    public BusService(CrudRepository<Bus, String> busRepository) {
+        this.busRepository = busRepository;
     }
 
-    private final CrudRepository<Bus, String> inMemoryBusRepository;
-    private final CrudRepository<Bus, String> inFileBusRepository;
-
-    public BusService(BusRepository busRepository) {
-        this.inMemoryBusRepository = busRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
-        this.inFileBusRepository = busRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
-    }
-
-    public Bus registerBus(Bus bus, RepositoryType repositoryType) {
-        CrudRepository<Bus, String> busRepository = getRepository(repositoryType);
+    public Bus registerBus(Bus bus) {
         if (bus.getId() == null || bus.getId().isBlank()) {
             throw new IllegalArgumentException("Bus ID cannot be empty");
         }
@@ -35,21 +26,15 @@ public class BusService {
     }
 
     public Bus getBusById(String id) {
-        return inMemoryBusRepository.findById(id)
+        return busRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Bus not found: " + id));
     }
 
-    public void deleteById(String id, RepositoryType repositoryType) {
-        getRepository(repositoryType).deleteById(id);
+    public void deleteById(String id) {
+        busRepository.deleteById(id);
     }
 
-    public List<Bus> getAllBuses(RepositoryType repositoryType) {
-        return getRepository(repositoryType).findAll();
-    }
-
-    private CrudRepository<Bus, String> getRepository(RepositoryType repositoryType) {
-        return repositoryType == RepositoryType.IN_FILE
-                ? inFileBusRepository
-                : inMemoryBusRepository;
+    public List<Bus> getAllBuses() {
+        return busRepository.findAll();
     }
 }

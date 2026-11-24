@@ -3,7 +3,6 @@ package com.example.busstationmanagementsystem.controller;
 import com.example.busstationmanagementsystem.model.Bus;
 import com.example.busstationmanagementsystem.model.BusStatus;
 import com.example.busstationmanagementsystem.service.BusService;
-import com.example.busstationmanagementsystem.service.BusService.RepositoryType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,48 +21,35 @@ public class BusController {
     }
 
     @GetMapping
-    public String getAllBuses(
-            @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
-            Model model) {
-        model.addAttribute("busList", busService.getAllBuses(repository));
-        model.addAttribute("selectedRepository", repository);
+    public String getAllBuses(Model model) {
+        model.addAttribute("busList", busService.getAllBuses());
         return "bus/index";
     }
 
     @GetMapping("/new")
-    public String showCreateForm(
-            @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
-            Model model) {
+    public String showCreateForm(Model model) {
         model.addAttribute("bus", new Bus());
         model.addAttribute("statuses", BusStatus.values());
-        model.addAttribute("selectedRepository", repository);
         return "bus/form";
     }
 
     @PostMapping
     public String createBus(
             @ModelAttribute("bus") Bus bus,
-            @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
             Model model) {
         try {
-            busService.registerBus(bus, repository);
+            busService.registerBus(bus);
         } catch (IllegalArgumentException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
             model.addAttribute("statuses", BusStatus.values());
-            model.addAttribute("selectedRepository", repository);
             return "bus/form";
         }
-        return "redirect:/buses?repository=" + repository;
+        return "redirect:/buses";
     }
 
     @GetMapping("/{id}")
-    public String showBusDetails(@PathVariable("id") String id,
-                                 @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
-                                 Model model) {
-        Bus bus = busService.getAllBuses(repository).stream()
-                .filter(item -> item.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new java.util.NoSuchElementException("Bus not found: " + id));
+    public String showBusDetails(@PathVariable("id") String id, Model model) {
+        Bus bus = busService.getBusById(id);
         Map<String, Object> fields = new LinkedHashMap<>();
         fields.put("ID", bus.getId());
         fields.put("Registration Number", bus.getRegistrationNumber());
@@ -74,15 +60,12 @@ public class BusController {
         model.addAttribute("title", "Bus " + bus.getId());
         model.addAttribute("fields", fields);
         model.addAttribute("backUrl", "/buses");
-        model.addAttribute("selectedRepository", repository);
         return "details";
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteBus(
-            @PathVariable("id") String id,
-            @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository) {
-        busService.deleteById(id, repository);
-        return "redirect:/buses?repository=" + repository;
+    public String deleteBus(@PathVariable("id") String id) {
+        busService.deleteById(id);
+        return "redirect:/buses";
     }
 }
