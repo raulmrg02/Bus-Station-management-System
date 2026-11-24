@@ -45,6 +45,7 @@
         <td th:text="${bus.status}">ACTIVE</td>
         <td>
             <a th:href="@{'/buses/' + ${bus.id}(repository=${selectedRepository})}">Details</a>
+            <a th:href="@{'/buses/' + ${bus.id} + '/edit'(repository=${selectedRepository})}">Update</a>
             <form th:action="@{'/buses/' + ${bus.id} + '/delete'}" method="post" style="display:inline">
                 <input type="hidden" name="repository" th:value="${selectedRepository}">
                 <button type="submit">Delete</button>

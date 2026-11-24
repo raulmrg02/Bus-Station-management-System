@@ -35,9 +35,18 @@ public class BusService {
         return busRepository.save(bus);
     }
 
-    public Bus getBusById(String id) {
-        return inMemoryBusRepository.findById(id)
+    public Bus getBusById(String id, RepositoryType repositoryType) {
+        return getRepository(repositoryType).findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Bus not found: " + id));
+    }
+
+    public Bus updateBus(String id, Bus updatedBus, RepositoryType repositoryType) {
+        CrudRepository<Bus, String> busRepository = getRepository(repositoryType);
+        if (busRepository.findById(id).isEmpty()) {
+            throw new NoSuchElementException("Bus not found: " + id);
+        }
+        updatedBus.setId(id); // Ensure ID remains locked to the path variable
+        return busRepository.save(updatedBus);
     }
 
     public void deleteById(String id, RepositoryType repositoryType) {

@@ -37,6 +37,18 @@ public class BusController {
         model.addAttribute("bus", new Bus());
         model.addAttribute("statuses", BusStatus.values());
         model.addAttribute("selectedRepository", repository);
+        model.addAttribute("isUpdate", false);
+        return "bus/form";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showUpdateForm(@PathVariable("id") String id,
+                                 @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
+                                 Model model) {
+        model.addAttribute("bus", busService.getBusById(id, repository));
+        model.addAttribute("statuses", BusStatus.values());
+        model.addAttribute("selectedRepository", repository);
+        model.addAttribute("isUpdate", true);
         return "bus/form";
     }
 
@@ -51,6 +63,24 @@ public class BusController {
             model.addAttribute("errorMessage", exception.getMessage());
             model.addAttribute("statuses", BusStatus.values());
             model.addAttribute("selectedRepository", repository);
+            model.addAttribute("isUpdate", false);
+            return "bus/form";
+        }
+        return "redirect:/buses?repository=" + repository;
+    }
+
+    @PostMapping("/{id}")
+    public String updateBus(@PathVariable("id") String id,
+                            @ModelAttribute("bus") Bus bus,
+                            @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
+                            Model model) {
+        try {
+            busService.updateBus(id, bus, repository);
+        } catch (IllegalArgumentException exception) {
+            model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("statuses", BusStatus.values());
+            model.addAttribute("selectedRepository", repository);
+            model.addAttribute("isUpdate", true);
             return "bus/form";
         }
         return "redirect:/buses?repository=" + repository;
