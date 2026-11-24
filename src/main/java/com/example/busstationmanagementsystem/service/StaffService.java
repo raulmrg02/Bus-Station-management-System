@@ -37,6 +37,15 @@ public class StaffService {
         return staffRepository.save(staff);
     }
 
+    public Staff updateStaff(String id, Staff updatedStaff, RepositoryType repositoryType) {
+        CrudRepository<Staff, String> staffRepository = getRepository(repositoryType);
+        Staff existingStaff = staffRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Staff member not found: " + id));
+        updatedStaff.setId(id);
+        updatedStaff.setAssignments(existingStaff.getAssignments());
+        return staffRepository.save(updatedStaff);
+    }
+
     public Staff getStaffById(String id) {
         return inMemoryStaffRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Staff member not found: " + id));

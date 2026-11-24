@@ -32,6 +32,30 @@ public class StaffController {
     public String showCreateForm(@RequestParam(defaultValue = "IN_MEMORY") StaffService.RepositoryType repository,
                                  Model model) {
         model.addAttribute("selectedRepository", repository);
+        model.addAttribute("staff", null);
+        model.addAttribute("isUpdate", false);
+        model.addAttribute("staffType", "DRIVER");
+        model.addAttribute("yearsOfExperience", 0);
+        model.addAttribute("employeeCode", "");
+        return "staff/form";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showUpdateForm(@PathVariable("id") String id,
+                                 @RequestParam(defaultValue = "IN_MEMORY") StaffService.RepositoryType repository,
+                                 Model model) {
+        Staff staff = staffService.getAllStaff(repository).stream()
+                .filter(item -> item.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new java.util.NoSuchElementException("Staff member not found: " + id));
+        model.addAttribute("staff", staff);
+        model.addAttribute("selectedRepository", repository);
+        model.addAttribute("isUpdate", true);
+        model.addAttribute("staffType", staff instanceof Driver ? "DRIVER" : "MANAGER");
+        model.addAttribute("yearsOfExperience", staff instanceof Driver
+                ? ((Driver) staff).getYearsOfExperience() : 0);
+        model.addAttribute("employeeCode", staff instanceof TripManager
+                ? ((TripManager) staff).getEmployeeCode() : "");
         return "staff/form";
     }
 
@@ -43,6 +67,24 @@ public class StaffController {
                               @RequestParam(value = "employeeCode", required = false) String employeeCode,
                               @RequestParam(defaultValue = "IN_MEMORY") StaffService.RepositoryType repository,
                               Model model) {
+        return saveStaff(null, id, name, staffType, yearsOfExperience, employeeCode, repository, model);
+    }
+
+    @PostMapping("/{id}")
+    public String updateStaff(@PathVariable("id") String pathId,
+                              @RequestParam("id") String id,
+                              @RequestParam("name") String name,
+                              @RequestParam("staffType") String staffType,
+                              @RequestParam(value = "yearsOfExperience", defaultValue = "0") int yearsOfExperience,
+                              @RequestParam(value = "employeeCode", required = false) String employeeCode,
+                              @RequestParam(defaultValue = "IN_MEMORY") StaffService.RepositoryType repository,
+                              Model model) {
+        return saveStaff(pathId, id, name, staffType, yearsOfExperience, employeeCode, repository, model);
+    }
+
+    private String saveStaff(String pathId, String id, String name, String staffType,
+                             int yearsOfExperience, String employeeCode,
+                             StaffService.RepositoryType repository, Model model) {
 
         Staff staff;
         if ("DRIVER".equalsIgnoreCase(staffType)) {
@@ -59,8 +101,17 @@ public class StaffController {
             staff = manager;
         }
 
+        model.addAttribute("staff", staff);
+        model.addAttribute("isUpdate", pathId != null);
+        model.addAttribute("staffType", staffType.toUpperCase());
+        model.addAttribute("yearsOfExperience", yearsOfExperience);
+        model.addAttribute("employeeCode", employeeCode != null ? employeeCode : "");
         try {
-            staffService.registerStaff(staff, repository);
+            if (pathId == null) {
+                staffService.registerStaff(staff, repository);
+            } else {
+                staffService.updateStaff(pathId, staff, repository);
+            }
         } catch (IllegalArgumentException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
             model.addAttribute("selectedRepository", repository);
