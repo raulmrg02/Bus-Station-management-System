@@ -33,6 +33,21 @@ public class PassengerController {
                                  Model model) {
         model.addAttribute("passenger", new Passenger());
         model.addAttribute("selectedRepository", repository);
+        model.addAttribute("isUpdate", false);
+        return "passenger/form";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showUpdateForm(@PathVariable("id") String id,
+                                 @RequestParam(defaultValue = "IN_MEMORY") PassengerService.RepositoryType repository,
+                                 Model model) {
+        Passenger passenger = passengerService.getAllPassengers(repository).stream()
+                .filter(item -> item.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new java.util.NoSuchElementException("Passenger not found: " + id));
+        model.addAttribute("passenger", passenger);
+        model.addAttribute("selectedRepository", repository);
+        model.addAttribute("isUpdate", true);
         return "passenger/form";
     }
 
@@ -45,6 +60,23 @@ public class PassengerController {
         } catch (IllegalArgumentException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
             model.addAttribute("selectedRepository", repository);
+            model.addAttribute("isUpdate", false);
+            return "passenger/form";
+        }
+        return "redirect:/passengers?repository=" + repository;
+    }
+
+    @PostMapping("/{id}")
+    public String updatePassenger(@PathVariable("id") String id,
+                                  @ModelAttribute("passenger") Passenger passenger,
+                                  @RequestParam(defaultValue = "IN_MEMORY") PassengerService.RepositoryType repository,
+                                  Model model) {
+        try {
+            passengerService.updatePassenger(id, passenger, repository);
+        } catch (IllegalArgumentException exception) {
+            model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("selectedRepository", repository);
+            model.addAttribute("isUpdate", true);
             return "passenger/form";
         }
         return "redirect:/passengers?repository=" + repository;

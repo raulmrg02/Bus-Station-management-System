@@ -44,6 +44,22 @@ public class PassengerService {
         return getRepository(repositoryType).findAll();
     }
 
+    public Passenger updatePassenger(String id, Passenger updatedPassenger, RepositoryType repositoryType) {
+        CrudRepository<Passenger, String> passengerRepository = getRepository(repositoryType);
+        Passenger existingPassenger = passengerRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Passenger not found: " + id));
+        if (updatedPassenger.getEmail() != null
+                && !updatedPassenger.getEmail().isBlank()
+                && passengerRepository.findAll().stream()
+                .anyMatch(existing -> !id.equals(existing.getId())
+                        && updatedPassenger.getEmail().equalsIgnoreCase(existing.getEmail()))) {
+            throw new IllegalArgumentException("Passenger already exists with email: " + updatedPassenger.getEmail());
+        }
+        updatedPassenger.setId(id);
+        updatedPassenger.setTickets(existingPassenger.getTickets());
+        return passengerRepository.save(updatedPassenger);
+    }
+
     public Passenger getPassengerById(String id) {
         return inMemoryPassengerRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Passenger not found: " + id));
