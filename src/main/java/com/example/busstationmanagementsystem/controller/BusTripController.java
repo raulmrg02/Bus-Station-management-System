@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Controller
@@ -53,6 +55,30 @@ public class BusTripController {
             return "bus-trip/form";
         }
         return "redirect:/trips?repository=" + repository;
+    }
+
+    @GetMapping("/{id}")
+    public String showTripDetails(@PathVariable("id") String id,
+                                  @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
+                                  Model model) {
+        BusTrip trip = tripService.getAllTrips(repository).stream()
+                .filter(item -> item.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Bus trip not found: " + id));
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("ID", trip.getId());
+        fields.put("Route ID", trip.getRouteId());
+        fields.put("Bus ID", trip.getBusId());
+        fields.put("Start Time", trip.getStartTime());
+        fields.put("Arrival Time", trip.getArrivalTime());
+        fields.put("Status", trip.getStatus());
+        fields.put("Ticket IDs", trip.getTickets().stream().map(ticket -> ticket.getId()).toList());
+        fields.put("Duty Assignment IDs", trip.getAssignments().stream().map(assignment -> assignment.getId()).toList());
+        model.addAttribute("title", "Bus Trip " + trip.getId());
+        model.addAttribute("fields", fields);
+        model.addAttribute("backUrl", "/trips");
+        model.addAttribute("selectedRepository", repository);
+        return "details";
     }
 
     @PostMapping("/{id}/delete")
