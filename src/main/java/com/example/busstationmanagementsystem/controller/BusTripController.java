@@ -3,7 +3,6 @@ package com.example.busstationmanagementsystem.controller;
 import com.example.busstationmanagementsystem.model.BusTrip;
 import com.example.busstationmanagementsystem.model.TripStatus;
 import com.example.busstationmanagementsystem.service.BusTripService;
-import com.example.busstationmanagementsystem.service.BusTripService.RepositoryType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,48 +22,35 @@ public class BusTripController {
     }
 
     @GetMapping
-    public String getAllTrips(
-            @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
-            Model model) {
-        model.addAttribute("trips", tripService.getAllTrips(repository));
-        model.addAttribute("selectedRepository", repository);
+    public String getAllTrips(Model model) {
+        model.addAttribute("trips", tripService.getAllTrips());
         return "bus-trip/index";
     }
 
     @GetMapping("/new")
-    public String showCreateForm(
-            @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
-            Model model) {
+    public String showCreateForm(Model model) {
         model.addAttribute("trip", new BusTrip());
         model.addAttribute("statuses", TripStatus.values());
-        model.addAttribute("selectedRepository", repository);
         return "bus-trip/form";
     }
 
     @PostMapping
     public String createTrip(
             @ModelAttribute("trip") BusTrip trip,
-            @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
             Model model) {
         try {
-            tripService.scheduleTrip(trip, repository);
+            tripService.scheduleTrip(trip);
         } catch (IllegalArgumentException | IllegalStateException | NoSuchElementException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
             model.addAttribute("statuses", TripStatus.values());
-            model.addAttribute("selectedRepository", repository);
             return "bus-trip/form";
         }
-        return "redirect:/trips?repository=" + repository;
+        return "redirect:/trips";
     }
 
     @GetMapping("/{id}")
-    public String showTripDetails(@PathVariable("id") String id,
-                                  @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
-                                  Model model) {
-        BusTrip trip = tripService.getAllTrips(repository).stream()
-                .filter(item -> item.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Bus trip not found: " + id));
+    public String showTripDetails(@PathVariable("id") String id, Model model) {
+        BusTrip trip = tripService.getTripById(id);
         Map<String, Object> fields = new LinkedHashMap<>();
         fields.put("ID", trip.getId());
         fields.put("Route ID", trip.getRouteId());
@@ -77,15 +63,12 @@ public class BusTripController {
         model.addAttribute("title", "Bus Trip " + trip.getId());
         model.addAttribute("fields", fields);
         model.addAttribute("backUrl", "/trips");
-        model.addAttribute("selectedRepository", repository);
         return "details";
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteTrip(
-            @PathVariable("id") String id,
-            @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository) {
-        tripService.deleteTrip(id, repository);
-        return "redirect:/trips?repository=" + repository;
+    public String deleteTrip(@PathVariable("id") String id) {
+        tripService.deleteTrip(id);
+        return "redirect:/trips";
     }
 }

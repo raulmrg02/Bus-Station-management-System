@@ -9,49 +9,34 @@ import java.util.NoSuchElementException;
 
 @Service
 public class BusTripService {
-    public enum RepositoryType {
-        IN_MEMORY,
-        IN_FILE
-    }
+    private final CrudRepository<BusTrip, String> busTripRepository;
+    private final CrudRepository<DutyAssignment, String> dutyAssignmentRepository;
+    private final CrudRepository<Bus, String> busRepository;
+    private final CrudRepository<Route, String> routeRepository;
+    private final CrudRepository<BusStation, String> stationRepository;
 
-    private final CrudRepository<BusTrip, String> inMemoryBusTripRepository;
-    private final CrudRepository<BusTrip, String> inFileBusTripRepository;
-    private final DutyAssignmentRepository dutyAssignmentRepository;
-    private final CrudRepository<Bus, String> inMemoryBusRepository;
-    private final CrudRepository<Bus, String> inFileBusRepository;
-    private final CrudRepository<Route, String> inMemoryRouteRepository;
-    private final CrudRepository<Route, String> inFileRouteRepository;
-    private final CrudRepository<BusStation, String> inMemoryStationRepository;
-    private final CrudRepository<BusStation, String> inFileStationRepository;
-
-    public BusTripService(BusTripRepository busTripRepository,
-                          DutyAssignmentRepository dutyAssignmentRepository,
-                          BusRepository busRepository,
-                          RouteRepository routeRepository,
-                          BusStationRepository stationRepository) {
-        this.inMemoryBusTripRepository = busTripRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
-        this.inFileBusTripRepository = busTripRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
+    public BusTripService(CrudRepository<BusTrip, String> busTripRepository,
+                          CrudRepository<DutyAssignment, String> dutyAssignmentRepository,
+                          CrudRepository<Bus, String> busRepository,
+                          CrudRepository<Route, String> routeRepository,
+                          CrudRepository<BusStation, String> stationRepository) {
+        this.busTripRepository = busTripRepository;
         this.dutyAssignmentRepository = dutyAssignmentRepository;
-        this.inMemoryBusRepository = busRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
-        this.inFileBusRepository = busRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
-        this.inMemoryRouteRepository = routeRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
-        this.inFileRouteRepository = routeRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
-        this.inMemoryStationRepository = stationRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
-        this.inFileStationRepository = stationRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
+        this.busRepository = busRepository;
+        this.routeRepository = routeRepository;
+        this.stationRepository = stationRepository;
     }
 
-    public BusTrip scheduleTrip(BusTrip trip, RepositoryType repositoryType) {
-        CrudRepository<BusTrip, String> tripRepository = getRepository(repositoryType);
+    public BusTrip scheduleTrip(BusTrip trip) {
         if (trip.getId() == null || trip.getId().isBlank()) {
             throw new IllegalArgumentException("Bus trip ID cannot be empty");
         }
-        if (tripRepository.findById(trip.getId()).isPresent()) {
+        if (busTripRepository.findById(trip.getId()).isPresent()) {
             throw new IllegalArgumentException("Bus trip already exists with ID: " + trip.getId());
         }
-        CrudRepository<Route, String> routeRepository = getRouteRepository(repositoryType);
         Route route = routeRepository.findById(trip.getRouteId())
                 .orElseThrow(() -> new NoSuchElementException("Assigned route does not exist: " + trip.getRouteId()));
-        Bus bus = getBusRepository(repositoryType).findById(trip.getBusId())
+        Bus bus = busRepository.findById(trip.getBusId())
                 .orElseThrow(() -> new NoSuchElementException("Assigned bus does not exist: " + trip.getBusId()));
 
         if (bus.getStatus() != BusStatus.ACTIVE) {
@@ -62,23 +47,22 @@ public class BusTripService {
             throw new IllegalArgumentException("Arrival time cannot be before start time");
         }
 
-        BusTrip savedTrip = tripRepository.save(trip);
-        addTripToRouteAndStations(savedTrip, route, repositoryType, routeRepository);
+        BusTrip savedTrip = busTripRepository.save(trip);
+        addTripToRouteAndStations(savedTrip, route);
         return savedTrip;
     }
 
     public BusTrip getTripById(String id) {
-        return inFileBusTripRepository.findById(id)
-                .or(() -> inMemoryBusTripRepository.findById(id))
+        return busTripRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("BusTrip not found: " + id));
     }
 
-    public List<BusTrip> getAllTrips(RepositoryType repositoryType) {
-        return getRepository(repositoryType).findAll();
+    public List<BusTrip> getAllTrips() {
+        return busTripRepository.findAll();
     }
 
     public List<BusTrip> getTripsByRoute(String routeId) {
-        return inFileBusTripRepository.findAll().stream()
+        return busTripRepository.findAll().stream()
                 .filter(t -> routeId.equals(t.getRouteId()))
                 .toList();
     }
@@ -86,10 +70,7 @@ public class BusTripService {
     public BusTrip updateTripStatus(String tripId, TripStatus status) {
         BusTrip trip = getTripById(tripId);
         trip.setStatus(status);
-        if (inFileBusTripRepository.findById(tripId).isPresent()) {
-            return inFileBusTripRepository.save(trip);
-        }
-        return inMemoryBusTripRepository.save(trip);
+        return busTripRepository.save(trip);
     }
 
     public BusTrip assignDuty(String tripId, DutyAssignment assignment) {
@@ -98,47 +79,20 @@ public class BusTripService {
         DutyAssignment saved = dutyAssignmentRepository.save(assignment);
 
         trip.getAssignments().add(saved);
-        if (inFileBusTripRepository.findById(tripId).isPresent()) {
-            return inFileBusTripRepository.save(trip);
-        }
-        return inMemoryBusTripRepository.save(trip);
+        return busTripRepository.save(trip);
     }
 
-    public void deleteTrip(String id, RepositoryType repositoryType) {
-        CrudRepository<BusTrip, String> tripRepository = getRepository(repositoryType);
-        tripRepository.findById(id).ifPresent(trip -> {
-            removeTripFromRouteAndStations(trip, repositoryType);
-            tripRepository.deleteById(id);
+    public void deleteTrip(String id) {
+        busTripRepository.findById(id).ifPresent(trip -> {
+            removeTripFromRouteAndStations(trip);
+            busTripRepository.deleteById(id);
         });
     }
 
-    private CrudRepository<BusTrip, String> getRepository(RepositoryType repositoryType) {
-        return repositoryType == RepositoryType.IN_FILE
-                ? inFileBusTripRepository
-                : inMemoryBusTripRepository;
-    }
-
-    private CrudRepository<Route, String> getRouteRepository(RepositoryType repositoryType) {
-        return repositoryType == RepositoryType.IN_FILE
-                ? inFileRouteRepository
-                : inMemoryRouteRepository;
-    }
-
-    private CrudRepository<Bus, String> getBusRepository(RepositoryType repositoryType) {
-        return repositoryType == RepositoryType.IN_FILE
-                ? inFileBusRepository
-                : inMemoryBusRepository;
-    }
-
-    private void addTripToRouteAndStations(BusTrip trip, Route route,
-                                           RepositoryType repositoryType,
-                                           CrudRepository<Route, String> routeRepository) {
+    private void addTripToRouteAndStations(BusTrip trip, Route route) {
         addIfMissing(route.getTrips(), trip);
         routeRepository.save(route);
 
-        CrudRepository<BusStation, String> stationRepository = repositoryType == RepositoryType.IN_FILE
-                ? inFileStationRepository
-                : inMemoryStationRepository;
         addTripToStation(trip, route.getOrigin(), stationRepository);
         addTripToStation(trip, route.getDestination(), stationRepository);
     }
@@ -160,12 +114,7 @@ public class BusTripService {
         }
     }
 
-    private void removeTripFromRouteAndStations(BusTrip trip, RepositoryType repositoryType) {
-        CrudRepository<Route, String> routeRepository = getRouteRepository(repositoryType);
-        CrudRepository<BusStation, String> stationRepository = repositoryType == RepositoryType.IN_FILE
-                ? inFileStationRepository
-                : inMemoryStationRepository;
-
+    private void removeTripFromRouteAndStations(BusTrip trip) {
         routeRepository.findById(trip.getRouteId()).ifPresent(route -> {
             route.getTrips().removeIf(existing -> trip.getId().equals(existing.getId()));
             routeRepository.save(route);
