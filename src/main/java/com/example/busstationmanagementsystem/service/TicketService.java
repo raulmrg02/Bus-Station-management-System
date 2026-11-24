@@ -7,17 +7,11 @@ import com.example.busstationmanagementsystem.model.BusStation;
 import com.example.busstationmanagementsystem.model.Route;
 import com.example.busstationmanagementsystem.model.Ticket;
 import com.example.busstationmanagementsystem.repository.CrudRepository;
-import com.example.busstationmanagementsystem.repository.BusTripFileRepository;
 import com.example.busstationmanagementsystem.repository.BusTripRepository;
-import com.example.busstationmanagementsystem.repository.BusFileRepository;
 import com.example.busstationmanagementsystem.repository.BusRepository;
 import com.example.busstationmanagementsystem.repository.RouteRepository;
-import com.example.busstationmanagementsystem.repository.RouteFileRepository;
 import com.example.busstationmanagementsystem.repository.BusStationRepository;
-import com.example.busstationmanagementsystem.repository.BusStationFileRepository;
-import com.example.busstationmanagementsystem.repository.TicketFileRepository;
 import com.example.busstationmanagementsystem.repository.TicketRepository;
-import com.example.busstationmanagementsystem.repository.PassengerFileRepository;
 import com.example.busstationmanagementsystem.repository.PassengerRepository;
 import org.springframework.stereotype.Service;
 
@@ -45,29 +39,23 @@ public class TicketService {
     private final CrudRepository<BusStation, String> inFileStationRepository;
 
     public TicketService(TicketRepository ticketRepository,
-                         TicketFileRepository ticketFileRepository,
                          PassengerRepository passengerRepository,
-                         PassengerFileRepository passengerFileRepository,
                          BusTripRepository busTripRepository,
-                         BusTripFileRepository busTripFileRepository,
                          BusRepository busRepository,
-                         BusFileRepository busFileRepository,
                          RouteRepository routeRepository,
-                         RouteFileRepository routeFileRepository,
-                         BusStationRepository stationRepository,
-                         BusStationFileRepository stationFileRepository) {
-        this.inMemoryTicketRepository = ticketRepository;
-        this.inFileTicketRepository = ticketFileRepository;
-        this.inMemoryPassengerRepository = passengerRepository;
-        this.inFilePassengerRepository = passengerFileRepository;
-        this.inMemoryBusTripRepository = busTripRepository;
-        this.inFileBusTripRepository = busTripFileRepository;
-        this.inMemoryBusRepository = busRepository;
-        this.inFileBusRepository = busFileRepository;
-        this.inMemoryRouteRepository = routeRepository;
-        this.inFileRouteRepository = routeFileRepository;
-        this.inMemoryStationRepository = stationRepository;
-        this.inFileStationRepository = stationFileRepository;
+                         BusStationRepository stationRepository) {
+        this.inMemoryTicketRepository = ticketRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
+        this.inFileTicketRepository = ticketRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
+        this.inMemoryPassengerRepository = passengerRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
+        this.inFilePassengerRepository = passengerRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
+        this.inMemoryBusTripRepository = busTripRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
+        this.inFileBusTripRepository = busTripRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
+        this.inMemoryBusRepository = busRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
+        this.inFileBusRepository = busRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
+        this.inMemoryRouteRepository = routeRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
+        this.inFileRouteRepository = routeRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
+        this.inMemoryStationRepository = stationRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
+        this.inFileStationRepository = stationRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
     }
 
     public Passenger registerPassenger(Passenger passenger) {
