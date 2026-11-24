@@ -4,14 +4,10 @@ import com.example.busstationmanagementsystem.model.DutyAssignment;
 import com.example.busstationmanagementsystem.model.BusStation;
 import com.example.busstationmanagementsystem.model.BusTrip;
 import com.example.busstationmanagementsystem.model.Route;
-import com.example.busstationmanagementsystem.repository.BusTripFileRepository;
 import com.example.busstationmanagementsystem.repository.BusTripRepository;
 import com.example.busstationmanagementsystem.repository.CrudRepository;
-import com.example.busstationmanagementsystem.repository.DutyAssignmentFileRepository;
 import com.example.busstationmanagementsystem.repository.DutyAssignmentRepository;
-import com.example.busstationmanagementsystem.repository.BusStationFileRepository;
 import com.example.busstationmanagementsystem.repository.BusStationRepository;
-import com.example.busstationmanagementsystem.repository.RouteFileRepository;
 import com.example.busstationmanagementsystem.repository.RouteRepository;
 import org.springframework.stereotype.Service;
 
@@ -27,29 +23,25 @@ public class DutyAssignmentService {
 
     private final CrudRepository<DutyAssignment, String> inMemoryAssignmentRepository;
     private final CrudRepository<DutyAssignment, String> inFileAssignmentRepository;
-    private final BusTripRepository inMemoryBusTripRepository;
-    private final BusTripFileRepository inFileBusTripRepository;
+    private final CrudRepository<BusTrip, String> inMemoryBusTripRepository;
+    private final CrudRepository<BusTrip, String> inFileBusTripRepository;
     private final CrudRepository<Route, String> inMemoryRouteRepository;
     private final CrudRepository<Route, String> inFileRouteRepository;
     private final CrudRepository<BusStation, String> inMemoryStationRepository;
     private final CrudRepository<BusStation, String> inFileStationRepository;
 
     public DutyAssignmentService(DutyAssignmentRepository dutyAssignmentRepository,
-                                 DutyAssignmentFileRepository dutyAssignmentFileRepository,
                                  BusTripRepository busTripRepository,
-                                 BusTripFileRepository busTripFileRepository,
                                  RouteRepository routeRepository,
-                                 RouteFileRepository routeFileRepository,
-                                 BusStationRepository stationRepository,
-                                 BusStationFileRepository stationFileRepository) {
-        this.inMemoryAssignmentRepository = dutyAssignmentRepository;
-        this.inFileAssignmentRepository = dutyAssignmentFileRepository;
-        this.inMemoryBusTripRepository = busTripRepository;
-        this.inFileBusTripRepository = busTripFileRepository;
-        this.inMemoryRouteRepository = routeRepository;
-        this.inFileRouteRepository = routeFileRepository;
-        this.inMemoryStationRepository = stationRepository;
-        this.inFileStationRepository = stationFileRepository;
+                                 BusStationRepository stationRepository) {
+        this.inMemoryAssignmentRepository = dutyAssignmentRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
+        this.inFileAssignmentRepository = dutyAssignmentRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
+        this.inMemoryBusTripRepository = busTripRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
+        this.inFileBusTripRepository = busTripRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
+        this.inMemoryRouteRepository = routeRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
+        this.inFileRouteRepository = routeRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
+        this.inMemoryStationRepository = stationRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
+        this.inFileStationRepository = stationRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
     }
 
     public DutyAssignment assignDuty(DutyAssignment assignment, RepositoryType repositoryType) {
