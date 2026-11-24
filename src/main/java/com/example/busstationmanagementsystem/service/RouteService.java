@@ -2,7 +2,6 @@ package com.example.busstationmanagementsystem.service;
 
 import com.example.busstationmanagementsystem.model.Route;
 import com.example.busstationmanagementsystem.repository.CrudRepository;
-import com.example.busstationmanagementsystem.repository.RouteFileRepository;
 import com.example.busstationmanagementsystem.repository.RouteRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +19,9 @@ public class RouteService {
     private final CrudRepository<Route, String> inMemoryRouteRepository;
     private final CrudRepository<Route, String> inFileRouteRepository;
 
-    public RouteService(RouteRepository routeRepository, RouteFileRepository routeFileRepository) {
-        this.inMemoryRouteRepository = routeRepository;
-        this.inFileRouteRepository = routeFileRepository;
+    public RouteService(RouteRepository routeRepository) {
+        this.inMemoryRouteRepository = routeRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
+        this.inFileRouteRepository = routeRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
     }
 
     public void createRoute(Route route, RepositoryType repositoryType) {
