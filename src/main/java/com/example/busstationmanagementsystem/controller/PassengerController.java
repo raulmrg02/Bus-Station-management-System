@@ -21,43 +21,32 @@ public class PassengerController {
     }
 
     @GetMapping
-    public String getAllPassengers(@RequestParam(defaultValue = "IN_MEMORY") PassengerService.RepositoryType repository,
-                                   Model model) {
-        model.addAttribute("passengers", passengerService.getAllPassengers(repository));
-        model.addAttribute("selectedRepository", repository);
+    public String getAllPassengers(Model model) {
+        model.addAttribute("passengers", passengerService.getAllPassengers());
         return "passenger/index";
     }
 
     @GetMapping("/new")
-    public String showCreateForm(@RequestParam(defaultValue = "IN_MEMORY") PassengerService.RepositoryType repository,
-                                 Model model) {
+    public String showCreateForm(Model model) {
         model.addAttribute("passenger", new Passenger());
-        model.addAttribute("selectedRepository", repository);
         return "passenger/form";
     }
 
     @PostMapping
     public String createPassenger(@ModelAttribute("passenger") Passenger passenger,
-                                  @RequestParam(defaultValue = "IN_MEMORY") PassengerService.RepositoryType repository,
                                   Model model) {
         try {
-            passengerService.createPassenger(passenger, repository);
+            passengerService.createPassenger(passenger);
         } catch (IllegalArgumentException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
-            model.addAttribute("selectedRepository", repository);
             return "passenger/form";
         }
-        return "redirect:/passengers?repository=" + repository;
+        return "redirect:/passengers";
     }
 
     @GetMapping("/{id}")
-    public String showPassengerDetails(@PathVariable("id") String id,
-                                       @RequestParam(defaultValue = "IN_MEMORY") PassengerService.RepositoryType repository,
-                                       Model model) {
-        Passenger passenger = passengerService.getAllPassengers(repository).stream()
-                .filter(item -> item.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new java.util.NoSuchElementException("Passenger not found: " + id));
+    public String showPassengerDetails(@PathVariable("id") String id, Model model) {
+        Passenger passenger = passengerService.getPassengerById(id);
         Map<String, Object> fields = new LinkedHashMap<>();
         fields.put("ID", passenger.getId());
         fields.put("Name", passenger.getName());
@@ -67,14 +56,12 @@ public class PassengerController {
         model.addAttribute("title", "Passenger " + passenger.getId());
         model.addAttribute("fields", fields);
         model.addAttribute("backUrl", "/passengers");
-        model.addAttribute("selectedRepository", repository);
         return "details";
     }
 
     @PostMapping("/{id}/delete")
-    public String deletePassenger(@PathVariable("id") String id,
-                                  @RequestParam(defaultValue = "IN_MEMORY") PassengerService.RepositoryType repository) {
-        passengerService.deletePassenger(id, repository);
-        return "redirect:/passengers?repository=" + repository;
+    public String deletePassenger(@PathVariable("id") String id) {
+        passengerService.deletePassenger(id);
+        return "redirect:/passengers";
     }
 }

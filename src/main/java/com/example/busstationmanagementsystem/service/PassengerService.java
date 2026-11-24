@@ -2,7 +2,6 @@ package com.example.busstationmanagementsystem.service;
 
 import com.example.busstationmanagementsystem.model.Passenger;
 import com.example.busstationmanagementsystem.repository.CrudRepository;
-import com.example.busstationmanagementsystem.repository.PassengerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,22 +9,13 @@ import java.util.NoSuchElementException;
 
 @Service
 public class PassengerService {
+    private final CrudRepository<Passenger, String> passengerRepository;
 
-    public enum RepositoryType {
-        IN_MEMORY,
-        IN_FILE
+    public PassengerService(CrudRepository<Passenger, String> passengerRepository) {
+        this.passengerRepository = passengerRepository;
     }
 
-    private final CrudRepository<Passenger, String> inMemoryPassengerRepository;
-    private final CrudRepository<Passenger, String> inFilePassengerRepository;
-
-    public PassengerService(PassengerRepository passengerRepository) {
-        this.inMemoryPassengerRepository = passengerRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
-        this.inFilePassengerRepository = passengerRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
-    }
-
-    public Passenger createPassenger(Passenger passenger, RepositoryType repositoryType) {
-        CrudRepository<Passenger, String> passengerRepository = getRepository(repositoryType);
+    public Passenger createPassenger(Passenger passenger) {
         if (passengerRepository.findById(passenger.getId()).isPresent()) {
             throw new IllegalArgumentException("Passenger already exists with ID: " + passenger.getId());
         }
@@ -38,22 +28,16 @@ public class PassengerService {
         return passengerRepository.save(passenger);
     }
 
-    public List<Passenger> getAllPassengers(RepositoryType repositoryType) {
-        return getRepository(repositoryType).findAll();
+    public List<Passenger> getAllPassengers() {
+        return passengerRepository.findAll();
     }
 
     public Passenger getPassengerById(String id) {
-        return inMemoryPassengerRepository.findById(id)
+        return passengerRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Passenger not found: " + id));
     }
 
-    public void deletePassenger(String id, RepositoryType repositoryType) {
-        getRepository(repositoryType).deleteById(id);
-    }
-
-    private CrudRepository<Passenger, String> getRepository(RepositoryType repositoryType) {
-        return repositoryType == RepositoryType.IN_FILE
-                ? inFilePassengerRepository
-                : inMemoryPassengerRepository;
+    public void deletePassenger(String id) {
+        passengerRepository.deleteById(id);
     }
 }

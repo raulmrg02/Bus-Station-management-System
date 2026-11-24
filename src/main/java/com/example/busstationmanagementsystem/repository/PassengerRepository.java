@@ -1,18 +1,23 @@
 package com.example.busstationmanagementsystem.repository;
 
 import com.example.busstationmanagementsystem.model.Passenger;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class PassengerRepository extends InMemoryRepository<Passenger, String> {
-    private final CrudRepository<Passenger, String> fileRepository;
+import java.nio.file.Path;
 
+@Repository
+@Profile("memory")
+public class PassengerRepository extends InMemoryRepository<Passenger, String> {
     public PassengerRepository() {
         super(Passenger::getId);
-        fileRepository = new InFileRepository<Passenger>("src/main/resources/data/passengers.json", Passenger.class, Passenger::getId) {};
     }
 
-    public CrudRepository<Passenger, String> forMode(StorageMode mode) {
-        return mode == StorageMode.IN_FILE ? fileRepository : this;
+    @Repository
+    @Profile("file")
+    public static class PassengerFileRepository extends InFileRepository<Passenger> {
+        public PassengerFileRepository() {
+            super(Path.of(DATA_DIRECTORY, "passengers.json").toString(), Passenger.class, Passenger::getId);
+        }
     }
 }
