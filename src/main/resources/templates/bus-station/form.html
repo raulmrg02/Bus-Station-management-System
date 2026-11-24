@@ -2,18 +2,18 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Create Bus Station</title>
+    <title th:text="${isUpdate} ? 'Update Bus Station' : 'Create Bus Station'">Create Bus Station</title>
 </head>
 <body>
-<h1>Add a New Bus Station</h1>
+<h1 th:text="${isUpdate} ? 'Update Bus Station' : 'Add a New Bus Station'">Add a New Bus Station</h1>
 
 <p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
 
-<form th:action="@{/stations}" th:object="${station}" method="post">
+<form th:action="${isUpdate} ? @{/stations/{id}(id=${station.id})} : @{/stations}" th:object="${station}" method="post">
     <input type="hidden" name="repository" th:value="${selectedRepository}">
     <div>
         <label for="id">Station ID:</label><br>
-        <input type="text" id="id" th:field="*{id}" required />
+        <input type="text" id="id" th:field="*{id}" th:readonly="${isUpdate}" required />
     </div>
     <br>
     <div>
@@ -26,7 +26,7 @@
         <input type="text" id="city" th:field="*{city}" required />
     </div>
     <br>
-    <button type="submit">Save Bus Station</button>
+    <button type="submit" th:text="${isUpdate} ? 'Update Bus Station' : 'Save Bus Station'">Save Bus Station</button>
     <a th:href="@{/stations(repository=${selectedRepository})}">Cancel</a>
 </form>
 </body>

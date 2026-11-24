@@ -41,6 +41,7 @@
         <td th:text="${station.trips != null ? station.trips.size() : 0}">0</td>
         <td>
             <a th:href="@{'/stations/' + ${station.id}(repository=${selectedRepository})}">Details</a>
+            <a th:href="@{'/stations/' + ${station.id} + '/edit'(repository=${selectedRepository})}">Update</a>
             <form th:action="@{'/stations/' + ${station.id} + '/delete'}" method="post" style="display:inline">
                 <input type="hidden" name="repository" th:value="${selectedRepository}">
                 <button type="submit">Delete</button>

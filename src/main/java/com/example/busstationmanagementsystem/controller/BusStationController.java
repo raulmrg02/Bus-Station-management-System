@@ -35,6 +35,17 @@ public class BusStationController {
             Model model) {
         model.addAttribute("station", new BusStation());
         model.addAttribute("selectedRepository", repository);
+        model.addAttribute("isUpdate", false);
+        return "bus-station/form";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showUpdateForm(@PathVariable("id") String id,
+                                 @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
+                                 Model model) {
+        model.addAttribute("station", stationService.getStationById(id, repository));
+        model.addAttribute("selectedRepository", repository);
+        model.addAttribute("isUpdate", true);
         return "bus-station/form";
     }
 
@@ -48,6 +59,23 @@ public class BusStationController {
         } catch (IllegalArgumentException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
             model.addAttribute("selectedRepository", repository);
+            model.addAttribute("isUpdate", false);
+            return "bus-station/form";
+        }
+        return "redirect:/stations?repository=" + repository;
+    }
+
+    @PostMapping("/{id}")
+    public String updateStation(@PathVariable("id") String id,
+                                @ModelAttribute("station") BusStation station,
+                                @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
+                                Model model) {
+        try {
+            stationService.updateStation(id, station, repository);
+        } catch (IllegalArgumentException exception) {
+            model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("selectedRepository", repository);
+            model.addAttribute("isUpdate", true);
             return "bus-station/form";
         }
         return "redirect:/stations?repository=" + repository;

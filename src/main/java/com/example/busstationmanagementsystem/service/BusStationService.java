@@ -40,6 +40,15 @@ public class BusStationService {
                 .orElseThrow(() -> new NoSuchElementException("Station not found: " + id));
     }
 
+    public BusStation updateStation(String id, BusStation updatedStation, RepositoryType repositoryType) {
+        CrudRepository<BusStation, String> stationRepository = getRepository(repositoryType);
+        BusStation existingStation = stationRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Station not found: " + id));
+        updatedStation.setId(id);
+        updatedStation.setTrips(existingStation.getTrips());
+        return stationRepository.save(updatedStation);
+    }
+
     public void deleteById(String id, RepositoryType repositoryType) {
         getRepository(repositoryType).deleteById(id);
     }
