@@ -7,12 +7,6 @@ import com.example.busstationmanagementsystem.model.BusStation;
 import com.example.busstationmanagementsystem.model.Route;
 import com.example.busstationmanagementsystem.model.Ticket;
 import com.example.busstationmanagementsystem.repository.CrudRepository;
-import com.example.busstationmanagementsystem.repository.BusTripRepository;
-import com.example.busstationmanagementsystem.repository.BusRepository;
-import com.example.busstationmanagementsystem.repository.RouteRepository;
-import com.example.busstationmanagementsystem.repository.BusStationRepository;
-import com.example.busstationmanagementsystem.repository.TicketRepository;
-import com.example.busstationmanagementsystem.repository.PassengerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,61 +14,40 @@ import java.util.NoSuchElementException;
 
 @Service
 public class TicketService {
-    public enum RepositoryType {
-        IN_MEMORY,
-        IN_FILE
-    }
+    private final CrudRepository<Ticket, String> ticketRepository;
+    private final CrudRepository<Passenger, String> passengerRepository;
+    private final CrudRepository<BusTrip, String> busTripRepository;
+    private final CrudRepository<Bus, String> busRepository;
+    private final CrudRepository<Route, String> routeRepository;
+    private final CrudRepository<BusStation, String> stationRepository;
 
-    private final CrudRepository<Ticket, String> inMemoryTicketRepository;
-    private final CrudRepository<Ticket, String> inFileTicketRepository;
-    private final CrudRepository<Passenger, String> inMemoryPassengerRepository;
-    private final CrudRepository<Passenger, String> inFilePassengerRepository;
-    private final CrudRepository<BusTrip, String> inMemoryBusTripRepository;
-    private final CrudRepository<BusTrip, String> inFileBusTripRepository;
-    private final CrudRepository<Bus, String> inMemoryBusRepository;
-    private final CrudRepository<Bus, String> inFileBusRepository;
-    private final CrudRepository<Route, String> inMemoryRouteRepository;
-    private final CrudRepository<Route, String> inFileRouteRepository;
-    private final CrudRepository<BusStation, String> inMemoryStationRepository;
-    private final CrudRepository<BusStation, String> inFileStationRepository;
-
-    public TicketService(TicketRepository ticketRepository,
-                         PassengerRepository passengerRepository,
-                         BusTripRepository busTripRepository,
-                         BusRepository busRepository,
-                         RouteRepository routeRepository,
-                         BusStationRepository stationRepository) {
-        this.inMemoryTicketRepository = ticketRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
-        this.inFileTicketRepository = ticketRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
-        this.inMemoryPassengerRepository = passengerRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
-        this.inFilePassengerRepository = passengerRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
-        this.inMemoryBusTripRepository = busTripRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
-        this.inFileBusTripRepository = busTripRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
-        this.inMemoryBusRepository = busRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
-        this.inFileBusRepository = busRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
-        this.inMemoryRouteRepository = routeRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
-        this.inFileRouteRepository = routeRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
-        this.inMemoryStationRepository = stationRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
-        this.inFileStationRepository = stationRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
+    public TicketService(CrudRepository<Ticket, String> ticketRepository,
+                         CrudRepository<Passenger, String> passengerRepository,
+                         CrudRepository<BusTrip, String> busTripRepository,
+                         CrudRepository<Bus, String> busRepository,
+                         CrudRepository<Route, String> routeRepository,
+                         CrudRepository<BusStation, String> stationRepository) {
+        this.ticketRepository = ticketRepository;
+        this.passengerRepository = passengerRepository;
+        this.busTripRepository = busTripRepository;
+        this.busRepository = busRepository;
+        this.routeRepository = routeRepository;
+        this.stationRepository = stationRepository;
     }
 
     public Passenger registerPassenger(Passenger passenger) {
-        return inMemoryPassengerRepository.save(passenger);
+        return passengerRepository.save(passenger);
     }
 
     public Passenger getPassengerById(String id) {
-        return inMemoryPassengerRepository.findById(id)
+        return passengerRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Passenger not found: " + id));
     }
 
-    public Ticket bookTicket(Ticket ticket, RepositoryType repositoryType) {
-        CrudRepository<Ticket, String> ticketRepository = getRepository(repositoryType);
+    public Ticket bookTicket(Ticket ticket) {
         if (ticketRepository.findById(ticket.getId()).isPresent()) {
             throw new IllegalArgumentException("Ticket already exists with ID: " + ticket.getId());
         }
-        CrudRepository<BusTrip, String> busTripRepository = getBusTripRepository(repositoryType);
-        CrudRepository<Bus, String> busRepository = getBusRepository(repositoryType);
-        CrudRepository<Passenger, String> passengerRepository = getPassengerRepository(repositoryType);
         BusTrip trip = busTripRepository.findById(ticket.getTripId())
                 .orElseThrow(() -> new NoSuchElementException("Trip not found: " + ticket.getTripId()));
 
@@ -96,7 +69,7 @@ public class TicketService {
         Ticket savedTicket = ticketRepository.save(ticket);
         trip.getTickets().add(savedTicket);
         busTripRepository.save(trip);
-        syncTripReferences(trip, repositoryType);
+        syncTripReferences(trip);
         passenger.getTickets().add(savedTicket);
         passengerRepository.save(passenger);
 
@@ -104,22 +77,20 @@ public class TicketService {
     }
 
     public List<Ticket> getTicketsByTrip(String tripId) {
-        return inMemoryTicketRepository.findAll().stream()
+        return ticketRepository.findAll().stream()
                 .filter(t -> tripId.equals(t.getTripId()))
                 .toList();
     }
 
-    public List<Ticket> getAllTickets(RepositoryType repositoryType) {
-        return getRepository(repositoryType).findAll();
+    public List<Ticket> getAllTickets() {
+        return ticketRepository.findAll();
     }
 
-    public List<Passenger> getAllPassengers(RepositoryType repositoryType) {
-        return getPassengerRepository(repositoryType).findAll();
+    public List<Passenger> getAllPassengers() {
+        return passengerRepository.findAll();
     }
 
-    public boolean deleteTicket(String id, RepositoryType repositoryType) {
-        CrudRepository<Ticket, String> ticketRepository = getRepository(repositoryType);
-        CrudRepository<BusTrip, String> busTripRepository = getBusTripRepository(repositoryType);
+    public boolean deleteTicket(String id) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Ticket not found: " + id));
 
@@ -127,48 +98,17 @@ public class TicketService {
                 .ifPresent(trip -> {
                     trip.getTickets().removeIf(t -> id.equals(t.getId()));
                     busTripRepository.save(trip);
-                    syncTripReferences(trip, repositoryType);
+                    syncTripReferences(trip);
                 });
-        getPassengerRepository(repositoryType).findById(ticket.getPassengerId())
+        passengerRepository.findById(ticket.getPassengerId())
                 .ifPresent(passenger -> {
                     passenger.getTickets().removeIf(t -> id.equals(t.getId()));
-                    getPassengerRepository(repositoryType).save(passenger);
+                    passengerRepository.save(passenger);
                 });
         return ticketRepository.deleteById(id);
     }
 
-    private CrudRepository<Ticket, String> getRepository(RepositoryType repositoryType) {
-        return repositoryType == RepositoryType.IN_FILE
-                ? inFileTicketRepository
-                : inMemoryTicketRepository;
-    }
-
-    private CrudRepository<Passenger, String> getPassengerRepository(RepositoryType repositoryType) {
-        return repositoryType == RepositoryType.IN_FILE
-                ? inFilePassengerRepository
-                : inMemoryPassengerRepository;
-    }
-
-    private CrudRepository<BusTrip, String> getBusTripRepository(RepositoryType repositoryType) {
-        return repositoryType == RepositoryType.IN_FILE
-                ? inFileBusTripRepository
-                : inMemoryBusTripRepository;
-    }
-
-    private CrudRepository<Bus, String> getBusRepository(RepositoryType repositoryType) {
-        return repositoryType == RepositoryType.IN_FILE
-                ? inFileBusRepository
-                : inMemoryBusRepository;
-    }
-
-    private void syncTripReferences(BusTrip trip, RepositoryType repositoryType) {
-        CrudRepository<Route, String> routeRepository = repositoryType == RepositoryType.IN_FILE
-                ? inFileRouteRepository
-                : inMemoryRouteRepository;
-        CrudRepository<BusStation, String> stationRepository = repositoryType == RepositoryType.IN_FILE
-                ? inFileStationRepository
-                : inMemoryStationRepository;
-
+    private void syncTripReferences(BusTrip trip) {
         routeRepository.findById(trip.getRouteId()).ifPresent(route -> {
             replaceTrip(route.getTrips(), trip);
             routeRepository.save(route);
