@@ -2,16 +2,19 @@
 
 ## Storage configuration
 
-Choose exactly one storage profile: `memory` (the default) stores data in memory, and data is lost when the application
-stops; `file` persists data in JSON files. Do not activate both profiles together. File storage always uses the `data`
-directory at `src/main/resources/data`, relative to the application's working directory. File-mode changes are written
-to that directory.
+Choose exactly one storage profile. The default `file` profile persists data in JSON files. The `memory` profile stores
+data in memory and starts with five sample records for each model; all memory data is lost when the application stops.
+Do not activate both profiles together. File storage uses the `src/main/resources/data` directory relative to the
+application's working directory, and file-mode changes are written there.
 
-For example, to use file storage:
+To start with the five in-memory sample records:
 
 ```shell
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=memory
 ```
+
+To use persistent file storage, run `./mvnw spring-boot:run` or explicitly select `file` with
+`-Dspring-boot.run.profiles=file`.
 
 ## Architecture Decisions
 
