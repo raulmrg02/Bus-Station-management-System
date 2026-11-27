@@ -2,17 +2,22 @@ package com.example.busstationmanagementsystem.repository;
 
 import com.example.busstationmanagementsystem.model.DutyAssignment;
 import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository
 public class DutyAssignmentRepository extends InMemoryRepository<DutyAssignment, String> {
-    private final CrudRepository<DutyAssignment, String> fileRepository;
-
     public DutyAssignmentRepository() {
         super(DutyAssignment::getId);
-        fileRepository = new InFileRepository<DutyAssignment>("src/main/resources/data/duty_assignments.json", DutyAssignment.class, DutyAssignment::getId) {};
+    }
+    public List<DutyAssignment> findByStaffId(String staffId) {
+        return findAll().stream()
+                .filter(a -> staffId.equals(a.getStaffId()))
+                .toList();
     }
 
-    public CrudRepository<DutyAssignment, String> forMode(StorageMode mode) {
-        return mode == StorageMode.IN_FILE ? fileRepository : this;
+    public List<DutyAssignment> findByTripId(String tripId) {
+        return findAll().stream()
+                .filter(a -> tripId.equals(a.getTripId()))
+                .toList();
     }
 }
