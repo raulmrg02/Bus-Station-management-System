@@ -16,28 +16,32 @@ public class BusTripService {
 
     private final CrudRepository<BusTrip, String> inMemoryBusTripRepository;
     private final CrudRepository<BusTrip, String> inFileBusTripRepository;
-    private final DutyAssignmentRepository dutyAssignmentRepository;
-    private final CrudRepository<Bus, String> inMemoryBusRepository;
-    private final CrudRepository<Bus, String> inFileBusRepository;
+    private final CrudRepository<DutyAssignment, String> dutyAssignmentRepository;
+    private final BusRepository inMemoryBusRepository;
+    private final BusFileRepository inFileBusRepository;
     private final CrudRepository<Route, String> inMemoryRouteRepository;
     private final CrudRepository<Route, String> inFileRouteRepository;
     private final CrudRepository<BusStation, String> inMemoryStationRepository;
     private final CrudRepository<BusStation, String> inFileStationRepository;
 
     public BusTripService(BusTripRepository busTripRepository,
-                          DutyAssignmentRepository dutyAssignmentRepository,
+                          BusTripFileRepository busTripFileRepository,
+                          CrudRepository<DutyAssignment, String> dutyAssignmentRepository,
                           BusRepository busRepository,
+                          BusFileRepository busFileRepository,
                           RouteRepository routeRepository,
-                          BusStationRepository stationRepository) {
-        this.inMemoryBusTripRepository = busTripRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
-        this.inFileBusTripRepository = busTripRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
+                          RouteFileRepository routeFileRepository,
+                          BusStationRepository stationRepository,
+                          BusStationFileRepository stationFileRepository) {
+        this.inMemoryBusTripRepository = busTripRepository;
+        this.inFileBusTripRepository = busTripFileRepository;
         this.dutyAssignmentRepository = dutyAssignmentRepository;
-        this.inMemoryBusRepository = busRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
-        this.inFileBusRepository = busRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
-        this.inMemoryRouteRepository = routeRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
-        this.inFileRouteRepository = routeRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
-        this.inMemoryStationRepository = stationRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
-        this.inFileStationRepository = stationRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
+        this.inMemoryBusRepository = busRepository;
+        this.inFileBusRepository = busFileRepository;
+        this.inMemoryRouteRepository = routeRepository;
+        this.inFileRouteRepository = routeFileRepository;
+        this.inMemoryStationRepository = stationRepository;
+        this.inFileStationRepository = stationFileRepository;
     }
 
     public BusTrip scheduleTrip(BusTrip trip, RepositoryType repositoryType) {

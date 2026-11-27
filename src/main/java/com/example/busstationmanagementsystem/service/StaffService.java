@@ -4,6 +4,7 @@ import com.example.busstationmanagementsystem.model.Driver;
 import com.example.busstationmanagementsystem.model.Staff;
 import com.example.busstationmanagementsystem.model.TripManager;
 import com.example.busstationmanagementsystem.repository.CrudRepository;
+import com.example.busstationmanagementsystem.repository.StaffFileRepository;
 import com.example.busstationmanagementsystem.repository.StaffRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +21,9 @@ public class StaffService {
     private final CrudRepository<Staff, String> inMemoryStaffRepository;
     private final CrudRepository<Staff, String> inFileStaffRepository;
 
-    public StaffService(StaffRepository staffRepository) {
-        this.inMemoryStaffRepository = staffRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
-        this.inFileStaffRepository = staffRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
+    public StaffService(StaffRepository staffRepository, StaffFileRepository staffFileRepository) {
+        this.inMemoryStaffRepository = staffRepository;
+        this.inFileStaffRepository = staffFileRepository;
     }
 
     public Staff registerStaff(Staff staff, RepositoryType repositoryType) {
