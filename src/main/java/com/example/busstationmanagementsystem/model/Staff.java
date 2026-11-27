@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Staff {
-    private String id;
+    private String id = IdGenerator.generate("SF");
     private String name;
 
     private List<DutyAssignment> assignments = new ArrayList<>();

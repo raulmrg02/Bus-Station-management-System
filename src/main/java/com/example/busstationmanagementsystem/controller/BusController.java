@@ -30,6 +30,15 @@ public class BusController {
     public String showCreateForm(Model model) {
         model.addAttribute("bus", new Bus());
         model.addAttribute("statuses", BusStatus.values());
+        model.addAttribute("isUpdate", false);
+        return "bus/form";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showUpdateForm(@PathVariable("id") String id, Model model) {
+        model.addAttribute("bus", busService.getBusById(id));
+        model.addAttribute("statuses", BusStatus.values());
+        model.addAttribute("isUpdate", true);
         return "bus/form";
     }
 
@@ -42,6 +51,22 @@ public class BusController {
         } catch (IllegalArgumentException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
             model.addAttribute("statuses", BusStatus.values());
+            model.addAttribute("isUpdate", false);
+            return "bus/form";
+        }
+        return "redirect:/buses";
+    }
+
+    @PostMapping("/{id}")
+    public String updateBus(@PathVariable("id") String id,
+                            @ModelAttribute("bus") Bus bus,
+                            Model model) {
+        try {
+            busService.updateBus(id, bus);
+        } catch (IllegalArgumentException exception) {
+            model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("statuses", BusStatus.values());
+            model.addAttribute("isUpdate", true);
             return "bus/form";
         }
         return "redirect:/buses";

@@ -1,7 +1,7 @@
 package com.example.busstationmanagementsystem.model;
 
 public class DutyAssignment {
-    private String id;
+    private String id = IdGenerator.generate("DA");
     private String tripId;
     private String staffId;
     private DutyRole role;

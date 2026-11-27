@@ -32,7 +32,18 @@ public class RouteController {
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
+        model.addAttribute("route", new Route());
         model.addAttribute("stations", stationService.getAllStations());
+        model.addAttribute("isUpdate", false);
+        return "route/form";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showUpdateForm(@PathVariable String id, Model model) {
+        Route route = routeService.getRouteById(id);
+        model.addAttribute("route", route);
+        model.addAttribute("stations", stationService.getAllStations());
+        model.addAttribute("isUpdate", true);
         return "route/form";
     }
 
@@ -52,11 +63,46 @@ public class RouteController {
             routeService.createRoute(route);
         } catch (IllegalArgumentException | NoSuchElementException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("route", new Route());
             model.addAttribute("stations", stationService.getAllStations());
+            model.addAttribute("isUpdate", false);
             return "route/form";
         }
         return "redirect:/routes";
     }
+
+    @PostMapping("/{id}")
+    public String updateRoute(@PathVariable String id,
+                              @RequestParam String originId,
+                              @RequestParam String destinationId,
+                              @RequestParam BigDecimal distance,
+                              Model model) {
+       try {
+           routeService.updateRoute(id, new Route(
+                   id,
+                   stationService.getStationById(originId),
+                   stationService.getStationById(destinationId),
+                   distance
+           ));
+        } catch (IllegalArgumentException | NoSuchElementException exception) {
+            model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("route", new Route(
+                    id,
+                    stationService.getAllStations().stream()
+                            .filter(station -> station.getId().equals(originId))
+                            .findFirst().orElse(null),
+                    stationService.getAllStations().stream()
+                            .filter(station -> station.getId().equals(destinationId))
+                            .findFirst().orElse(null),
+                    distance
+            ));
+            model.addAttribute("stations", stationService.getAllStations());
+            model.addAttribute("isUpdate", true);
+            return "route/form";
+        }
+        return "redirect:/routes";
+    }
+
 
     @GetMapping("/{id}")
     public String showRouteDetails(@PathVariable String id, Model model) {

@@ -2,43 +2,43 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Create Staff Member</title>
+    <title th:text="${isUpdate} ? 'Update Staff Member' : 'Create Staff Member'">Create Staff Member</title>
 </head>
 <body>
-<h1>Add a New Staff Member</h1>
+<h1 th:text="${isUpdate} ? 'Update Staff Member' : 'Add a New Staff Member'">Add a New Staff Member</h1>
 
 <p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
 
-<form th:action="@{/staff}" method="post">
+<form th:action="${isUpdate} ? @{/staff/{id}(id=${staff.id})} : @{/staff}" method="post">
     <div>
         <label for="id">Staff ID:</label><br>
-        <input type="text" id="id" name="id" required />
+        <input type="text" id="id" name="id" th:value="${staff != null ? staff.id : ''}" th:readonly="${isUpdate}" required />
     </div>
     <br>
     <div>
         <label for="name">Name:</label><br>
-        <input type="text" id="name" name="name" required />
+        <input type="text" id="name" name="name" th:value="${staff != null ? staff.name : ''}" required />
     </div>
     <br>
     <div>
         <label for="staffType">Staff Type:</label><br>
         <select id="staffType" name="staffType" onchange="toggleFields()">
-            <option value="DRIVER">Driver</option>
-            <option value="MANAGER">Trip Manager</option>
+            <option value="DRIVER" th:selected="${staffType == 'DRIVER'}">Driver</option>
+            <option value="MANAGER" th:selected="${staffType == 'MANAGER'}">Trip Manager</option>
         </select>
     </div>
     <br>
     <div id="driverField">
         <label for="yearsOfExperience">Years of Experience:</label><br>
-        <input type="number" id="yearsOfExperience" name="yearsOfExperience" min="0" placeholder="e.g. 5" />
+        <input type="number" id="yearsOfExperience" name="yearsOfExperience" th:value="${yearsOfExperience}" min="0" placeholder="e.g. 5" />
     </div>
     <br>
     <div id="managerField" style="display: none;">
         <label for="employeeCode">Employee Code:</label><br>
-        <input type="text" id="employeeCode" name="employeeCode" placeholder="e.g. MGR-101" />
+        <input type="text" id="employeeCode" name="employeeCode" th:value="${employeeCode}" placeholder="e.g. MGR-101" />
     </div>
     <br>
-    <button type="submit">Save Staff Member</button>
+    <button type="submit" th:text="${isUpdate} ? 'Update Staff Member' : 'Save Staff Member'">Save Staff Member</button>
     <a th:href="@{/staff}">Cancel</a>
 </form>
 
@@ -48,6 +48,7 @@
         document.getElementById("driverField").style.display = (type === "DRIVER") ? "block" : "none";
         document.getElementById("managerField").style.display = (type === "MANAGER") ? "block" : "none";
     }
+    toggleFields();
 </script>
 </body>
 </html>

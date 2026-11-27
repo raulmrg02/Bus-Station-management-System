@@ -35,38 +35,19 @@ public class TicketService {
         this.stationRepository = stationRepository;
     }
 
-    public Passenger registerPassenger(Passenger passenger) {
-        return passengerRepository.save(passenger);
-    }
-
-    public Passenger getPassengerById(String id) {
-        return passengerRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Passenger not found: " + id));
-    }
-
     public Ticket bookTicket(Ticket ticket) {
+        if (ticket.getId() == null || ticket.getId().isBlank()) {
+            throw new IllegalArgumentException("Ticket ID cannot be empty");
+        }
         if (ticketRepository.findById(ticket.getId()).isPresent()) {
             throw new IllegalArgumentException("Ticket already exists with ID: " + ticket.getId());
         }
-        BusTrip trip = busTripRepository.findById(ticket.getTripId())
-                .orElseThrow(() -> new NoSuchElementException("Trip not found: " + ticket.getTripId()));
-
-        Bus bus = busRepository.findById(trip.getBusId())
-                .orElseThrow(() -> new NoSuchElementException("Bus not found for trip: " + trip.getBusId()));
-
-        if (trip.getTickets().size() >= bus.getCapacity()) {
-            throw new IllegalStateException("Cannot book ticket: bus capacity (" + bus.getCapacity() + ") reached.");
-        }
-
-        boolean seatTaken = trip.getTickets().stream()
-                .anyMatch(t -> t.getSeatNumber().equalsIgnoreCase(ticket.getSeatNumber()));
-        if (seatTaken) {
-            throw new IllegalArgumentException("Seat " + ticket.getSeatNumber() + " is already booked.");
-        }
-
+        BusTrip trip = getTrip(ticket.getTripId());
         Passenger passenger = passengerRepository.findById(ticket.getPassengerId())
                 .orElseThrow(() -> new NoSuchElementException("Passenger not found: " + ticket.getPassengerId()));
+        validateSeatAndCapacity(ticket, trip, false);
         Ticket savedTicket = ticketRepository.save(ticket);
+        trip.getTickets().removeIf(existing -> savedTicket.getId().equals(existing.getId()));
         trip.getTickets().add(savedTicket);
         busTripRepository.save(trip);
         syncTripReferences(trip);
@@ -86,13 +67,48 @@ public class TicketService {
         return ticketRepository.findAll();
     }
 
+    public Ticket updateTicket(String id, Ticket updatedTicket) {
+        Ticket existingTicket = ticketRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Ticket not found: " + id));
+        BusTrip updatedTrip = getTrip(updatedTicket.getTripId());
+        Passenger updatedPassenger = passengerRepository.findById(updatedTicket.getPassengerId())
+                .orElseThrow(() -> new NoSuchElementException("Passenger not found: " + updatedTicket.getPassengerId()));
+        boolean movingToAnotherTrip = !existingTicket.getTripId().equals(updatedTicket.getTripId());
+        validateSeatAndCapacity(updatedTicket, updatedTrip, !movingToAnotherTrip, id);
+        updatedTicket.setId(id);
+        Ticket savedTicket = ticketRepository.save(updatedTicket);
+        if (movingToAnotherTrip) {
+            busTripRepository.findById(existingTicket.getTripId()).ifPresent(oldTrip -> {
+                oldTrip.getTickets().removeIf(ticket -> id.equals(ticket.getId()));
+                busTripRepository.save(oldTrip);
+                syncTripReferences(oldTrip);
+            });
+        }
+        if (!existingTicket.getPassengerId().equals(updatedTicket.getPassengerId())) {
+            passengerRepository.findById(existingTicket.getPassengerId()).ifPresent(oldPassenger -> {
+                oldPassenger.getTickets().removeIf(ticket -> id.equals(ticket.getId()));
+                passengerRepository.save(oldPassenger);
+            });
+        }
+        updatedTrip.getTickets().removeIf(ticket -> id.equals(ticket.getId()));
+        updatedTrip.getTickets().add(savedTicket);
+        busTripRepository.save(updatedTrip);
+        syncTripReferences(updatedTrip);
+        updatedPassenger.getTickets().removeIf(ticket -> id.equals(ticket.getId()));
+        updatedPassenger.getTickets().add(savedTicket);
+        passengerRepository.save(updatedPassenger);
+        return savedTicket;
+    }
+
     public List<Passenger> getAllPassengers() {
         return passengerRepository.findAll();
     }
 
     public boolean deleteTicket(String id) {
-        Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Ticket not found: " + id));
+        Ticket ticket = ticketRepository.findById(id).orElse(null);
+        if (ticket == null) {
+            return false;
+        }
 
         busTripRepository.findById(ticket.getTripId())
                 .ifPresent(trip -> {
@@ -115,6 +131,38 @@ public class TicketService {
             syncStation(route.getOrigin(), trip, stationRepository);
             syncStation(route.getDestination(), trip, stationRepository);
         });
+    }
+
+    private BusTrip getTrip(String id) {
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("Trip is required");
+        }
+        return busTripRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Trip not found: " + id));
+    }
+
+    private void validateSeatAndCapacity(Ticket ticket, BusTrip trip, boolean sameTrip) {
+        validateSeatAndCapacity(ticket, trip, sameTrip, null);
+    }
+
+    private void validateSeatAndCapacity(Ticket ticket, BusTrip trip, boolean sameTrip, String excludedTicketId) {
+        if (ticket.getSeatNumber() == null || ticket.getSeatNumber().isBlank()) {
+            throw new IllegalArgumentException("Seat number is required");
+        }
+        Bus bus = busRepository.findById(trip.getBusId())
+                .orElseThrow(() -> new NoSuchElementException("Bus not found for trip: " + trip.getBusId()));
+        long occupiedSeats = trip.getTickets().stream()
+                .filter(existing -> excludedTicketId == null || !excludedTicketId.equals(existing.getId()))
+                .count();
+        if (!sameTrip && occupiedSeats >= bus.getCapacity()) {
+            throw new IllegalStateException("Cannot book ticket: bus capacity (" + bus.getCapacity() + ") reached.");
+        }
+        boolean seatTaken = trip.getTickets().stream()
+                .anyMatch(existing -> !java.util.Objects.equals(excludedTicketId, existing.getId())
+                        && ticket.getSeatNumber().equalsIgnoreCase(existing.getSeatNumber()));
+        if (seatTaken) {
+            throw new IllegalArgumentException("Seat " + ticket.getSeatNumber() + " is already booked.");
+        }
     }
 
     private void syncStation(BusStation station, BusTrip trip,

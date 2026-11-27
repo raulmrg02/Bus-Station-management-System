@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BusTrip {
-    private String id;
+    private String id = IdGenerator.generate("TR");
     private String routeId;
     private String busId;
     private LocalDateTime startTime;

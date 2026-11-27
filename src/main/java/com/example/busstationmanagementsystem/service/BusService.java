@@ -10,9 +10,11 @@ import java.util.NoSuchElementException;
 @Service
 public class BusService {
     private final CrudRepository<Bus, String> busRepository;
+    private final BusTripService busTripService;
 
-    public BusService(CrudRepository<Bus, String> busRepository) {
+    public BusService(CrudRepository<Bus, String> busRepository, BusTripService busTripService) {
         this.busRepository = busRepository;
+        this.busTripService = busTripService;
     }
 
     public Bus registerBus(Bus bus) {
@@ -30,7 +32,19 @@ public class BusService {
                 .orElseThrow(() -> new NoSuchElementException("Bus not found: " + id));
     }
 
+    public Bus updateBus(String id, Bus updatedBus) {
+        busRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Bus not found: " + id));
+        updatedBus.setId(id);
+        return busRepository.save(updatedBus);
+    }
+
     public void deleteById(String id) {
+        busTripService.getAllTrips().stream()
+                .filter(trip -> id.equals(trip.getBusId()))
+                .map(trip -> trip.getId())
+                .toList()
+                .forEach(busTripService::deleteTrip);
         busRepository.deleteById(id);
     }
 

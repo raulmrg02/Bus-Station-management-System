@@ -1,6 +1,7 @@
 package com.example.busstationmanagementsystem.repository;
 
 import com.example.busstationmanagementsystem.model.Route;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
@@ -12,12 +13,11 @@ public class RouteRepository extends InMemoryRepository<Route, String> {
     public RouteRepository() {
         super(Route::getId);
     }
-
     @Repository
     @Profile("file")
     public static class RouteFileRepository extends InFileRepository<Route> {
-        public RouteFileRepository() {
-            super(Path.of(DATA_DIRECTORY, "routes.json").toString(), Route.class, Route::getId);
+        public RouteFileRepository(@Value("${busstation.data-directory:src/main/resources/data}") String dataDirectory) {
+            super(Path.of(dataDirectory, "routes.json").toString(), Route.class, Route::getId);
         }
     }
 }

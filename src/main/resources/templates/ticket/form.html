@@ -2,17 +2,17 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Create Ticket</title>
+    <title th:text="${isUpdate} ? 'Update Ticket' : 'Create Ticket'">Create Ticket</title>
 </head>
 <body>
-<h1>Book a New Ticket</h1>
+<h1 th:text="${isUpdate} ? 'Update Ticket' : 'Book a New Ticket'">Book a New Ticket</h1>
 
 <p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
 
-<form th:action="@{/tickets}" method="post">
+<form th:action="${isUpdate} ? @{/tickets/{id}(id=${ticket.id})} : @{/tickets}" method="post">
     <div>
         <label for="id">Ticket ID:</label><br>
-        <input type="text" id="id" name="id" required />
+        <input type="text" id="id" name="id" th:value="${ticket.id}" th:readonly="${isUpdate}" required />
     </div>
     <br>
     <div>
@@ -21,6 +21,7 @@
             <option value="">Select trip</option>
             <option th:each="trip : ${trips}"
                     th:value="${trip.id}"
+                    th:selected="${ticket.tripId == trip.id}"
                     th:text="${trip.id + ' - Route: ' + trip.routeId}">
                 TRIP-1 - Route: R1
             </option>
@@ -33,6 +34,7 @@
             <option value="">Select passenger</option>
             <option th:each="passenger : ${passengers}"
                     th:value="${passenger.id}"
+                    th:selected="${ticket.passengerId == passenger.id}"
                     th:text="${passenger.id + ' - ' + passenger.name}">
                 P1 - Alice
             </option>
@@ -41,15 +43,15 @@
     <br>
     <div>
         <label for="seatNumber">Seat Number:</label><br>
-        <input type="text" id="seatNumber" name="seatNumber" required />
+        <input type="text" id="seatNumber" name="seatNumber" th:value="${ticket.seatNumber}" required />
     </div>
     <br>
     <div>
         <label for="price">Price:</label><br>
-        <input type="number" id="price" name="price" min="0" step="0.01" required />
+        <input type="number" id="price" name="price" th:value="${ticket.price}" min="0" step="0.01" required />
     </div>
     <br>
-    <button type="submit">Save Ticket</button>
+    <button type="submit" th:text="${isUpdate} ? 'Update Ticket' : 'Save Ticket'">Save Ticket</button>
     <a th:href="@{/tickets}">Cancel</a>
 </form>
 </body>

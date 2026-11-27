@@ -28,6 +28,14 @@ public class BusStationController {
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("station", new BusStation());
+        model.addAttribute("isUpdate", false);
+        return "bus-station/form";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showUpdateForm(@PathVariable("id") String id, Model model) {
+        model.addAttribute("station", stationService.getStationById(id));
+        model.addAttribute("isUpdate", true);
         return "bus-station/form";
     }
 
@@ -39,6 +47,21 @@ public class BusStationController {
             stationService.registerStation(station);
         } catch (IllegalArgumentException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("isUpdate", false);
+            return "bus-station/form";
+        }
+        return "redirect:/stations";
+    }
+
+    @PostMapping("/{id}")
+    public String updateStation(@PathVariable("id") String id,
+                                @ModelAttribute("station") BusStation station,
+                                Model model) {
+        try {
+            stationService.updateStation(id, station);
+        } catch (IllegalArgumentException exception) {
+            model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("isUpdate", true);
             return "bus-station/form";
         }
         return "redirect:/stations";

@@ -33,7 +33,8 @@
                   th:text="${'Employee Code: ' + staff.employeeCode}"></span>
         </td>
         <td>
-            <a th:href="@{/staff/{id}(id=${staff.id})}">Details</a>
+            <a th:href="@{'/staff/' + ${staff.id}}">Details</a>
+            <a th:href="@{'/staff/' + ${staff.id} + '/edit'}">Update</a>
             <form th:action="@{'/staff/' + ${staff.id} + '/delete'}" method="post" style="display:inline">
                 <button type="submit">Delete</button>
             </form>

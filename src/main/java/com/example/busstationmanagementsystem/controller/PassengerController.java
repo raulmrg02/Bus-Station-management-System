@@ -29,6 +29,15 @@ public class PassengerController {
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("passenger", new Passenger());
+        model.addAttribute("isUpdate", false);
+        return "passenger/form";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showUpdateForm(@PathVariable("id") String id, Model model) {
+        Passenger passenger = passengerService.getPassengerById(id);
+        model.addAttribute("passenger", passenger);
+        model.addAttribute("isUpdate", true);
         return "passenger/form";
     }
 
@@ -39,6 +48,21 @@ public class PassengerController {
             passengerService.createPassenger(passenger);
         } catch (IllegalArgumentException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("isUpdate", false);
+            return "passenger/form";
+        }
+        return "redirect:/passengers";
+    }
+
+    @PostMapping("/{id}")
+    public String updatePassenger(@PathVariable("id") String id,
+                                  @ModelAttribute("passenger") Passenger passenger,
+                                  Model model) {
+        try {
+            passengerService.updatePassenger(id, passenger);
+        } catch (IllegalArgumentException exception) {
+            model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("isUpdate", true);
             return "passenger/form";
         }
         return "redirect:/passengers";

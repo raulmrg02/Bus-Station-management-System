@@ -28,7 +28,8 @@
         <td th:text="${assignment.staffId}">S1</td>
         <td th:text="${assignment.role}">PRIMARY_DRIVER</td>
         <td>
-            <a th:href="@{/duty-assignments/{id}(id=${assignment.id})}">Details</a>
+            <a th:href="@{'/duty-assignments/' + ${assignment.id}}">Details</a>
+            <a th:href="@{'/duty-assignments/' + ${assignment.id} + '/edit'}">Update</a>
             <form th:action="@{'/duty-assignments/' + ${assignment.id} + '/delete'}" method="post" style="display:inline">
                 <button type="submit">Delete</button>
             </form>

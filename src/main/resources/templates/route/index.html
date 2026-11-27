@@ -28,7 +28,8 @@
         <td th:text="${route.destination.name + ' (' + route.destination.city + ')'}">Airport (City)</td>
         <td th:text="${route.distance}">25.5</td>
         <td>
-            <a th:href="@{/routes/{id}(id=${route.id})}">Details</a>
+            <a th:href="@{'/routes/' + ${route.id}}">Details</a>
+            <a th:href="@{'/routes/' + ${route.id} + '/edit'}">Update</a>
             <form th:action="@{'/routes/' + ${route.id} + '/delete'}" method="post" style="display:inline">
                 <button type="submit">Delete</button>
             </form>

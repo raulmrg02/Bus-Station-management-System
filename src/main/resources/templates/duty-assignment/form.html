@@ -2,17 +2,17 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Create Duty Assignment</title>
+    <title th:text="${isUpdate} ? 'Update Duty Assignment' : 'Create Duty Assignment'">Create Duty Assignment</title>
 </head>
 <body>
-<h1>Add a New Duty Assignment</h1>
+<h1 th:text="${isUpdate} ? 'Update Duty Assignment' : 'Add a New Duty Assignment'">Add a New Duty Assignment</h1>
 
 <p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
 
-<form th:action="@{/duty-assignments}" th:object="${assignment}" method="post">
+<form th:action="${isUpdate} ? @{/duty-assignments/{id}(id=${assignment.id})} : @{/duty-assignments}" th:object="${assignment}" method="post">
     <div>
         <label for="id">Assignment ID:</label><br>
-        <input type="text" id="id" th:field="*{id}" required />
+        <input type="text" id="id" th:field="*{id}" readonly required />
     </div>
     <br>
     <div>
@@ -35,7 +35,7 @@
         </select>
     </div>
     <br>
-    <button type="submit">Save Duty Assignment</button>
+    <button type="submit" th:text="${isUpdate} ? 'Update Duty Assignment' : 'Save Duty Assignment'">Save Duty Assignment</button>
     <a th:href="@{/duty-assignments}">Cancel</a>
 </form>
 </body>

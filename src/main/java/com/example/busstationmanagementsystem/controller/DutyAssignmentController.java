@@ -30,6 +30,16 @@ public class DutyAssignmentController {
     public String showCreateForm(Model model) {
         model.addAttribute("assignment", new DutyAssignment());
         model.addAttribute("roles", DutyRole.values());
+        model.addAttribute("isUpdate", false);
+        return "duty-assignment/form";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showUpdateForm(@PathVariable("id") String id, Model model) {
+        DutyAssignment assignment = dutyAssignmentService.getAssignmentById(id);
+        model.addAttribute("assignment", assignment);
+        model.addAttribute("roles", DutyRole.values());
+        model.addAttribute("isUpdate", true);
         return "duty-assignment/form";
     }
 
@@ -42,6 +52,22 @@ public class DutyAssignmentController {
         } catch (IllegalArgumentException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
             model.addAttribute("roles", DutyRole.values());
+            model.addAttribute("isUpdate", false);
+            return "duty-assignment/form";
+        }
+        return "redirect:/duty-assignments";
+    }
+
+    @PostMapping("/{id}")
+    public String updateAssignment(@PathVariable("id") String id,
+                                   @ModelAttribute("assignment") DutyAssignment assignment,
+                                   Model model) {
+        try {
+            dutyAssignmentService.updateAssignment(id, assignment);
+        } catch (IllegalArgumentException exception) {
+            model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("roles", DutyRole.values());
+            model.addAttribute("isUpdate", true);
             return "duty-assignment/form";
         }
         return "redirect:/duty-assignments";

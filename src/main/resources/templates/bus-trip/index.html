@@ -32,7 +32,8 @@
         <td th:text="${trip.arrivalTime}">2026-11-15T11:30</td>
         <td th:text="${trip.status}">SCHEDULED</td>
         <td>
-            <a th:href="@{/trips/{id}(id=${trip.id})}">Details</a>
+            <a th:href="@{'/trips/' + ${trip.id}}">Details</a>
+            <a th:href="@{'/trips/' + ${trip.id} + '/edit'}">Update</a>
             <form th:action="@{'/trips/' + ${trip.id} + '/delete'}" method="post" style="display:inline">
                 <button type="submit">Delete</button>
             </form>

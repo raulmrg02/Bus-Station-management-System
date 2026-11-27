@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Route {
-    private String id;
+    private String id = IdGenerator.generate("RT");
     private BusStation origin;
     private BusStation destination;
     private BigDecimal distance;

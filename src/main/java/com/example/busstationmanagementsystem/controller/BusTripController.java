@@ -31,6 +31,16 @@ public class BusTripController {
     public String showCreateForm(Model model) {
         model.addAttribute("trip", new BusTrip());
         model.addAttribute("statuses", TripStatus.values());
+        model.addAttribute("isUpdate", false);
+        return "bus-trip/form";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showUpdateForm(@PathVariable("id") String id, Model model) {
+        BusTrip trip = tripService.getTripById(id);
+        model.addAttribute("trip", trip);
+        model.addAttribute("statuses", TripStatus.values());
+        model.addAttribute("isUpdate", true);
         return "bus-trip/form";
     }
 
@@ -43,6 +53,22 @@ public class BusTripController {
         } catch (IllegalArgumentException | IllegalStateException | NoSuchElementException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
             model.addAttribute("statuses", TripStatus.values());
+            model.addAttribute("isUpdate", false);
+            return "bus-trip/form";
+        }
+        return "redirect:/trips";
+    }
+
+    @PostMapping("/{id}")
+    public String updateTrip(@PathVariable("id") String id,
+                             @ModelAttribute("trip") BusTrip trip,
+                             Model model) {
+       try {
+           tripService.updateTrip(id, trip);
+        } catch (IllegalArgumentException | IllegalStateException | NoSuchElementException exception) {
+            model.addAttribute("errorMessage", exception.getMessage());
+            model.addAttribute("statuses", TripStatus.values());
+            model.addAttribute("isUpdate", true);
             return "bus-trip/form";
         }
         return "redirect:/trips";

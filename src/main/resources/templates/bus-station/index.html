@@ -28,7 +28,8 @@
         <td th:text="${station.city}">Bucharest</td>
         <td th:text="${station.trips != null ? station.trips.size() : 0}">0</td>
         <td>
-            <a th:href="@{/stations/{id}(id=${station.id})}">Details</a>
+            <a th:href="@{'/stations/' + ${station.id}}">Details</a>
+            <a th:href="@{'/stations/' + ${station.id} + '/edit'}">Update</a>
             <form th:action="@{'/stations/' + ${station.id} + '/delete'}" method="post" style="display:inline">
                 <button type="submit">Delete</button>
             </form>

@@ -32,7 +32,8 @@
         <td th:text="${bus.manufactureYear}">2020</td>
         <td th:text="${bus.status}">ACTIVE</td>
         <td>
-            <a th:href="@{/buses/{id}(id=${bus.id})}">Details</a>
+            <a th:href="@{'/buses/' + ${bus.id}}">Details</a>
+            <a th:href="@{'/buses/' + ${bus.id} + '/edit'}">Update</a>
             <form th:action="@{'/buses/' + ${bus.id} + '/delete'}" method="post" style="display:inline">
                 <button type="submit">Delete</button>
             </form>

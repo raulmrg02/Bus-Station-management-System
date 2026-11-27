@@ -30,7 +30,8 @@
         <td th:text="${ticket.seatNumber}">12A</td>
         <td th:text="${ticket.price}">25.00</td>
         <td>
-            <a th:href="@{/tickets/{id}(id=${ticket.id})}">Details</a>
+            <a th:href="@{'/tickets/' + ${ticket.id}}">Details</a>
+            <a th:href="@{'/tickets/' + ${ticket.id} + '/edit'}">Update</a>
             <form th:action="@{'/tickets/' + ${ticket.id} + '/delete'}" method="post" style="display:inline">
                 <button type="submit">Delete</button>
             </form>

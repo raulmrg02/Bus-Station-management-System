@@ -2,17 +2,17 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Create Passenger</title>
+    <title th:text="${isUpdate} ? 'Update Passenger' : 'Create Passenger'">Create Passenger</title>
 </head>
 <body>
-<h1>Add a New Passenger</h1>
+<h1 th:text="${isUpdate} ? 'Update Passenger' : 'Add a New Passenger'">Add a New Passenger</h1>
 
 <p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
 
-<form th:action="@{/passengers}" th:object="${passenger}" method="post">
+<form th:action="${isUpdate} ? @{/passengers/{id}(id=${passenger.id})} : @{/passengers}" th:object="${passenger}" method="post">
     <div>
         <label for="id">Passenger ID:</label><br>
-        <input type="text" id="id" th:field="*{id}" required />
+        <input type="text" id="id" th:field="*{id}" readonly required />
     </div>
     <br>
     <div>
@@ -30,7 +30,7 @@
         <input type="email" id="email" th:field="*{email}" />
     </div>
     <br>
-    <button type="submit">Save Passenger</button>
+    <button type="submit" th:text="${isUpdate} ? 'Update Passenger' : 'Save Passenger'">Save Passenger</button>
     <a th:href="@{/passengers}">Cancel</a>
 </form>
 </body>
