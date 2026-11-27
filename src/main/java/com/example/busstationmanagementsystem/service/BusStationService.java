@@ -1,7 +1,6 @@
 package com.example.busstationmanagementsystem.service;
 
 import com.example.busstationmanagementsystem.model.BusStation;
-import com.example.busstationmanagementsystem.repository.BusStationFileRepository;
 import com.example.busstationmanagementsystem.repository.BusStationRepository;
 import com.example.busstationmanagementsystem.repository.CrudRepository;
 import org.springframework.stereotype.Service;
@@ -19,9 +18,9 @@ public class BusStationService {
     private final CrudRepository<BusStation, String> inMemoryStationRepository;
     private final CrudRepository<BusStation, String> inFileStationRepository;
 
-    public BusStationService(BusStationRepository stationRepository, BusStationFileRepository stationFileRepository) {
-        this.inMemoryStationRepository = stationRepository;
-        this.inFileStationRepository = stationFileRepository;
+    public BusStationService(BusStationRepository stationRepository) {
+        this.inMemoryStationRepository = stationRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_MEMORY);
+        this.inFileStationRepository = stationRepository.forMode(com.example.busstationmanagementsystem.repository.StorageMode.IN_FILE);
     }
 
     public BusStation registerStation(BusStation station, RepositoryType repositoryType) {
