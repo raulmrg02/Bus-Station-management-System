@@ -2,8 +2,6 @@ package com.example.busstationmanagementsystem.service;
 
 import com.example.busstationmanagementsystem.model.Passenger;
 import com.example.busstationmanagementsystem.repository.CrudRepository;
-import com.example.busstationmanagementsystem.repository.PassengerFileRepository;
-import com.example.busstationmanagementsystem.repository.PassengerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,23 +9,18 @@ import java.util.NoSuchElementException;
 
 @Service
 public class PassengerService {
+    private final CrudRepository<Passenger, String> passengerRepository;
+    private final TicketService ticketService;
 
-    public enum RepositoryType {
-        IN_MEMORY,
-        IN_FILE
+    public PassengerService(CrudRepository<Passenger, String> passengerRepository, TicketService ticketService) {
+        this.passengerRepository = passengerRepository;
+        this.ticketService = ticketService;
     }
 
-    private final CrudRepository<Passenger, String> inMemoryPassengerRepository;
-    private final CrudRepository<Passenger, String> inFilePassengerRepository;
-
-    public PassengerService(PassengerRepository passengerRepository,
-                            PassengerFileRepository passengerFileRepository) {
-        this.inMemoryPassengerRepository = passengerRepository;
-        this.inFilePassengerRepository = passengerFileRepository;
-    }
-
-    public Passenger createPassenger(Passenger passenger, RepositoryType repositoryType) {
-        CrudRepository<Passenger, String> passengerRepository = getRepository(repositoryType);
+    public Passenger createPassenger(Passenger passenger) {
+        if (passenger.getId() == null || passenger.getId().isBlank()) {
+            throw new IllegalArgumentException("Passenger ID cannot be empty");
+        }
         if (passengerRepository.findById(passenger.getId()).isPresent()) {
             throw new IllegalArgumentException("Passenger already exists with ID: " + passenger.getId());
         }
@@ -40,12 +33,11 @@ public class PassengerService {
         return passengerRepository.save(passenger);
     }
 
-    public List<Passenger> getAllPassengers(RepositoryType repositoryType) {
-        return getRepository(repositoryType).findAll();
+    public List<Passenger> getAllPassengers() {
+        return passengerRepository.findAll();
     }
 
-    public Passenger updatePassenger(String id, Passenger updatedPassenger, RepositoryType repositoryType) {
-        CrudRepository<Passenger, String> passengerRepository = getRepository(repositoryType);
+    public Passenger updatePassenger(String id, Passenger updatedPassenger) {
         Passenger existingPassenger = passengerRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Passenger not found: " + id));
         if (updatedPassenger.getEmail() != null
@@ -61,17 +53,16 @@ public class PassengerService {
     }
 
     public Passenger getPassengerById(String id) {
-        return inMemoryPassengerRepository.findById(id)
+        return passengerRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Passenger not found: " + id));
     }
 
-    public void deletePassenger(String id, RepositoryType repositoryType) {
-        getRepository(repositoryType).deleteById(id);
-    }
-
-    private CrudRepository<Passenger, String> getRepository(RepositoryType repositoryType) {
-        return repositoryType == RepositoryType.IN_FILE
-                ? inFilePassengerRepository
-                : inMemoryPassengerRepository;
+    public void deletePassenger(String id) {
+        ticketService.getAllTickets().stream()
+                .filter(ticket -> id.equals(ticket.getPassengerId()))
+                .map(ticket -> ticket.getId())
+                .toList()
+                .forEach(ticketService::deleteTicket);
+        passengerRepository.deleteById(id);
     }
 }

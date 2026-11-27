@@ -7,11 +7,18 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 public abstract class InFileRepository<T> implements CrudRepository<T, String> {
+    public static final String DATA_DIRECTORY = "src/main/resources/data";
+
     protected final Map<String, T> storage = new ConcurrentHashMap<>();
     protected final Function<T, String> idExtractor;
     protected final String filePath;
@@ -24,10 +31,18 @@ public abstract class InFileRepository<T> implements CrudRepository<T, String> {
         this.idExtractor = idExtractor;
         this.objectMapper = new ObjectMapper();
         this.objectMapper.registerModule(new JavaTimeModule());
+        Path parent = Path.of(filePath).getParent();
+        if (parent != null) {
+            try {
+                Files.createDirectories(parent);
+            } catch (IOException exception) {
+                throw new UncheckedIOException("Failed to create data directory " + parent, exception);
+            }
+        }
         loadFromFile();
     }
 
-    private synchronized void loadFromFile() {
+    protected synchronized void loadFromFile() {
         try {
             File file = new File(filePath);
             if (!file.exists() || file.length() == 0) {
@@ -51,7 +66,7 @@ public abstract class InFileRepository<T> implements CrudRepository<T, String> {
         }
     }
 
-    private synchronized void saveToFile() {
+    protected synchronized void saveToFile() {
         try {
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(filePath), new ArrayList<>(storage.values()));
         } catch (IOException e) {

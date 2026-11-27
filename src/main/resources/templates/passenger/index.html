@@ -7,20 +7,8 @@
 <body>
 <h1>Passenger Overview</h1>
 
-<form th:action="@{/passengers}" method="get">
-    <label for="repository">Data source:</label>
-    <select id="repository" name="repository" onchange="this.form.submit()">
-        <option value="IN_MEMORY" th:selected="${selectedRepository == T(com.example.busstationmanagementsystem.service.PassengerService.RepositoryType).IN_MEMORY}">
-            In-memory repository
-        </option>
-        <option value="IN_FILE" th:selected="${selectedRepository == T(com.example.busstationmanagementsystem.service.PassengerService.RepositoryType).IN_FILE}">
-            In-file repository
-        </option>
-    </select>
-</form>
-
 <p>
-    <a th:href="@{/passengers/new(repository=${selectedRepository})}">Add New Passenger</a>
+    <a th:href="@{/passengers/new}">Add New Passenger</a>
 </p>
 
 <table border="1" cellpadding="6" cellspacing="0">
@@ -40,10 +28,9 @@
         <td th:text="${passenger.currency}">EUR</td>
         <td th:text="${passenger.email}">john.doe@example.com</td>
         <td>
-            <a th:href="@{'/passengers/' + ${passenger.id}(repository=${selectedRepository})}">Details</a>
-            <a th:href="@{'/passengers/' + ${passenger.id} + '/edit'(repository=${selectedRepository})}">Update</a>
+            <a th:href="@{'/passengers/' + ${passenger.id}}">Details</a>
+            <a th:href="@{'/passengers/' + ${passenger.id} + '/edit'}">Update</a>
             <form th:action="@{'/passengers/' + ${passenger.id} + '/delete'}" method="post" style="display:inline">
-                <input type="hidden" name="repository" th:value="${selectedRepository}">
                 <button type="submit">Delete</button>
             </form>
         </td>

@@ -3,7 +3,6 @@ package com.example.busstationmanagementsystem.controller;
 import com.example.busstationmanagementsystem.model.DutyAssignment;
 import com.example.busstationmanagementsystem.model.DutyRole;
 import com.example.busstationmanagementsystem.service.DutyAssignmentService;
-import com.example.busstationmanagementsystem.service.DutyAssignmentService.RepositoryType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,36 +21,24 @@ public class DutyAssignmentController {
     }
 
     @GetMapping
-    public String getAllAssignments(
-            @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
-            Model model) {
-        model.addAttribute("assignments", dutyAssignmentService.getAllAssignments(repository));
-        model.addAttribute("selectedRepository", repository);
+    public String getAllAssignments(Model model) {
+        model.addAttribute("assignments", dutyAssignmentService.getAllAssignments());
         return "duty-assignment/index";
     }
 
     @GetMapping("/new")
-    public String showCreateForm(
-            @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
-            Model model) {
+    public String showCreateForm(Model model) {
         model.addAttribute("assignment", new DutyAssignment());
         model.addAttribute("roles", DutyRole.values());
-        model.addAttribute("selectedRepository", repository);
         model.addAttribute("isUpdate", false);
         return "duty-assignment/form";
     }
 
     @GetMapping("/{id}/edit")
-    public String showUpdateForm(@PathVariable("id") String id,
-                                 @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
-                                 Model model) {
-        DutyAssignment assignment = dutyAssignmentService.getAllAssignments(repository).stream()
-                .filter(item -> item.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new java.util.NoSuchElementException("Duty assignment not found: " + id));
+    public String showUpdateForm(@PathVariable("id") String id, Model model) {
+        DutyAssignment assignment = dutyAssignmentService.getAssignmentById(id);
         model.addAttribute("assignment", assignment);
         model.addAttribute("roles", DutyRole.values());
-        model.addAttribute("selectedRepository", repository);
         model.addAttribute("isUpdate", true);
         return "duty-assignment/form";
     }
@@ -59,45 +46,36 @@ public class DutyAssignmentController {
     @PostMapping
     public String createAssignment(
             @ModelAttribute("assignment") DutyAssignment assignment,
-            @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
             Model model) {
         try {
-            dutyAssignmentService.assignDuty(assignment, repository);
+            dutyAssignmentService.assignDuty(assignment);
         } catch (IllegalArgumentException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
             model.addAttribute("roles", DutyRole.values());
-            model.addAttribute("selectedRepository", repository);
             model.addAttribute("isUpdate", false);
             return "duty-assignment/form";
         }
-        return "redirect:/duty-assignments?repository=" + repository;
+        return "redirect:/duty-assignments";
     }
 
     @PostMapping("/{id}")
     public String updateAssignment(@PathVariable("id") String id,
                                    @ModelAttribute("assignment") DutyAssignment assignment,
-                                   @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
                                    Model model) {
         try {
-            dutyAssignmentService.updateAssignment(id, assignment, repository);
+            dutyAssignmentService.updateAssignment(id, assignment);
         } catch (IllegalArgumentException exception) {
             model.addAttribute("errorMessage", exception.getMessage());
             model.addAttribute("roles", DutyRole.values());
-            model.addAttribute("selectedRepository", repository);
             model.addAttribute("isUpdate", true);
             return "duty-assignment/form";
         }
-        return "redirect:/duty-assignments?repository=" + repository;
+        return "redirect:/duty-assignments";
     }
 
     @GetMapping("/{id}")
-    public String showAssignmentDetails(@PathVariable("id") String id,
-                                        @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository,
-                                        Model model) {
-        DutyAssignment assignment = dutyAssignmentService.getAllAssignments(repository).stream()
-                .filter(item -> item.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new java.util.NoSuchElementException("Duty assignment not found: " + id));
+    public String showAssignmentDetails(@PathVariable("id") String id, Model model) {
+        DutyAssignment assignment = dutyAssignmentService.getAssignmentById(id);
         Map<String, Object> fields = new LinkedHashMap<>();
         fields.put("ID", assignment.getId());
         fields.put("Trip ID", assignment.getTripId());
@@ -106,15 +84,12 @@ public class DutyAssignmentController {
         model.addAttribute("title", "Duty Assignment " + assignment.getId());
         model.addAttribute("fields", fields);
         model.addAttribute("backUrl", "/duty-assignments");
-        model.addAttribute("selectedRepository", repository);
         return "details";
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteAssignment(
-            @PathVariable("id") String id,
-            @RequestParam(value = "repository", defaultValue = "IN_FILE") RepositoryType repository) {
-        dutyAssignmentService.deleteAssignment(id, repository);
-        return "redirect:/duty-assignments?repository=" + repository;
+    public String deleteAssignment(@PathVariable("id") String id) {
+        dutyAssignmentService.deleteAssignment(id);
+        return "redirect:/duty-assignments";
     }
 }

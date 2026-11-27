@@ -10,7 +10,6 @@
 <p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
 
 <form th:action="${isUpdate} ? @{/passengers/{id}(id=${passenger.id})} : @{/passengers}" th:object="${passenger}" method="post">
-    <input type="hidden" name="repository" th:value="${selectedRepository}">
     <div>
         <label for="id">Passenger ID:</label><br>
         <input type="text" id="id" th:field="*{id}" readonly required />
@@ -32,7 +31,7 @@
     </div>
     <br>
     <button type="submit" th:text="${isUpdate} ? 'Update Passenger' : 'Save Passenger'">Save Passenger</button>
-    <a th:href="@{/passengers(repository=${selectedRepository})}">Cancel</a>
+    <a th:href="@{/passengers}">Cancel</a>
 </form>
 </body>
 </html>

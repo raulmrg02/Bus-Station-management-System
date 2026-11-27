@@ -10,7 +10,6 @@
 <p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
 
 <form th:action="${isUpdate} ? @{/duty-assignments/{id}(id=${assignment.id})} : @{/duty-assignments}" th:object="${assignment}" method="post">
-    <input type="hidden" name="repository" th:value="${selectedRepository}">
     <div>
         <label for="id">Assignment ID:</label><br>
         <input type="text" id="id" th:field="*{id}" readonly required />
@@ -37,7 +36,7 @@
     </div>
     <br>
     <button type="submit" th:text="${isUpdate} ? 'Update Duty Assignment' : 'Save Duty Assignment'">Save Duty Assignment</button>
-    <a th:href="@{/duty-assignments(repository=${selectedRepository})}">Cancel</a>
+    <a th:href="@{/duty-assignments}">Cancel</a>
 </form>
 </body>
 </html>

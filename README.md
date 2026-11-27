@@ -1,5 +1,21 @@
 # Bus Station Management System (Thema 1)
 
+## Storage configuration
+
+Choose exactly one storage profile. The default `file` profile persists data in JSON files. The `memory` profile stores
+data in memory and starts with five sample records for each model; all memory data is lost when the application stops.
+Do not activate both profiles together. File storage uses the `src/main/resources/data` directory relative to the
+application's working directory, and file-mode changes are written there.
+
+To start with the five in-memory sample records:
+
+```shell
+./mvnw spring-boot:run -Dspring-boot.run.profiles=memory
+```
+
+To use persistent file storage, run `./mvnw spring-boot:run` or explicitly select `file` with
+`-Dspring-boot.run.profiles=file`.
+
 ## Architecture Decisions
 
 ### 1. Granular Controller & Domain Service Design
@@ -60,4 +76,4 @@ We added new properties to 3 model classes:
 1. **`Bus`**: Added `modelName` (`String`) and `manufactureYear` (`int`) for fleet tracking.
 2. **`Passenger`**: Added `email` (`String`) for contact and ticketing notifications.
 3. **`BusTrip`**: Added `arrivalTime` (`LocalDateTime`) to support trip duration tracking.
-Health check endpoint: `GET http://localhost:8080/hello` $\rightarrow$ returns `"Die Anwendung funktioniert!"`
+   Health check endpoint: `GET http://localhost:8080/hello` $\rightarrow$ returns `"Die Anwendung funktioniert!"`

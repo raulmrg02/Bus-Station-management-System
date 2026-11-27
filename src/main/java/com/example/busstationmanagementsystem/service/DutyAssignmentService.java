@@ -4,15 +4,8 @@ import com.example.busstationmanagementsystem.model.DutyAssignment;
 import com.example.busstationmanagementsystem.model.BusStation;
 import com.example.busstationmanagementsystem.model.BusTrip;
 import com.example.busstationmanagementsystem.model.Route;
-import com.example.busstationmanagementsystem.repository.BusTripFileRepository;
-import com.example.busstationmanagementsystem.repository.BusTripRepository;
+import com.example.busstationmanagementsystem.model.Staff;
 import com.example.busstationmanagementsystem.repository.CrudRepository;
-import com.example.busstationmanagementsystem.repository.DutyAssignmentFileRepository;
-import com.example.busstationmanagementsystem.repository.DutyAssignmentRepository;
-import com.example.busstationmanagementsystem.repository.BusStationFileRepository;
-import com.example.busstationmanagementsystem.repository.BusStationRepository;
-import com.example.busstationmanagementsystem.repository.RouteFileRepository;
-import com.example.busstationmanagementsystem.repository.RouteRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,139 +13,101 @@ import java.util.NoSuchElementException;
 
 @Service
 public class DutyAssignmentService {
-    public enum RepositoryType {
-        IN_MEMORY,
-        IN_FILE
+    private final CrudRepository<DutyAssignment, String> assignmentRepository;
+    private final CrudRepository<BusTrip, String> busTripRepository;
+    private final CrudRepository<Staff, String> staffRepository;
+    private final CrudRepository<Route, String> routeRepository;
+    private final CrudRepository<BusStation, String> stationRepository;
+
+    public DutyAssignmentService(CrudRepository<DutyAssignment, String> assignmentRepository,
+                                 CrudRepository<BusTrip, String> busTripRepository,
+                                 CrudRepository<Staff, String> staffRepository,
+                                 CrudRepository<Route, String> routeRepository,
+                                 CrudRepository<BusStation, String> stationRepository) {
+        this.assignmentRepository = assignmentRepository;
+        this.busTripRepository = busTripRepository;
+        this.staffRepository = staffRepository;
+        this.routeRepository = routeRepository;
+        this.stationRepository = stationRepository;
     }
 
-    private final CrudRepository<DutyAssignment, String> inMemoryAssignmentRepository;
-    private final CrudRepository<DutyAssignment, String> inFileAssignmentRepository;
-    private final BusTripRepository inMemoryBusTripRepository;
-    private final BusTripFileRepository inFileBusTripRepository;
-    private final CrudRepository<Route, String> inMemoryRouteRepository;
-    private final CrudRepository<Route, String> inFileRouteRepository;
-    private final CrudRepository<BusStation, String> inMemoryStationRepository;
-    private final CrudRepository<BusStation, String> inFileStationRepository;
-
-    public DutyAssignmentService(DutyAssignmentRepository dutyAssignmentRepository,
-                                 DutyAssignmentFileRepository dutyAssignmentFileRepository,
-                                 BusTripRepository busTripRepository,
-                                 BusTripFileRepository busTripFileRepository,
-                                 RouteRepository routeRepository,
-                                 RouteFileRepository routeFileRepository,
-                                 BusStationRepository stationRepository,
-                                 BusStationFileRepository stationFileRepository) {
-        this.inMemoryAssignmentRepository = dutyAssignmentRepository;
-        this.inFileAssignmentRepository = dutyAssignmentFileRepository;
-        this.inMemoryBusTripRepository = busTripRepository;
-        this.inFileBusTripRepository = busTripFileRepository;
-        this.inMemoryRouteRepository = routeRepository;
-        this.inFileRouteRepository = routeFileRepository;
-        this.inMemoryStationRepository = stationRepository;
-        this.inFileStationRepository = stationFileRepository;
-    }
-
-    public DutyAssignment assignDuty(DutyAssignment assignment, RepositoryType repositoryType) {
-        CrudRepository<DutyAssignment, String> assignmentRepository = getRepository(repositoryType);
+    public DutyAssignment assignDuty(DutyAssignment assignment) {
         if (assignment.getId() == null || assignment.getId().isBlank()) {
             throw new IllegalArgumentException("Duty assignment ID cannot be empty");
         }
         if (assignmentRepository.findById(assignment.getId()).isPresent()) {
             throw new IllegalArgumentException("Duty assignment already exists with ID: " + assignment.getId());
         }
+        getTrip(assignment.getTripId());
+        Staff staff = getStaff(assignment.getStaffId());
         DutyAssignment saved = assignmentRepository.save(assignment);
-
-        // Keep the trip's internal list in sync if tripId exists
-        if (assignment.getTripId() != null) {
-            inFileBusTripRepository.findById(assignment.getTripId()).ifPresent(trip -> {
-                trip.getAssignments().add(saved);
-                inFileBusTripRepository.save(trip);
-            });
-            inMemoryBusTripRepository.findById(assignment.getTripId()).ifPresent(trip -> {
-                trip.getAssignments().add(saved);
-                inMemoryBusTripRepository.save(trip);
-            });
-            syncTripReferences(assignment.getTripId(), repositoryType);
-        }
+        addAssignmentToTrip(saved);
+        addAssignmentToStaff(saved, staff);
+        syncTripReferences(assignment.getTripId());
         return saved;
     }
 
-    public List<DutyAssignment> getAllAssignments(RepositoryType repositoryType) {
-        return getRepository(repositoryType).findAll();
+    public List<DutyAssignment> getAllAssignments() {
+        return assignmentRepository.findAll();
     }
 
-    public DutyAssignment updateAssignment(String id, DutyAssignment updatedAssignment,
-                                           RepositoryType repositoryType) {
-        CrudRepository<DutyAssignment, String> assignmentRepository = getRepository(repositoryType);
+    public DutyAssignment updateAssignment(String id, DutyAssignment updatedAssignment) {
         DutyAssignment existingAssignment = assignmentRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Duty assignment not found: " + id));
-
+        getTrip(updatedAssignment.getTripId());
+        Staff updatedStaff = getStaff(updatedAssignment.getStaffId());
         updatedAssignment.setId(id);
         DutyAssignment saved = assignmentRepository.save(updatedAssignment);
         String oldTripId = existingAssignment.getTripId();
         String newTripId = saved.getTripId();
         if (oldTripId != null) {
-            getTripRepository(repositoryType).findById(oldTripId).ifPresent(trip -> {
+            busTripRepository.findById(oldTripId).ifPresent(trip -> {
                 trip.getAssignments().removeIf(assignment -> id.equals(assignment.getId()));
-                getTripRepository(repositoryType).save(trip);
+                busTripRepository.save(trip);
             });
-            syncTripReferences(oldTripId, repositoryType);
+            syncTripReferences(oldTripId);
         }
+        staffRepository.findById(existingAssignment.getStaffId()).ifPresent(staff -> {
+            staff.getAssignments().removeIf(assignment -> id.equals(assignment.getId()));
+            staffRepository.save(staff);
+        });
         if (newTripId != null) {
-            getTripRepository(repositoryType).findById(newTripId).ifPresent(trip -> {
+            busTripRepository.findById(newTripId).ifPresent(trip -> {
                 trip.getAssignments().removeIf(assignment -> id.equals(assignment.getId()));
                 trip.getAssignments().add(saved);
-                getTripRepository(repositoryType).save(trip);
+                busTripRepository.save(trip);
             });
-            syncTripReferences(newTripId, repositoryType);
+            syncTripReferences(newTripId);
         }
+        addAssignmentToStaff(saved, updatedStaff);
         return saved;
     }
 
     public DutyAssignment getAssignmentById(String id) {
-        return inFileAssignmentRepository.findById(id)
-                .or(() -> inMemoryAssignmentRepository.findById(id))
+        return assignmentRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Duty assignment not found: " + id));
     }
 
-    public void deleteAssignment(String id, RepositoryType repositoryType) {
-        CrudRepository<DutyAssignment, String> assignmentRepository = getRepository(repositoryType);
+    public void deleteAssignment(String id) {
         assignmentRepository.findById(id).ifPresent(assignment -> {
             if (assignment.getTripId() != null) {
-                getTripRepository(repositoryType).findById(assignment.getTripId()).ifPresent(trip -> {
+                busTripRepository.findById(assignment.getTripId()).ifPresent(trip -> {
                     trip.getAssignments().removeIf(a -> id.equals(a.getId()));
-                    getTripRepository(repositoryType).save(trip);
+                    busTripRepository.save(trip);
                 });
-                syncTripReferences(assignment.getTripId(), repositoryType);
+                syncTripReferences(assignment.getTripId());
             }
+            staffRepository.findById(assignment.getStaffId()).ifPresent(staff -> {
+                staff.getAssignments().removeIf(existing -> id.equals(existing.getId()));
+                staffRepository.save(staff);
+            });
         });
 
         assignmentRepository.deleteById(id);
     }
 
-    private CrudRepository<DutyAssignment, String> getRepository(RepositoryType repositoryType) {
-        return repositoryType == RepositoryType.IN_FILE
-                ? inFileAssignmentRepository
-                : inMemoryAssignmentRepository;
-    }
-
-    private CrudRepository<BusTrip, String> getTripRepository(RepositoryType repositoryType) {
-        return repositoryType == RepositoryType.IN_FILE
-                ? inFileBusTripRepository
-                : inMemoryBusTripRepository;
-    }
-
-    private void syncTripReferences(String tripId, RepositoryType repositoryType) {
-        CrudRepository<BusTrip, String> tripRepository = repositoryType == RepositoryType.IN_FILE
-                ? inFileBusTripRepository
-                : inMemoryBusTripRepository;
-        tripRepository.findById(tripId).ifPresent(trip -> {
-            CrudRepository<Route, String> routeRepository = repositoryType == RepositoryType.IN_FILE
-                    ? inFileRouteRepository
-                    : inMemoryRouteRepository;
-            CrudRepository<BusStation, String> stationRepository = repositoryType == RepositoryType.IN_FILE
-                    ? inFileStationRepository
-                    : inMemoryStationRepository;
+    private void syncTripReferences(String tripId) {
+        busTripRepository.findById(tripId).ifPresent(trip -> {
             routeRepository.findById(trip.getRouteId()).ifPresent(route -> {
                 replaceTrip(route.getTrips(), trip);
                 routeRepository.save(route);
@@ -176,5 +131,35 @@ public class DutyAssignmentService {
     private void replaceTrip(List<BusTrip> trips, BusTrip trip) {
         trips.removeIf(existing -> trip.getId().equals(existing.getId()));
         trips.add(trip);
+    }
+
+    private BusTrip getTrip(String id) {
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("Trip is required");
+        }
+        return busTripRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Trip not found: " + id));
+    }
+
+    private Staff getStaff(String id) {
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("Staff member is required");
+        }
+        return staffRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Staff member not found: " + id));
+    }
+
+    private void addAssignmentToTrip(DutyAssignment assignment) {
+        busTripRepository.findById(assignment.getTripId()).ifPresent(trip -> {
+            trip.getAssignments().removeIf(existing -> assignment.getId().equals(existing.getId()));
+            trip.getAssignments().add(assignment);
+            busTripRepository.save(trip);
+        });
+    }
+
+    private void addAssignmentToStaff(DutyAssignment assignment, Staff staff) {
+        staff.getAssignments().removeIf(existing -> assignment.getId().equals(existing.getId()));
+        staff.getAssignments().add(assignment);
+        staffRepository.save(staff);
     }
 }

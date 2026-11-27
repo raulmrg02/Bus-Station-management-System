@@ -1,71 +1,82 @@
-[ {
-  "id" : "BUS-009",
-  "registrationNumber" : "IS-60-VWX",
-  "capacity" : 36,
-  "status" : "ACTIVE",
-  "model" : "Temsa Maraton",
-  "manufactureYear" : 1999
-}, {
-  "id" : "BUS-007",
-  "registrationNumber" : "CJ-40-PQR",
-  "capacity" : 40,
-  "status" : "ACTIVE",
-  "model" : "Iveco Crossway",
-  "manufactureYear" : 2020
-}, {
-  "id" : "BUS-008",
-  "registrationNumber" : "AR-50-STU",
-  "capacity" : 48,
-  "status" : "ACTIVE",
-  "model" : "Setra S 516 HD",
-  "manufactureYear" : 2022
-}, {
-  "id" : "BUS-005",
-  "registrationNumber" : "SB-20-JKL",
-  "capacity" : 45,
-  "status" : "ACTIVE",
-  "model" : "Scania Touring",
-  "manufactureYear" : 2019
-}, {
-  "id" : "BUS-006",
-  "registrationNumber" : "BH-30-MNO",
-  "capacity" : 52,
-  "status" : "ACTIVE",
-  "model" : "Mercedes-Benz Intouro",
-  "manufactureYear" : 2023
-}, {
-  "id" : "BUS-003",
-  "registrationNumber" : "TM-99-DEF",
-  "capacity" : 55,
-  "status" : "DOWN",
-  "model" : "MAN Lion's Coach",
-  "manufactureYear" : 2018
-}, {
-  "id" : "BUS-004",
-  "registrationNumber" : "BV-10-GHI",
-  "capacity" : 49,
-  "status" : "ACTIVE",
-  "model" : "Volvo 9700",
-  "manufactureYear" : 2020
-}, {
-  "id" : "BUS-001",
-  "registrationNumber" : "B-123-XYZ",
-  "capacity" : 50,
-  "status" : "ACTIVE",
-  "model" : "Mercedes-Benz Tourismo",
-  "manufactureYear" : 2022
-}, {
-  "id" : "BUS-002",
-  "registrationNumber" : "CJ-45-ABC",
-  "capacity" : 35,
-  "status" : "ACTIVE",
-  "model" : "Setra S 515 HD",
-  "manufactureYear" : 2021
-}, {
-  "id" : "BUS-010",
-  "registrationNumber" : "CJ-01-ABC",
-  "capacity" : 48,
-  "status" : "ACTIVE",
-  "model" : "Iveco Crossway",
-  "manufactureYear" : 2020
-} ]
+[
+  {
+    "id": "BUS-001",
+    "registrationNumber": "B-123-XYZ",
+    "capacity": 50,
+    "status": "ACTIVE",
+    "model": "Mercedes-Benz Tourismo",
+    "manufactureYear": 2022
+  },
+  {
+    "id": "BUS-002",
+    "registrationNumber": "CJ-45-ABC",
+    "capacity": 35,
+    "status": "ACTIVE",
+    "model": "Setra S 515 HD",
+    "manufactureYear": 2021
+  },
+  {
+    "id": "BUS-003",
+    "registrationNumber": "TM-99-DEF",
+    "capacity": 55,
+    "status": "DOWN",
+    "model": "MAN Lion's Coach",
+    "manufactureYear": 2018
+  },
+  {
+    "id": "BUS-004",
+    "registrationNumber": "BV-10-GHI",
+    "capacity": 49,
+    "status": "ACTIVE",
+    "model": "Volvo 9700",
+    "manufactureYear": 2020
+  },
+  {
+    "id": "BUS-005",
+    "registrationNumber": "SB-20-JKL",
+    "capacity": 45,
+    "status": "ACTIVE",
+    "model": "Scania Touring",
+    "manufactureYear": 2019
+  },
+  {
+    "id": "BUS-006",
+    "registrationNumber": "BH-30-MNO",
+    "capacity": 52,
+    "status": "ACTIVE",
+    "model": "Mercedes-Benz Intouro",
+    "manufactureYear": 2023
+  },
+  {
+    "id": "BUS-007",
+    "registrationNumber": "CJ-40-PQR",
+    "capacity": 40,
+    "status": "ACTIVE",
+    "model": "Iveco Crossway",
+    "manufactureYear": 2020
+  },
+  {
+    "id": "BUS-008",
+    "registrationNumber": "AR-50-STU",
+    "capacity": 48,
+    "status": "ACTIVE",
+    "model": "Setra S 516 HD",
+    "manufactureYear": 2022
+  },
+  {
+    "id": "BUS-009",
+    "registrationNumber": "IS-60-VWX",
+    "capacity": 36,
+    "status": "ACTIVE",
+    "model": "Temsa Maraton",
+    "manufactureYear": 2021
+  },
+  {
+    "id": "BUS-010",
+    "registrationNumber": "CJ-01-ABC",
+    "capacity": 48,
+    "status": "ACTIVE",
+    "model": "Iveco Crossway",
+    "manufactureYear": 2020
+  }
+]

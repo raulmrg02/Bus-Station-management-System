@@ -1,8 +1,7 @@
 package com.example.busstationmanagementsystem.service;
 
 import com.example.busstationmanagementsystem.model.BusStation;
-import com.example.busstationmanagementsystem.repository.BusStationFileRepository;
-import com.example.busstationmanagementsystem.repository.BusStationRepository;
+import com.example.busstationmanagementsystem.model.Route;
 import com.example.busstationmanagementsystem.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
@@ -11,21 +10,15 @@ import java.util.NoSuchElementException;
 
 @Service
 public class BusStationService {
-    public enum RepositoryType {
-        IN_MEMORY,
-        IN_FILE
+    private final CrudRepository<BusStation, String> stationRepository;
+    private final RouteService routeService;
+
+    public BusStationService(CrudRepository<BusStation, String> stationRepository, RouteService routeService) {
+        this.stationRepository = stationRepository;
+        this.routeService = routeService;
     }
 
-    private final CrudRepository<BusStation, String> inMemoryStationRepository;
-    private final CrudRepository<BusStation, String> inFileStationRepository;
-
-    public BusStationService(BusStationRepository stationRepository, BusStationFileRepository stationFileRepository) {
-        this.inMemoryStationRepository = stationRepository;
-        this.inFileStationRepository = stationFileRepository;
-    }
-
-    public BusStation registerStation(BusStation station, RepositoryType repositoryType) {
-        CrudRepository<BusStation, String> stationRepository = getRepository(repositoryType);
+    public BusStation registerStation(BusStation station) {
         if (station.getId() == null || station.getId().isBlank()) {
             throw new IllegalArgumentException("Station ID cannot be empty");
         }
@@ -35,31 +28,32 @@ public class BusStationService {
         return stationRepository.save(station);
     }
 
-    public BusStation getStationById(String id, RepositoryType repositoryType) {
-        return getRepository(repositoryType).findById(id)
+    public BusStation getStationById(String id) {
+        return stationRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Station not found: " + id));
     }
 
-    public BusStation updateStation(String id, BusStation updatedStation, RepositoryType repositoryType) {
-        CrudRepository<BusStation, String> stationRepository = getRepository(repositoryType);
+    public BusStation updateStation(String id, BusStation updatedStation) {
         BusStation existingStation = stationRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Station not found: " + id));
         updatedStation.setId(id);
         updatedStation.setTrips(existingStation.getTrips());
-        return stationRepository.save(updatedStation);
+        BusStation savedStation = stationRepository.save(updatedStation);
+        routeService.updateStationReference(savedStation);
+        return savedStation;
     }
 
-    public void deleteById(String id, RepositoryType repositoryType) {
-        getRepository(repositoryType).deleteById(id);
+    public void deleteById(String id) {
+        routeService.getAllRoutes().stream()
+                .filter(route -> route.getOrigin() != null && id.equals(route.getOrigin().getId())
+                        || route.getDestination() != null && id.equals(route.getDestination().getId()))
+                .map(Route::getId)
+                .toList()
+                .forEach(routeService::deleteRoute);
+        stationRepository.deleteById(id);
     }
 
-    public List<BusStation> getAllStations(RepositoryType repositoryType) {
-        return getRepository(repositoryType).findAll();
-    }
-
-    private CrudRepository<BusStation, String> getRepository(RepositoryType repositoryType) {
-        return repositoryType == RepositoryType.IN_FILE
-                ? inFileStationRepository
-                : inMemoryStationRepository;
+    public List<BusStation> getAllStations() {
+        return stationRepository.findAll();
     }
 }

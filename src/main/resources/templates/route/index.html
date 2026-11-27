@@ -7,20 +7,8 @@
 <body>
 <h1>Route Overview</h1>
 
-<form th:action="@{/routes}" method="get">
-    <label for="repository">Data source:</label>
-    <select id="repository" name="repository" onchange="this.form.submit()">
-        <option value="IN_MEMORY" th:selected="${selectedRepository == T(com.example.busstationmanagementsystem.service.RouteService.RepositoryType).IN_MEMORY}">
-            In-memory repository
-        </option>
-        <option value="IN_FILE" th:selected="${selectedRepository == T(com.example.busstationmanagementsystem.service.RouteService.RepositoryType).IN_FILE}">
-            In-file repository
-        </option>
-    </select>
-</form>
-
 <p>
-    <a th:href="@{/routes/new(repository=${selectedRepository})}">Add New Route</a>
+    <a th:href="@{/routes/new}">Add New Route</a>
 </p>
 
 <table border="1" cellpadding="6" cellspacing="0">
@@ -40,10 +28,9 @@
         <td th:text="${route.destination.name + ' (' + route.destination.city + ')'}">Airport (City)</td>
         <td th:text="${route.distance}">25.5</td>
         <td>
-            <a th:href="@{'/routes/' + ${route.id}(repository=${selectedRepository})}">Details</a>
-            <a th:href="@{'/routes/' + ${route.id} + '/edit'(repository=${selectedRepository})}">Update</a>
+            <a th:href="@{'/routes/' + ${route.id}}">Details</a>
+            <a th:href="@{'/routes/' + ${route.id} + '/edit'}">Update</a>
             <form th:action="@{'/routes/' + ${route.id} + '/delete'}" method="post" style="display:inline">
-                <input type="hidden" name="repository" th:value="${selectedRepository}">
                 <button type="submit">Delete</button>
             </form>
         </td>
